@@ -6,12 +6,16 @@ def ProcessTitanicData(CV = False):
     '''Devuelve los datos del problema del Titanic, separados en un train set, 
        un test set y un cross validation set si la opcion CV es True'''
     def convert5(x):
+        '''Convierte los datos de la columna 5. los valores "male" los convierte
+           en 0., y los "female" en 1.'''
         if x.strip() == 'male': ret = 0.
         elif x.strip() == 'female': ret = 1.
         else: ret = 999.
         return ret
     
     def convert6(x):
+        '''Convierte los datos de la columna 6, la edad, pasando a float los datos
+           existentes y poniendo el valor 0 a los datos que falten'''
         return float(x or 0)
         
     #COMO EN LOS NOMBRES HAY COMAS, TENGO QUE PONER UNA COLUMNA MAS
