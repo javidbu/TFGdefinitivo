@@ -1,0 +1,3 @@
+#TFGdefinitivo
+
+###Aquí guardo los archivos definitivos del TFG. Todo lo que aquí se encuentra tiene la calidad suficiente como para ser parte del tramo final del TFG, entendiendo que el otro repositorio ("TFG") es sólo una primera aproximación a lo que quería hacer...
