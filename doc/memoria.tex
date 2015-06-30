@@ -1,7 +1,7 @@
 \documentclass[10pt,a4paper]{article}
 
 \newcommand{\nombre}{Javier D\'iaz Bustamante Ussia}
-\newcommand{\titulo}{Algoritmos de Machine Learning y sus aplicaiones}
+\newcommand{\titulo}{Algoritmos de Machine Learning y sus aplicaciones}
 \newcommand{\asignatura}{Trabajo de Fin de Grado}
 
 \author{\nombre}
@@ -48,7 +48,7 @@ En un mundo cada vez más tecnológico, las bases de datos crecen cada día. Cuando
 
 Al calor del problema del tratamiento de datos surge el \textit{Machine Learning} (de ahora en adelante \ML), con algoritmos cada vez más potentes capaces de sacar el máximo partido a estos datos. En este trabajo estudiaremos en concreto cinco de ellos, todos de clasificación (también los hay de regresión). Estos cinco son \textit{Logistic Regresion}, \textit{Naïve Bayes}, \textit{Support Vector Machine}, \textit{Random Forest} y \textit{K-Nearest Neighbors}, explicados en detalle en la seccion \ref{sec:alg}.
 
-Existen dos tipos de problemas en \ML, los de clasificación y los de regresión. Estos últimos tratan de predecir el valor de una variable para un conjunto de datos nuevos, como por ejemplo la regresión por mínimos cuadrados. Los problemas de clasificación consisten en tratar de asignar cada entrada de datos nuevos a una clase concreta, pudiendo ser una clasificación binaria (verdadero o falso) o una clasificación multiclase, como por ejemplo un algoritmo de reconocimiento de dígitos. A lo largo de este trabajo, por similitud con el problema del bosón de Higgs, trataremos únicamente con problemas de clasificación binaria.
+Existen dos tipos de problemas en \ML, los de clasificación y los de regresión. Estos últimos tratan de predecir el valor de una variable para un conjunto de datos nuevos, como por ejemplo la regresión por mínimos cuadrados. Los problemas de clasificación consisten en tratar de asignar a cada entrada de datos nuevos una clase concreta, pudiendo ser una clasificación binaria (verdadero o falso) o una clasificación multiclase, como por ejemplo un algoritmo de reconocimiento de dígitos. A lo largo de este trabajo, por similitud con el problema del bosón de Higgs, trataremos únicamente con problemas de clasificación binaria.
 
 
 
@@ -71,6 +71,16 @@ Por otra parte, podemos tener datos como por ejemplo el gusto por diferentes tip
 \label{fig:tipos}
 \end{figure}
 
+Tanto en el aprendizaje supervisado como en el no supervisado, el objetivo de un algoritmo de clasificación es el de elegir una superficie de decisión que separe distintas regiones a las que se asignará cada una de las clases. Estas superficies pueden ser más o menos complejas, dependiendo del algoritmo que se utilice. Un ejemplo de curvas de decisión se recoge en la gráfica \ref{fig:decCurv}.
+
+\begin{figure}[htbp]
+\centering
+\subfigure{\includegraphics[width=0.4\textwidth]{graficas/supervisadoDecCurv}}
+\subfigure{\includegraphics[width=0.4\textwidth]{graficas/noSupervisadoDecCurv}}
+\caption{Curvas de decisión lineales.}
+\label{fig:decCurv}
+\end{figure}
+
 \subsection{Métricas}\label{sec:metricas}
 Una vez el algoritmo ha sido entrenado sobre un training set, es hora de probarlo. Para ello se emplea otro conjunto de datos, llamado test set\footnote{Muchas veces se suele tener sólo un conjunto de datos, que se divide en distintas partes, una el training set, otra el test set, y otra el cross-validation set, que veremos más adelante.}, que se clasifica según el algoritmo disponga. En el caso de clasificación binaria, el algoritmo asignará a cada entrada del test set una etiqueta de clase (verdadero o falso, 1 ó 0). Nos interesa saber cómo de preciso ha sido el algoritmo, para lo que disponemos de diversas métricas. Según la etiqueta original de cada entrada y según la etiqueta predicha por el algoritmo, se pueden dar los casos de la tabla \ref{tab:casos}.
 
@@ -89,7 +99,7 @@ Una vez el algoritmo ha sido entrenado sobre un training set, es hora de probarl
 	\label{tab:casos}
 \end{table}
 
-Un buen algoritmo será aquel que prediga 0 para todos los negativos y 1 para los positivos, pero la realidad es que eso casi nunca ocurre. Necesitamos, por lo tanto, un mecanismo para evaluar la bondad de un algoritmo, y eso se consigue con las métricas definidas a continuación\footnote{Ver \cite{bhat}.}:
+Un buen algoritmo será aquel que prediga 0 para todos los negativos y 1 para los positivos, pero la realidad es que esto casi nunca ocurre. Necesitamos, por lo tanto, un mecanismo para evaluar la bondad de un algoritmo, y eso se consigue con las métricas definidas a continuación\footnote{Ver \cite{bhat}.}:
 
 \begin{equation}
 \text{Accuracy} = \frac{TP + TN}{TP + FP + TN + FN}
@@ -118,12 +128,51 @@ Un buen algoritmo será aquel que prediga 0 para todos los negativos y 1 para los
 
 La ecuación \eqref{eq:rec} (sensibilidad) nos da una medida de la exactitud de los casos positivos, mientras que \eqref{eq:spec} (especificidad) nos da la de los casos negativos. \eqref{eq:prec} (precisión) nos da la exactitud de los casos clasificados como positivos. 
 
-Aunque pudiera parecer que \eqref{eq:acc} (exactitud) es una buena medida de la bondad de la clasificación, no siempre es así. En los casos de clases sesgadas (\textit{skewed classes}), en las que la proporción de una de las dos clases es mucho mayor que la de la otra, un algoritmo que clasifique cualquier entrada de datos como la clase mayoritaria tendría una gran exactitud, aunque no cumpliría con el objetivo de clasificar correctamente los datos. Por ejemplo, supongamos un problema de detección de fraude en transacciones bancarias en el que nuestro algoritmo deba clasificar como verdaderas las operaciones fraudulentas. En la realidad hay muchas más transacciones legítimas que fraudulentas, en nuestro ejemplo consideraremos que son el 99\% de las transacciones. Si tenemos un algoritmo que prediga siempre que una transacción es legítima, la exactitud será del 99\%, pero no por ello será un buen algoritmo. 
+Aunque pudiera parecer que \eqref{eq:acc} (exactitud) es una buena medida de la bondad de la clasificación, no siempre es así. En los casos de clases sesgadas (\textit{skewed classes}), en las que la proporción de una de las dos clases es mucho mayor que la de la otra, un algoritmo que clasifique cualquier entrada de datos como la clase mayoritaria tendría una gran exactitud, aunque no cumpliría con el objetivo de clasificar correctamente los datos. Por ejemplo, supongamos un problema de detección de fraude en transacciones bancarias en el que nuestro algoritmo deba clasificar como 1 las operaciones fraudulentas. En la realidad hay muchas más transacciones legítimas que fraudulentas, en nuestro ejemplo consideraremos que son el 99\% de las transacciones. Si tenemos un algoritmo que prediga siempre que una transacción es legítima, la exactitud será del 99\%, pero no por ello será un buen algoritmo. 
 
-El valor F1, ecuación \eqref{eq:F1}, soluciona este problema. Se trata de una media armónica de la precisión y la sensibilidad. 
+El valor F1, ecuación \eqref{eq:F1}, soluciona este problema. Se trata de una media armónica de la precisión y la sensibilidad. A lo largo de este trabajo consideraremos ésta como la métrica para decidir si un algoritmo es mejor que otro.
+
+Para estudiar un algoritmo seguimos unos pasos definidos. Primero, entrenaremos el algoritmo con el training set, tras lo que el algoritmo define una \textit{decisión} que utilizará para clasificar nuevos datos. A continuación, con el algoritmo ya entrenado, procedemos a predecir las clases de cada entrada de datos del test set, con lo que podremos calcular nuestras métricas como vimos en las ecuaciones \ref{eq:acc} a \ref{eq:F1}. Al final, tenemos un algoritmo entrenado que generaliza su decisión mejor o peor en función de los valores de las métricas.
+
+El concepto de generalizar viene de que normalmente tenemos un conjunto de datos ya clasificados, que usaremos para entrenar el algoritmo, pero este algoritmo lo necesitamos no para clasificar ese conjunto, sino para clasificar nuevos conjuntos de datos que estén aún sin clasificar. Por esto no medimos las métricas sobre el mismo conjunto con el que entrenamos, sino que lo hacemos sobre un conjunto distinto, para ver si el algoritmo no sólo clasifica bien el training set, sino cualquier nuevo conjunto de datos del que dispongamos.
 
 \subsection{Cross Validation}\label{sec:CV}
-La mayoría de los algoritmos de \ML  dependen de unos parámetros que hay que fijar 
+La mayoría de los algoritmos de \ML  dependen de unos parámetros que hay que fijar manualmente. Por ejemplo, muchos de ellos utilizan el \textit{parámetro de regularización}, $C$, que veremos a continuación. El problema es que los valores de estos parámetros influyen en gran medida en la bondad de la clasificación, y una mala elección de los parámetros nos puede hacer pensar que un algoritmo es malo, cuando la realidad es que lo estamos utilizando mal. 
+
+Para fijar correctamente estos parámetros, nos ayudamos del Cross Validation set. Hasta ahora el procedimiento a seguir era entrenar el algoritmo con el training set, y ver la bondad del mismo con el test set. Ahora, para fijar correctamente estos parámetros, usaremos un tercer conjunto, el Cross Validation set, o CV set. El procedimiento a seguir ahora es el siguiente:
+
+Primero, elegimos valores para nuestros parámetros. Con esos valores, entrenamos el algoritmo con el training set. Evaluamos las métricas con el CV set, y volvemos a realizar estos pasos con valores distintos de los parámetros, eligiendo el conjunto de parámetros que mejor prediga las clases del CV set. Por último, con el algoritmo entrenado con los mejores parámetros, evaluamos las métricas en el test set. Estas métricas son las que nos dirán cómo de acertado será nuestro algoritmo al clasificar datos nuevos.
+
+Al igual que antes, el proceso de evaluar métricas se realiza en conjuntos de datos que no hayamos utilizado para entrenar el algoritmo, aunque esta vez tampoco usamos el conjunto que nos ha servido para ajustar los parámetros. Ésto se debe a que, al usar el CV set para ajustar los parámetros, éste ya no nos dice cómo generaliza nuestro algoritmo a datos nuevos, pues el algoritmo final depende de la información que aporta este conjunto. Para ver cómo generaliza, tenemos que alimentar nuestro algoritmo con datos que todavía no se hayan usado.
+
+\subsection{Varianza, Parcialidad y Regularización}\label{sec:BiasVariance}
+\textbf{REVISAR}
+
+Al entrenar un algoritmo nos enfrentamos a dos errores diametralmente opuestos, la \textit{parcialidad} y la \textit{varianza}. Tendremos alta parcialidad cuando nuestra hipótesis es demasiado sencilla. La consecuencia es que nuestro algoritmo no generaliza bien los datos nuevos porque tampoco ajusta bien los datos del training set, no somos capaces de extraer toda la información de los datos que tenemos. Para solucionarlo, lo que podemos hacer es tomar datos nuevos, hacer una hipótesis más compleja o modificar el parámetro de regularización, que veremos en seguida.
+
+Por el contrario, tendremos alta varianza en nuestro algoritmo cuando nuestra hipótesis es demasiado compleja y no tenemos suficientes datos. Nuestro algoritmo no generalizará bien para datos nuevos porque se ciñe demasiado a los datos del training set, perdiendo la tendencia general de estos datos al darle más importancia a las variaciones específicas de este conjunto. Cometeremos un muy bajo error en los datos del training set, pagando un alto error en el test set. Para solucionarlo podremos tomar más datos, simplificar la hipótesis o modificar el parámetro de regularización. Podemos ver un claro ejemplo de ambos problemas en la gráfica \ref{fig:BiasVariance}.
+
+\begin{figure}[htbp]
+\centering
+\subfigure[Datos]{\includegraphics[width=0.4\textwidth]{graficas/DatosBiasVariance}}
+\subfigure[Bien ajustado]{\includegraphics[width=0.4\textwidth]{graficas/NoBiasVariance}}
+\subfigure[Alta parcialidad]{\includegraphics[width=0.4\textwidth]{graficas/highBias}}
+\subfigure[Alta varianza]{\includegraphics[width=0.4\textwidth]{graficas/highVariance}}
+\caption{Datos para la regresión (a), regresión correcta (b), regresión con alta parcialidad (c) y regresión con alta varianza (d).}
+\label{fig:BiasVariance}
+\end{figure}
+
+A continuación explicamos en qué consiste el parámetro de regularización. Gran parte de los algoritmos se basan en una hipótesis en la que se asigna unos pesos a cada variable (\textit{feature weights}). El algoritmo optimizará estos pesos para que la predicción realizada por la hipótesis coincida lo máximo posible con las etiquetas de cada entrada de datos. Estos pesos, por lo tanto, serán mayores cuanto más influya la variable en la clasificación. El parámetro de regularización se encarga controlar la importancia que se da a las variables, con el objetivo de no depender demasiado de ellas, evitando caer en problemas de alta varianza. Una formulación más precisa sería la siguiente:
+
+Sea un algoritmo de clasificación en el que a cada variable se le asocia un peso $\theta_j$, y en el que cada entrada de datos viene dada por el vector $x^{(i)}$, donde $x^{(i)}_j$ sería el valor de la variable $j$ de la entrada $i$. Cada entrada está clasificada con una etiqueta $y^{(i)}$. El algoritmo tratará de seleccionar los pesos $\theta$ que optimicen un error cometido $J(\theta)$ (la fórmula concreta de este error dependerá del algoritmo en cuestión). El parámetro de regularización\footnote{A veces se utiliza $\lambda \propto C^{-1}$.} $C$ se introduce como un término adicional al error que se minimiza. Este término suele ser proporcional al inverso de $C$ y a la suma cuadrática de los $\theta_j$, de forma que un valor alto de $C$ respetará más la hipótesis del algoritmo que un valor bajo de $C$. En resumen, el nuevo error sería:
+
+\begin{equation}
+J'(\theta) = J(\theta) + \frac{A}{C}\sum_j{\theta_j^2}
+\label{eq:ErrorRegul}
+\end{equation}
+
+Reduciendo $C$ se consigue suavizar la hipótesis del algoritmo, minimizando el vector de pesos $\theta$, reduciendo la varianza del algoritmo. Por otro lado, si aumentamos $C$ permitimos al algoritmo ajustar los pesos más de acuerdo con su hipótesis, permitiendo que ésta sea más compleja y reduciendo la parcialidad del mismo. Por lo tanto, el parámetro de regularización nos ayuda a mejorar nuestro algoritmo, y lo podremos fijar con el CV set, como vimos en el apartado \ref{sec:CV}.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %            ALGTM                                          %
