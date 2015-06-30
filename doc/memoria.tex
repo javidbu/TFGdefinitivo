@@ -1,0 +1,174 @@
+\documentclass[10pt,a4paper]{article}
+
+\newcommand{\nombre}{Javier D\'iaz Bustamante Ussia}
+\newcommand{\titulo}{Algoritmos de Machine Learning y sus aplicaiones}
+\newcommand{\asignatura}{Trabajo de Fin de Grado}
+
+\author{\nombre}
+\title{\Huge \titulo \\\Large \asignatura}
+\date{\today}
+
+\usepackage[latin1]{inputenc}
+\usepackage[spanish]{babel} %Estefania usa [spanish,es-tabla], igual así me ahorro renewcommand y eso...
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage[hidelinks]{hyperref} %Añade marcadores e hipervinculos (sin colorear)
+\usepackage{booktabs}%Para \toprule, middlerule y bottomrule en las tablas
+\usepackage{subfigure}%Subfiguras
+\usepackage{multirow}%Celdas que ocupan muchas lineas. Muchas columnas viene por defecto
+\usepackage[all]{hypcap}%Hace que los links de hyperref vayan al ppio de la figura, no al caption.
+\usepackage{xspace}%Para tratar bien los espacios despues de un comando definido por mi (ver linea \newcommand{\ML})
+
+\spanishdecimal{.} %Cambia la coma decimal por un punto
+
+\pagestyle{myheadings}
+\markboth{}{\titulo}
+\newcommand{\qed}{\hfill\ensuremath{\blacksquare}} %simbolo quod erat demostrandum, \qed
+\newcommand\encuadre[1]{\text{\fbox{${\displaystyle #1}$}}} %\encuadre encuadra ecuaciones
+%ejemplo: \[ \therefore \encuadre{2+2=4} \]
+\newcommand{\ML}{\textit{ML}\xspace}
+
+\begin{document}
+\renewcommand{\tablename}{Tabla} %Para que no aparezca "Cuadro"
+\renewcommand{\figurename}{Gráfica} %Para que no aparezca "Figura"
+\maketitle
+
+\tableofcontents %Añade un índice (igual da algún warning)
+
+\begin{abstract}
+En este trabajo vamos a estudiar diferentes algoritmos de \textit{Machine Learning} para la clasificación de sucesos. Para comprobar su funcionamiento, los utilizaremos sobre distintas bases de datos, una de reconocimiento de dígitos, una de supervivientes del Titanic y la última de búsqueda del bosón de Higgs.
+\end{abstract}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%            INTRO                                          %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introducción}
+En un mundo cada vez más tecnológico, las bases de datos crecen cada día. Cuando alguien entra en una página web, realiza una compra en un comercio, una empresa realiza un estudio de mercado, se celebran unas elecciones, se están almacenando datos. Con este ingente flujo de datos, la física no se podía quedar detrás, hoy en día los grandes aceleradores de partículas manejan al día millones de sucesos que hay que catalogar, clasificar y estudiar, pero la enorme cantidad de estos datos hace imposible su tratamiento \textit{manual}.
+
+Al calor del problema del tratamiento de datos surge el \textit{Machine Learning} (de ahora en adelante \ML), con algoritmos cada vez más potentes capaces de sacar el máximo partido a estos datos. En este trabajo estudiaremos en concreto cinco de ellos, todos de clasificación (también los hay de regresión). Estos cinco son \textit{Logistic Regresion}, \textit{Naïve Bayes}, \textit{Support Vector Machine}, \textit{Random Forest} y \textit{K-Nearest Neighbors}, explicados en detalle en la seccion \ref{sec:alg}.
+
+Existen dos tipos de problemas en \ML, los de clasificación y los de regresión. Estos últimos tratan de predecir el valor de una variable para un conjunto de datos nuevos, como por ejemplo la regresión por mínimos cuadrados. Los problemas de clasificación consisten en tratar de asignar cada entrada de datos nuevos a una clase concreta, pudiendo ser una clasificación binaria (verdadero o falso) o una clasificación multiclase, como por ejemplo un algoritmo de reconocimiento de dígitos. A lo largo de este trabajo, por similitud con el problema del bosón de Higgs, trataremos únicamente con problemas de clasificación binaria.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%            PREV.                                          %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Consideraciones previas}\label{sec:previo}
+\subsection{Aprendizaje supervisado y no supervisado}\label{sec:supervisado}
+Antes de explicar cada uno de los algoritmos, vamos a ver algunas características comunes de \ML. Para empezar, veamos la diferencia entre \textit{aprendizaje supervisado} y \textit{aprendizaje no supervisado}. En \ML, el término aprendizaje (o entrenamiento) se refiere al análisis de los datos por parte del algoritmo. Éste recibe un conjunto de datos de aprendizaje (el \textit{training set}) y los analiza para tomar una decisión (ya veremos más adelante cómo). La diferencia entre aprendizaje supervisado y aprendizaje no supervisado es que en el primero el conjunto de datos de aprendizaje se encuentra perfectamente etiquetado, mientras que en el no supervisado no lo está. 
+
+Por ejemplo, si quisiéramos entrenar un algoritmo para saber a qué tipo de personas les gusta la música clásica, podríamos crear un training set con entradas como: "`A Juan Pérez, de 64 años, de clase alta, casado y con carrera universitaria, residente en Madrid, le gusta la música clásica"', y otras entradas del estilo de "`A Pedro Gutiérrez, de 24 años, clase media, soltero, sin carrera universitaria, residente en Villalpando, no le gusta"'. Éste sería un problema de clasificación supervisada, y podemos ver un ejemplo de training set ficticio en la gráfica \ref{fig:tipos}a.
+
+Por otra parte, podemos tener datos como por ejemplo el gusto por diferentes tipos de películas de los clientes de un videoclub. A una persona pueden gustarle los romances un 80\%, mientras que las películas de acción sólo un 57\%. A otra, sin embargo, le gustan las primeras al 43\% y las segundas al 96\%. Un ejemplo de training set podría ser el de la gráfica \ref{fig:tipos}b. En ella, aunque no tengamos clasificadas a las personas, se puede comprobar de forma más o menos nítida que el videoclub tiene tres tipos de clientes distintos.
+
+\begin{figure}[htbp]
+\centering
+\subfigure[Supervisado. En rojo, los amantes de la música clásica.]{\includegraphics[width=0.4\textwidth]{graficas/supervisado}}
+\subfigure[No supervisado.]{\includegraphics[width=0.4\textwidth]{graficas/noSupervisado}}
+\caption{Aprendizaje supervisado (a) y no supervisado (b).}
+\label{fig:tipos}
+\end{figure}
+
+\subsection{Métricas}\label{sec:metricas}
+Una vez el algoritmo ha sido entrenado sobre un training set, es hora de probarlo. Para ello se emplea otro conjunto de datos, llamado test set\footnote{Muchas veces se suele tener sólo un conjunto de datos, que se divide en distintas partes, una el training set, otra el test set, y otra el cross-validation set, que veremos más adelante.}, que se clasifica según el algoritmo disponga. En el caso de clasificación binaria, el algoritmo asignará a cada entrada del test set una etiqueta de clase (verdadero o falso, 1 ó 0). Nos interesa saber cómo de preciso ha sido el algoritmo, para lo que disponemos de diversas métricas. Según la etiqueta original de cada entrada y según la etiqueta predicha por el algoritmo, se pueden dar los casos de la tabla \ref{tab:casos}.
+
+\begin{table}[htbp]
+	\centering
+		\begin{tabular}{|c|c|c|}
+			\hline
+			& \textbf{0 real} & \textbf{1 real} \\
+			\hline
+			\textbf{0 predicho} & Verdadero negativo (TN) & Falso negativo (FN) \\
+			\hline
+			\textbf{1 predicho} & Falso positivo (FP) & Verdadero positivo (TP) \\
+			\hline
+		\end{tabular}
+	\caption{Posibles casos.}
+	\label{tab:casos}
+\end{table}
+
+Un buen algoritmo será aquel que prediga 0 para todos los negativos y 1 para los positivos, pero la realidad es que eso casi nunca ocurre. Necesitamos, por lo tanto, un mecanismo para evaluar la bondad de un algoritmo, y eso se consigue con las métricas definidas a continuación\footnote{Ver \cite{bhat}.}:
+
+\begin{equation}
+\text{Accuracy} = \frac{TP + TN}{TP + FP + TN + FN}
+\label{eq:acc}
+\end{equation}
+
+\begin{equation}
+\text{Recall} = \frac{TP}{TP + FN}
+\label{eq:rec}
+\end{equation}
+
+\begin{equation}
+\text{Specificity} = \frac{TN}{FP + TN}
+\label{eq:spec}
+\end{equation}
+
+\begin{equation}
+\text{Precision} = \frac{TP}{TP + FP}
+\label{eq:prec}
+\end{equation}
+
+\begin{equation}
+\text{F1-score} = \frac{2\cdot \text{Precision}\cdot \text{Recall}}{\text{Precision} + \text{Recall}}
+\label{eq:F1}
+\end{equation}
+
+La ecuación \eqref{eq:rec} (sensibilidad) nos da una medida de la exactitud de los casos positivos, mientras que \eqref{eq:spec} (especificidad) nos da la de los casos negativos. \eqref{eq:prec} (precisión) nos da la exactitud de los casos clasificados como positivos. 
+
+Aunque pudiera parecer que \eqref{eq:acc} (exactitud) es una buena medida de la bondad de la clasificación, no siempre es así. En los casos de clases sesgadas (\textit{skewed classes}), en las que la proporción de una de las dos clases es mucho mayor que la de la otra, un algoritmo que clasifique cualquier entrada de datos como la clase mayoritaria tendría una gran exactitud, aunque no cumpliría con el objetivo de clasificar correctamente los datos. Por ejemplo, supongamos un problema de detección de fraude en transacciones bancarias en el que nuestro algoritmo deba clasificar como verdaderas las operaciones fraudulentas. En la realidad hay muchas más transacciones legítimas que fraudulentas, en nuestro ejemplo consideraremos que son el 99\% de las transacciones. Si tenemos un algoritmo que prediga siempre que una transacción es legítima, la exactitud será del 99\%, pero no por ello será un buen algoritmo. 
+
+El valor F1, ecuación \eqref{eq:F1}, soluciona este problema. Se trata de una media armónica de la precisión y la sensibilidad. 
+
+\subsection{Cross Validation}\label{sec:CV}
+La mayoría de los algoritmos de \ML  dependen de unos parámetros que hay que fijar 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%            ALGTM                                          %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Algoritmos}\label{sec:alg}
+
+\subsection{Logistic Regression}\label{sec:LogReg}
+
+\subsection{Naïve Bayes}\label{sec:NB}
+
+\subsection{Support Vector Machine}\label{sec:SVM}
+
+\subsection{Random Forest}\label{sec:RandForest}
+
+\subsection{K-Nearest Neighbors}\label{KNN}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%            DATOS                                          %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Bases de datos}\label{sec:dat}
+
+\subsection{Reconocimiento de dígitos}\label{sec:digitos}
+
+\subsection{Supervivientes del Titanic}\label{sec:titanic}
+
+\subsection{Búsqueda del bosón de Higgs}\label{sec:higgs}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%            RESUL                                          %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Resultados}\label{sec:resultados}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%            CONCL                                          %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Conclusiones}\label{sec:conclusion}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%            BIBL.                                          %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{thebibliography}{99}
+\bibitem{bhat} \textsc{S. Bhattacharyya, S. Jha, K. Tharakunnel y J. C. Westland}. \textit{Decision Support Systems}, \textbf{50}, 602-613 (2011).
+\bibitem{sanjee} \textsc{S. Jha, M. Guillen, J. C. Westland}. \textit{Expert System with Applications}, \textbf{39}, 12650-12657 (2012).
+
+\end{thebibliography}
+
+\end{document}
