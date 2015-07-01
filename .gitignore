@@ -8,3 +8,5 @@
 *.toc
 *.ps
 *.pyc
+*.pdf
+!doc/memoria.pdf
