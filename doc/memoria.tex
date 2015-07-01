@@ -146,11 +146,9 @@ Primero, elegimos valores para nuestros parámetros. Con esos valores, entrenamos
 Al igual que antes, el proceso de evaluar métricas se realiza en conjuntos de datos que no hayamos utilizado para entrenar el algoritmo, aunque esta vez tampoco usamos el conjunto que nos ha servido para ajustar los parámetros. Ésto se debe a que, al usar el CV set para ajustar los parámetros, éste ya no nos dice cómo generaliza nuestro algoritmo a datos nuevos, pues el algoritmo final depende de la información que aporta este conjunto. Para ver cómo generaliza, tenemos que alimentar nuestro algoritmo con datos que todavía no se hayan usado.
 
 \subsection{Varianza, Parcialidad y Regularización}\label{sec:BiasVariance}
-\textbf{REVISAR}
+Al entrenar un algoritmo nos enfrentamos a dos errores diametralmente opuestos, la \textit{parcialidad} y la \textit{varianza}. Tendremos alta parcialidad (\textit{underfitting})cuando nuestra hipótesis es demasiado sencilla o tengamos pocas variables de entrada. La consecuencia es que nuestro algoritmo no generaliza bien los datos nuevos porque tampoco ajusta bien los datos del training set, no somos capaces de extraer información relevante de los datos que tenemos. Para solucionarlo, lo que podemos hacer es tomar datos nuevos con más variables, crear variables derivadas de las que ya tengamos, hacer una hipótesis más compleja o modificar el parámetro de regularización, que veremos en seguida.
 
-Al entrenar un algoritmo nos enfrentamos a dos errores diametralmente opuestos, la \textit{parcialidad} y la \textit{varianza}. Tendremos alta parcialidad cuando nuestra hipótesis es demasiado sencilla. La consecuencia es que nuestro algoritmo no generaliza bien los datos nuevos porque tampoco ajusta bien los datos del training set, no somos capaces de extraer toda la información de los datos que tenemos. Para solucionarlo, lo que podemos hacer es tomar datos nuevos, hacer una hipótesis más compleja o modificar el parámetro de regularización, que veremos en seguida.
-
-Por el contrario, tendremos alta varianza en nuestro algoritmo cuando nuestra hipótesis es demasiado compleja y no tenemos suficientes datos. Nuestro algoritmo no generalizará bien para datos nuevos porque se ciñe demasiado a los datos del training set, perdiendo la tendencia general de estos datos al darle más importancia a las variaciones específicas de este conjunto. Cometeremos un muy bajo error en los datos del training set, pagando un alto error en el test set. Para solucionarlo podremos tomar más datos, simplificar la hipótesis o modificar el parámetro de regularización. Podemos ver un claro ejemplo de ambos problemas en la gráfica \ref{fig:BiasVariance}.
+Por el contrario, tendremos alta varianza (\textit{overfitting}) en nuestro algoritmo cuando nuestra hipótesis es demasiado compleja y no tenemos suficientes datos. Nuestro algoritmo no generalizará bien para datos nuevos porque se ciñe demasiado a los datos del training set, perdiendo la tendencia general de estos datos al darle más importancia a las variaciones específicas de este conjunto. Cometeremos un muy bajo error en los datos del training set, pagando un alto error en el test set. Para solucionarlo podremos tomar más datos, simplificar la hipótesis o modificar el parámetro de regularización. Podemos ver un claro ejemplo de ambos problemas en la gráfica \ref{fig:BiasVariance}.
 
 \begin{figure}[htbp]
 \centering
@@ -167,7 +165,7 @@ A continuación explicamos en qué consiste el parámetro de regularización. Gran p
 Sea un algoritmo de clasificación en el que a cada variable se le asocia un peso $\theta_j$, y en el que cada entrada de datos viene dada por el vector $x^{(i)}$, donde $x^{(i)}_j$ sería el valor de la variable $j$ de la entrada $i$. Cada entrada está clasificada con una etiqueta $y^{(i)}$. El algoritmo tratará de seleccionar los pesos $\theta$ que optimicen un error cometido $J(\theta)$ (la fórmula concreta de este error dependerá del algoritmo en cuestión). El parámetro de regularización\footnote{A veces se utiliza $\lambda \propto C^{-1}$.} $C$ se introduce como un término adicional al error que se minimiza. Este término suele ser proporcional al inverso de $C$ y a la suma cuadrática de los $\theta_j$, de forma que un valor alto de $C$ respetará más la hipótesis del algoritmo que un valor bajo de $C$. En resumen, el nuevo error sería:
 
 \begin{equation}
-J'(\theta) = J(\theta) + \frac{A}{C}\sum_j{\theta_j^2}
+J'(\theta) = J(\theta) + \frac{1}{C}\sum_j{\theta_j^2}
 \label{eq:ErrorRegul}
 \end{equation}
 
@@ -178,8 +176,47 @@ Reduciendo $C$ se consigue suavizar la hipótesis del algoritmo, minimizando el v
 %            ALGTM                                          %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Algoritmos}\label{sec:alg}
+En esta sección estudiaremos diversos algoritmos de clasificación. La mayor parte de los algoritmos siempre producen una hipótesis y una función de error a minimizar. La hipótesis es una aplicación que va del espacio de las variables (\textit{features}) al de las etiquetas (\textit{labels} o \textit{targets}), es decir, $h_\theta(x): x \mapsto y$, donde $\theta$ es el vector de pesos. La forma concreta de la hipótesis depende del algoritmo. La función de error, o función objetivo, mide el error cometido por la hipótesis, y será una función que vaya del espacio de los vectores de pesos al de números reales positivos, es decir, $J(\theta): \mathbb{R}^n \rightarrow \mathbb{R}^+$, donde $n$ es la dimensión del vector de pesos, que la mayor parte de las veces coincide con la dimensión de las variables. La forma concreta de la función objetivo también depende del algoritmo, así que vamos a estudiar los que utilizaremos.
 
 \subsection{Logistic Regression}\label{sec:LogReg}
+El algoritmo de regresión logística\footnote{Ver el capítulo 1 de \cite{LogReg}} es un algoritmo de modelo lineal, es decir, siempre producirá una superficie de decisión que dependa linealmente de las variables de entrada, aunque si queremos una superficie más compleja sólo tendremos que crear nuevas variables no lineales con las de entrada. 
+
+Se llama de regresión logística porque precisamente para la hipótesis hace uso de una función logística, que tiene la forma de la ecuación \ref{eq:sigmoid}. Ésta es una función sigmoidea, muy comunes en estadística por tener la típica forma de densidad de probabilidad acumulada, como podemos ver en la gráfica \ref{fig:sigmoid}.
+
+\begin{equation}
+g(z) = \frac{1}{1+e^{-z}}
+\label{eq:sigmoid}
+\end{equation}
+
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=0.80\textwidth]{graficas/sigmoid}
+	\caption{Función logística. La forma de ``S'' (sigmoidea) es típica de las densidades de probabilidad acumulada en estadística.}
+	\label{fig:sigmoid}
+\end{figure}
+
+Sea $x$ el vector columna de variables de entrada, y $\theta$ el vector columna de pesos, ambos de la misma dimensión. Por convenio, al vector $x$ le añadimos una primera componente, $x_0 = 1$, que tiene su peso correspondiente, $\theta_0$. Esta componente añade un término constante a la combinación lineal de las variables de entrada, como ahora veremos. La hipótesis del algoritmo es \eqref{eq:hipLogReg}, donde $g(z)$ es la función logística de \eqref{eq:sigmoid}. Ésta se interpreta como la probabilidad de que, dados el vector $x$ y los pesos $\theta$, la etiqueta correspondiente a esos datos sea ``1''.
+
+\begin{equation}
+\encuadre{h_\theta(x) = p(y = 1 | x; \theta) = g(\theta^T x) = \frac{1}{1+e^{-\theta^T x}}}
+\label{eq:hipLogReg}
+\end{equation}
+
+Por norma general, predeciremos ``$y=1$'' si $h_\theta(x)>0.5$, es decir (ver gráfica \ref{fig:sigmoid}), si $\theta^T x > 0$, por lo que nuestra superficie de decisión, lineal en las variables $x$, será $\theta^T x = 0$.
+
+La función de coste nos da el error cometido por la hipótesis, y en el caso de la regresión logística tiene la forma de la ecuación \ref{eq:errLogReg}.
+\begin{equation}
+\encuadre{J(\theta) = -\frac{1}{m}\sum_{i=1}^{m}{\left[y^{(i)}\log{\left(h_\theta(x^{(i)})\right)} + \left(1-y^{(i)}\right)\log{\left(1-h_\theta(x^{(i)})\right)}\right]}}
+\label{eq:errLogReg}
+\end{equation}
+donde $m$ es el número de entradas de datos. Nótese que el primer término del sumatorio corresponde a los datos con $y=1$, mientras que el segundo es el de los datos con $y=0$. La función de coste se representa para los casos $y=1$ y $y=0$ en la gráfica \ref{fig:errLogReg}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{graficas/costLogReg}
+\caption{Función de error frente a $h_\theta(x)$ para los casos $y=1$ y $y=0$.}
+\label{fig:errLogReg}
+\end{figure}
 
 \subsection{Naïve Bayes}\label{sec:NB}
 
@@ -217,6 +254,7 @@ Reduciendo $C$ se consigue suavizar la hipótesis del algoritmo, minimizando el v
 \begin{thebibliography}{99}
 \bibitem{bhat} \textsc{S. Bhattacharyya, S. Jha, K. Tharakunnel y J. C. Westland}. \textit{Decision Support Systems}, \textbf{50}, 602-613 (2011).
 \bibitem{sanjee} \textsc{S. Jha, M. Guillen, J. C. Westland}. \textit{Expert System with Applications}, \textbf{39}, 12650-12657 (2012).
+\bibitem{LogReg} \textsc{D. W. Hosmer, S. Lemeshow, R. X. Sturdivant}. Applied Logistic Regression, \textit{John Wiley} \& \textit{Sons} (2013).
 
 \end{thebibliography}
 
