@@ -19,6 +19,7 @@
 \usepackage{multirow}%Celdas que ocupan muchas lineas. Muchas columnas viene por defecto
 \usepackage[all]{hypcap}%Hace que los links de hyperref vayan al ppio de la figura, no al caption.
 \usepackage{xspace}%Para tratar bien los espacios despues de un comando definido por mi (ver linea \newcommand{\ML})
+\usepackage{bm}
 
 \spanishdecimal{.} %Cambia la coma decimal por un punto
 
@@ -59,7 +60,7 @@ Existen dos tipos de problemas en \ML, los de clasificación y los de regresión. 
 \subsection{Aprendizaje supervisado y no supervisado}\label{sec:supervisado}
 Antes de explicar cada uno de los algoritmos, vamos a ver algunas características comunes de \ML. Para empezar, veamos la diferencia entre \textit{aprendizaje supervisado} y \textit{aprendizaje no supervisado}. En \ML, el término aprendizaje (o entrenamiento) se refiere al análisis de los datos por parte del algoritmo. Éste recibe un conjunto de datos de aprendizaje (el \textit{training set}) y los analiza para tomar una decisión (ya veremos más adelante cómo). La diferencia entre aprendizaje supervisado y aprendizaje no supervisado es que en el primero el conjunto de datos de aprendizaje se encuentra perfectamente etiquetado, mientras que en el no supervisado no lo está. 
 
-Por ejemplo, si quisiéramos entrenar un algoritmo para saber a qué tipo de personas les gusta la música clásica, podríamos crear un training set con entradas como: "`A Juan Pérez, de 64 años, de clase alta, casado y con carrera universitaria, residente en Madrid, le gusta la música clásica"', y otras entradas del estilo de "`A Pedro Gutiérrez, de 24 años, clase media, soltero, sin carrera universitaria, residente en Villalpando, no le gusta"'. Éste sería un problema de clasificación supervisada, y podemos ver un ejemplo de training set ficticio en la gráfica \ref{fig:tipos}a.
+Por ejemplo, si quisiéramos entrenar un algoritmo para saber a qué tipo de personas les gusta la música clásica, podríamos crear un training set con entradas como: ``A Juan Pérez, de 64 años, de clase alta, casado y con carrera universitaria, residente en Madrid, le gusta la música clásica'', y otras entradas del estilo de ``A Pedro Gutiérrez, de 24 años, clase media, soltero, sin carrera universitaria, residente en Villalpando, no le gusta''. Éste sería un problema de clasificación supervisada, y podemos ver un ejemplo de training set ficticio en la gráfica \ref{fig:tipos}a.
 
 Por otra parte, podemos tener datos como por ejemplo el gusto por diferentes tipos de películas de los clientes de un videoclub. A una persona pueden gustarle los romances un 80\%, mientras que las películas de acción sólo un 57\%. A otra, sin embargo, le gustan las primeras al 43\% y las segundas al 96\%. Un ejemplo de training set podría ser el de la gráfica \ref{fig:tipos}b. En ella, aunque no tengamos clasificadas a las personas, se puede comprobar de forma más o menos nítida que el videoclub tiene tres tipos de clientes distintos.
 
@@ -219,6 +220,22 @@ donde $m$ es el número de entradas de datos. Nótese que el primer término del su
 \end{figure}
 
 \subsection{Naïve Bayes}\label{sec:NB}
+El clasificador ``Bayes ingenuo'' es probablemente uno de los más simples que existen\footnote{Ver capítulo 20 de \cite{IA}.}. Se basa en asumir ingenuamente que las variables de las entradas de datos de una clase determinada son independientes, lo que nos puede asustar al oirlo por primera vez, aunque veremos que, a pesar del calibre de la simplificación, funciona sorprendentemente bien a pesar de que las variables no sean realmente independientes\footnote{Ver \cite{NaiveBayes}.}. Esta asunción se expresa con la siguiente expresión
+\begin{equation}
+p(\bm{x}|C) = \prod_{i=1}^n{p(x_i|C)}
+\label{eq:NaiveBayes}
+\end{equation}
+donde $\bm{x}$ es el vector de variables, cuyas componentes son $x_i$, y $C$ es una determinada clase (en nuestros problemas de clasificación binaria, $C$ será 0 ó 1). 
+
+Gracias al teorema de Bayes, sabemos que la probabilidad de que dado el vector de variables $\bm{x}$ se de la clase $C_j$ es:
+\begin{equation}
+p(C_j|\bm{x}) = \frac{p(C_j)p(\bm{x}|C_j)}{p(\bm{x})}
+\label{eq:TeoremaBayes}
+\end{equation}
+
+En general, para un problema de clasificación multiclase, siendo $C_j$ cada una de las clases, el algoritmo asignará a cada entrada nueva de datos la clase $C_k$ que maximice la probabilidad de la ecuación \ref{eq:TeoremaBayes}. Ésta es la hipótesis del algoritmo. Nótese que, dado un vector $\bm{x}$, $p(\bm{x})$ es una constante, por lo que sólo tenemos que preocuparnos por maximizar el numerador, teniendo en cuenta \eqref{eq:NaiveBayes}.
+
+ Para calcular las probabilidades $p(x_i|C)$, hay que tener en cuenta el tipo de distribución que sigue la variable $i$, dando lugar a diferentes algoritmos, como por ejemplo, el ``Naive Bayes Gaussiano'', el ``Naive Bayes Multinomial'' o el ``Naive Bayes Binomial'', todos ellos nombrados según la distribución de probabilidad de las variables. También se pueden hacer algoritmos de Naive Bayes mixtos, donde a distintas variables les correspondan distintas distribuciones de probabilidad.
 
 \subsection{Support Vector Machine}\label{sec:SVM}
 
@@ -255,6 +272,9 @@ donde $m$ es el número de entradas de datos. Nótese que el primer término del su
 \bibitem{bhat} \textsc{S. Bhattacharyya, S. Jha, K. Tharakunnel y J. C. Westland}. \textit{Decision Support Systems}, \textbf{50}, 602-613 (2011).
 \bibitem{sanjee} \textsc{S. Jha, M. Guillen, J. C. Westland}. \textit{Expert System with Applications}, \textbf{39}, 12650-12657 (2012).
 \bibitem{LogReg} \textsc{D. W. Hosmer, S. Lemeshow, R. X. Sturdivant}. Applied Logistic Regression, \textit{John Wiley} \& \textit{Sons} (2013).
+\bibitem{IA} \textsc{S. Russel, P. Norvig}. Artificial Intelligence: A Modern Approach, \textit{Prentice Hall} (2010).
+\bibitem{NaiveBayes} \textsc{I. Rish}. An empirical study of the naive Bayes classifier, \textit{IBM Research Report} \textbf{No se como citar esto...} (2001).
+
 
 \end{thebibliography}
 
