@@ -10,3 +10,4 @@
 *.pyc
 *.pdf
 !doc/memoria.pdf
+*.djvu
