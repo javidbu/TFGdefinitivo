@@ -147,7 +147,7 @@ Primero, elegimos valores para nuestros parámetros. Con esos valores, entrenamos
 Al igual que antes, el proceso de evaluar métricas se realiza en conjuntos de datos que no hayamos utilizado para entrenar el algoritmo, aunque esta vez tampoco usamos el conjunto que nos ha servido para ajustar los parámetros. Ésto se debe a que, al usar el CV set para ajustar los parámetros, éste ya no nos dice cómo generaliza nuestro algoritmo a datos nuevos, pues el algoritmo final depende de la información que aporta este conjunto. Para ver cómo generaliza, tenemos que alimentar nuestro algoritmo con datos que todavía no se hayan usado.
 
 \subsection{Varianza, Parcialidad y Regularización}\label{sec:BiasVariance}
-Al entrenar un algoritmo nos enfrentamos a dos errores diametralmente opuestos, la \textit{parcialidad} y la \textit{varianza}. Tendremos alta parcialidad (\textit{underfitting})cuando nuestra hipótesis es demasiado sencilla o tengamos pocas variables de entrada. La consecuencia es que nuestro algoritmo no generaliza bien los datos nuevos porque tampoco ajusta bien los datos del training set, no somos capaces de extraer información relevante de los datos que tenemos. Para solucionarlo, lo que podemos hacer es tomar datos nuevos con más variables, crear variables derivadas de las que ya tengamos, hacer una hipótesis más compleja o modificar el parámetro de regularización, que veremos en seguida.
+Al entrenar un algoritmo nos enfrentamos a dos errores diametralmente opuestos, la \textit{parcialidad} y la \textit{varianza}. Tendremos alta parcialidad (\textit{underfitting}) cuando nuestra hipótesis es demasiado sencilla o tengamos pocas variables de entrada. La consecuencia es que nuestro algoritmo no generaliza bien los datos nuevos porque tampoco ajusta bien los datos del training set, no somos capaces de extraer información relevante de los datos que tenemos. Para solucionarlo, lo que podemos hacer es tomar datos nuevos con más variables, crear variables derivadas de las que ya tengamos, hacer una hipótesis más compleja o modificar el parámetro de regularización, que veremos en seguida.
 
 Por el contrario, tendremos alta varianza (\textit{overfitting}) en nuestro algoritmo cuando nuestra hipótesis es demasiado compleja y no tenemos suficientes datos. Nuestro algoritmo no generalizará bien para datos nuevos porque se ciñe demasiado a los datos del training set, perdiendo la tendencia general de estos datos al darle más importancia a las variaciones específicas de este conjunto. Cometeremos un muy bajo error en los datos del training set, pagando un alto error en el test set. Para solucionarlo podremos tomar más datos, simplificar la hipótesis o modificar el parámetro de regularización. Podemos ver un claro ejemplo de ambos problemas en la gráfica \ref{fig:BiasVariance}.
 
@@ -155,29 +155,29 @@ Por el contrario, tendremos alta varianza (\textit{overfitting}) en nuestro algo
 \centering
 \subfigure[Datos]{\includegraphics[width=0.4\textwidth]{graficas/DatosBiasVariance}}
 \subfigure[Bien ajustado]{\includegraphics[width=0.4\textwidth]{graficas/NoBiasVariance}}
-\subfigure[Alta parcialidad]{\includegraphics[width=0.4\textwidth]{graficas/highBias}}
-\subfigure[Alta varianza]{\includegraphics[width=0.4\textwidth]{graficas/highVariance}}
+\subfigure[Alta parcialidad (underfitting)]{\includegraphics[width=0.4\textwidth]{graficas/highBias}}
+\subfigure[Alta varianza (overfitting)]{\includegraphics[width=0.4\textwidth]{graficas/highVariance}}
 \caption{Datos para la regresión (a), regresión correcta (b), regresión con alta parcialidad (c) y regresión con alta varianza (d).}
 \label{fig:BiasVariance}
 \end{figure}
 
 A continuación explicamos en qué consiste el parámetro de regularización. Gran parte de los algoritmos se basan en una hipótesis en la que se asigna unos pesos a cada variable (\textit{feature weights}). El algoritmo optimizará estos pesos para que la predicción realizada por la hipótesis coincida lo máximo posible con las etiquetas de cada entrada de datos. Estos pesos, por lo tanto, serán mayores cuanto más influya la variable en la clasificación. El parámetro de regularización se encarga controlar la importancia que se da a las variables, con el objetivo de no depender demasiado de ellas, evitando caer en problemas de alta varianza. Una formulación más precisa sería la siguiente:
 
-Sea un algoritmo de clasificación en el que a cada variable se le asocia un peso $\theta_j$, y en el que cada entrada de datos viene dada por el vector $x^{(i)}$, donde $x^{(i)}_j$ sería el valor de la variable $j$ de la entrada $i$. Cada entrada está clasificada con una etiqueta $y^{(i)}$. El algoritmo tratará de seleccionar los pesos $\theta$ que optimicen un error cometido $J(\theta)$ (la fórmula concreta de este error dependerá del algoritmo en cuestión). El parámetro de regularización\footnote{A veces se utiliza $\lambda \propto C^{-1}$.} $C$ se introduce como un término adicional al error que se minimiza. Este término suele ser proporcional al inverso de $C$ y a la suma cuadrática de los $\theta_j$, de forma que un valor alto de $C$ respetará más la hipótesis del algoritmo que un valor bajo de $C$. En resumen, el nuevo error sería:
+Sea un algoritmo de clasificación en el que a cada variable se le asocia un peso $\theta_j$, y en el que cada entrada de datos viene dada por el vector $\bm{x}^{(i)}$, donde $x^{(i)}_j$ sería el valor de la variable $j$ de la entrada $i$. Cada entrada está clasificada con una etiqueta $y^{(i)}$. El algoritmo tratará de seleccionar el vector de pesos $\bm{\theta}$ que optimice un error cometido $J(\bm{\theta})$ (la fórmula concreta de este error dependerá del algoritmo en cuestión). El parámetro de regularización\footnote{A veces se utiliza $\lambda \propto C^{-1}$.} $C$ se introduce como un término adicional al error que se minimiza. Este término suele ser proporcional al inverso de $C$ y a la suma cuadrática de los $\theta_j$, de forma que un valor alto de $C$ respetará más la hipótesis del algoritmo que un valor bajo de $C$. En resumen, el nuevo error sería:
 
 \begin{equation}
-J'(\theta) = J(\theta) + \frac{1}{C}\sum_j{\theta_j^2}
+J'(\bm{\theta}) = J(\bm{\theta}) + \frac{1}{C}\bm{\theta}^T\bm{\theta}
 \label{eq:ErrorRegul}
 \end{equation}
 
-Reduciendo $C$ se consigue suavizar la hipótesis del algoritmo, minimizando el vector de pesos $\theta$, reduciendo la varianza del algoritmo. Por otro lado, si aumentamos $C$ permitimos al algoritmo ajustar los pesos más de acuerdo con su hipótesis, permitiendo que ésta sea más compleja y reduciendo la parcialidad del mismo. Por lo tanto, el parámetro de regularización nos ayuda a mejorar nuestro algoritmo, y lo podremos fijar con el CV set, como vimos en el apartado \ref{sec:CV}.
+Reduciendo $C$ se consigue suavizar la hipótesis del algoritmo, minimizando el vector de pesos $\bm{\theta}$, reduciendo la varianza del algoritmo. Por otro lado, si aumentamos $C$ permitimos al algoritmo ajustar los pesos más de acuerdo con su hipótesis, permitiendo que ésta sea más compleja y reduciendo la parcialidad del mismo. Por lo tanto, el parámetro de regularización nos ayuda a mejorar nuestro algoritmo, y lo podremos fijar con el CV set, como vimos en el apartado \ref{sec:CV}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %            ALGTM                                          %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Algoritmos}\label{sec:alg}
-En esta sección estudiaremos diversos algoritmos de clasificación. La mayor parte de los algoritmos siempre producen una hipótesis y una función de error a minimizar. La hipótesis es una aplicación que va del espacio de las variables (\textit{features}) al de las etiquetas (\textit{labels} o \textit{targets}), es decir, $h_\theta(x): x \mapsto y$, donde $\theta$ es el vector de pesos. La forma concreta de la hipótesis depende del algoritmo. La función de error, o función objetivo, mide el error cometido por la hipótesis, y será una función que vaya del espacio de los vectores de pesos al de números reales positivos, es decir, $J(\theta): \mathbb{R}^n \rightarrow \mathbb{R}^+$, donde $n$ es la dimensión del vector de pesos, que la mayor parte de las veces coincide con la dimensión de las variables. La forma concreta de la función objetivo también depende del algoritmo, así que vamos a estudiar los que utilizaremos.
+En esta sección estudiaremos diversos algoritmos de clasificación. La mayor parte de los algoritmos siempre producen una hipótesis y una función de error a minimizar. La hipótesis es una aplicación que va del espacio de las variables (\textit{features}) al de las etiquetas (\textit{labels} o \textit{targets}), es decir, $h_{\bm{\theta}}(\bm{x}): \mathbb{R}^n \rightarrow \mathbb{Z}/p\mathbb{Z} : \bm{x} \mapsto y$, donde $n$ es la dimensión del vector $\bm{x}$, $p$ es el número de clases y $\bm{\theta}$ es el vector de pesos. La forma concreta de la hipótesis depende del algoritmo. La función de error, o función objetivo, mide el error cometido por la hipótesis, y será una función que vaya del espacio de los vectores de pesos al de números reales positivos, es decir, $J: \mathbb{R}^q \rightarrow \mathbb{R}^+ : \bm{\theta} \mapsto J(\bm{\theta})$, donde $q$ es la dimensión del vector de pesos, que la mayor parte de las veces coincide con la dimensión de las variables. La forma concreta de la función objetivo también depende del algoritmo, así que vamos a estudiar los que utilizaremos.
 
 \subsection{Logistic Regression}\label{sec:LogReg}
 El algoritmo de regresión logística\footnote{Ver el capítulo 1 de \cite{LogReg}} es un algoritmo de modelo lineal, es decir, siempre producirá una superficie de decisión que dependa linealmente de las variables de entrada, aunque si queremos una superficie más compleja sólo tendremos que crear nuevas variables no lineales con las de entrada. 
@@ -196,18 +196,18 @@ g(z) = \frac{1}{1+e^{-z}}
 	\label{fig:sigmoid}
 \end{figure}
 
-Sea $x$ el vector columna de variables de entrada, y $\theta$ el vector columna de pesos, ambos de la misma dimensión. Por convenio, al vector $x$ le añadimos una primera componente, $x_0 = 1$, que tiene su peso correspondiente, $\theta_0$. Esta componente añade un término constante a la combinación lineal de las variables de entrada, como ahora veremos. La hipótesis del algoritmo es \eqref{eq:hipLogReg}, donde $g(z)$ es la función logística de \eqref{eq:sigmoid}. Ésta se interpreta como la probabilidad de que, dados el vector $x$ y los pesos $\theta$, la etiqueta correspondiente a esos datos sea ``1''.
+Sea $\bm{x}$ el vector columna de variables de entrada, y $\bm{\theta}$ el vector columna de pesos, ambos de la misma dimensión. Por convenio, al vector $\bm{x}$ le añadimos una primera componente, $x_0 = 1$, que tiene su peso correspondiente, $\theta_0$. Esta componente añade un término constante a la combinación lineal de las variables de entrada, como ahora veremos. La hipótesis del algoritmo es \eqref{eq:hipLogReg}, donde $g(z)$ es la función logística de \eqref{eq:sigmoid}. Ésta se interpreta como la probabilidad de que, dados el vector $\bm{x}$ y los pesos $\bm{\theta}$, la etiqueta correspondiente a esos datos sea ``1''.
 
 \begin{equation}
-\encuadre{h_\theta(x) = p(y = 1 | x; \theta) = g(\theta^T x) = \frac{1}{1+e^{-\theta^T x}}}
+\encuadre{h_{\bm{\theta}}(\bm{x}) = p(y = 1 | \bm{x}; \bm{\theta}) = g(\bm{\theta}^T \bm{x}) = \frac{1}{1+e^{-\bm{\theta}^T \bm{x}}}}
 \label{eq:hipLogReg}
 \end{equation}
 
-Por norma general, predeciremos ``$y=1$'' si $h_\theta(x)>0.5$, es decir (ver gráfica \ref{fig:sigmoid}), si $\theta^T x > 0$, por lo que nuestra superficie de decisión, lineal en las variables $x$, será $\theta^T x = 0$.
+Por norma general, predeciremos ``$y=1$'' si $h_{\bm{\theta}}(\bm{x})>0.5$, es decir (ver gráfica \ref{fig:sigmoid}), si $\bm{\theta}^T \bm{x} > 0$, por lo que nuestra superficie de decisión, lineal en las variables $x$, será $\bm{\theta}^T \bm{x} = 0$.
 
 La función de coste nos da el error cometido por la hipótesis, y en el caso de la regresión logística tiene la forma de la ecuación \ref{eq:errLogReg}.
 \begin{equation}
-\encuadre{J(\theta) = -\frac{1}{m}\sum_{i=1}^{m}{\left[y^{(i)}\log{\left(h_\theta(x^{(i)})\right)} + \left(1-y^{(i)}\right)\log{\left(1-h_\theta(x^{(i)})\right)}\right]}}
+\encuadre{J(\bm{\theta}) = -\frac{1}{m}\sum_{i=1}^{m}{\left[y^{(i)}\log{\left(h_{\bm{\theta}}(\bm{x}^{(i)})\right)} + \left(1-y^{(i)}\right)\log{\left(1-h_{\bm{\theta}}(\bm{x}^{(i)})\right)}\right]}}
 \label{eq:errLogReg}
 \end{equation}
 donde $m$ es el número de entradas de datos. Nótese que el primer término del sumatorio corresponde a los datos con $y=1$, mientras que el segundo es el de los datos con $y=0$. La función de coste se representa para los casos $y=1$ y $y=0$ en la gráfica \ref{fig:errLogReg}
@@ -215,27 +215,27 @@ donde $m$ es el número de entradas de datos. Nótese que el primer término del su
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.8\textwidth]{graficas/costLogReg}
-\caption{Función de error frente a $h_\theta(x)$ para los casos $y=1$ y $y=0$.}
+\caption{Función de error frente a $h_{\bm{\theta}}(\bm{x})$ para los casos $y=1$ y $y=0$.}
 \label{fig:errLogReg}
 \end{figure}
 
 \subsection{Naïve Bayes}\label{sec:NB}
 El clasificador ``Bayes ingenuo'' es probablemente uno de los más simples que existen\footnote{Ver capítulo 20 de \cite{IA}.}. Se basa en asumir ingenuamente que las variables de las entradas de datos de una clase determinada son independientes, lo que nos puede asustar al oirlo por primera vez, aunque veremos que, a pesar del calibre de la simplificación, funciona sorprendentemente bien a pesar de que las variables no sean realmente independientes\footnote{Ver \cite{NaiveBayes}.}. Esta asunción se expresa con la siguiente expresión
 \begin{equation}
-p(\bm{x}|C) = \prod_{i=1}^n{p(x_i|C)}
+p(\bm{x}|C) = \prod_{j=1}^n{p(x_j|C)}
 \label{eq:NaiveBayes}
 \end{equation}
-donde $\bm{x}$ es el vector de variables, cuyas componentes son $x_i$, y $C$ es una determinada clase (en nuestros problemas de clasificación binaria, $C$ será 0 ó 1). 
+donde $\bm{x}$ es el vector de variables, cuyas componentes son $x_j$, y $C$ es una determinada clase (en nuestros problemas de clasificación binaria, $C$ será 0 ó 1). 
 
-Gracias al teorema de Bayes, sabemos que la probabilidad de que dado el vector de variables $\bm{x}$ se de la clase $C_j$ es:
+Gracias al teorema de Bayes, sabemos que la probabilidad de que dado el vector de variables $\bm{x}$ se de la clase $C_l$ es:
 \begin{equation}
-p(C_j|\bm{x}) = \frac{p(C_j)p(\bm{x}|C_j)}{p(\bm{x})}
+\encuadre{p(C_l|\bm{x}) = \frac{p(C_l)p(\bm{x}|C_l)}{p(\bm{x})}}
 \label{eq:TeoremaBayes}
 \end{equation}
 
-En general, para un problema de clasificación multiclase, siendo $C_j$ cada una de las clases, el algoritmo asignará a cada entrada nueva de datos la clase $C_k$ que maximice la probabilidad de la ecuación \ref{eq:TeoremaBayes}. Ésta es la hipótesis del algoritmo. Nótese que, dado un vector $\bm{x}$, $p(\bm{x})$ es una constante, por lo que sólo tenemos que preocuparnos por maximizar el numerador, teniendo en cuenta \eqref{eq:NaiveBayes}.
+En general, para un problema de clasificación multiclase, siendo $C_l$ cada una de las clases, el algoritmo asignará a cada entrada nueva de datos la clase $C_k$ que maximice la probabilidad de la ecuación \ref{eq:TeoremaBayes}. Ésta es la hipótesis del algoritmo. Nótese que, dado un vector $\bm{x}$, $p(\bm{x})$ es una constante, por lo que sólo tenemos que preocuparnos por maximizar el numerador, teniendo en cuenta \eqref{eq:NaiveBayes}.
 
- Para calcular las probabilidades $p(x_i|C)$, hay que tener en cuenta el tipo de distribución que sigue la variable $i$, dando lugar a diferentes algoritmos, como por ejemplo, el ``Naive Bayes Gaussiano'', el ``Naive Bayes Multinomial'' o el ``Naive Bayes Binomial'', todos ellos nombrados según la distribución de probabilidad de las variables. También se pueden hacer algoritmos de Naive Bayes mixtos, donde a distintas variables les correspondan distintas distribuciones de probabilidad.
+ Para calcular las probabilidades $p(x_j|C)$, hay que tener en cuenta el tipo de distribución que sigue la variable $j$, dando lugar a diferentes algoritmos, como por ejemplo, el ``Naive Bayes Gaussiano'', el ``Naive Bayes Multinomial'' o el ``Naive Bayes Binomial'', todos ellos nombrados según la distribución de probabilidad de las variables. También se pueden hacer algoritmos de Naive Bayes mixtos, donde a distintas variables les correspondan distintas distribuciones de probabilidad.
 
 \subsection{Support Vector Machine}\label{sec:SVM}
 
