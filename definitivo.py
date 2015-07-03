@@ -8,23 +8,27 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
 #Cross Validation
 from sklearn.grid_search import GridSearchCV
+#Curvas de aprendizaje
+from sklearn.learning_curve import learning_curve
 #Preprocesamiento de datos
 from sklearn.datasets import load_digits
 from PreProcTitanic import ProcessTitanicData
 from sklearn.preprocessing import MinMaxScaler
 #Graficas
-from matplotlib.pyplot import figure, scatter, show, contourf, title, subplot
+from matplotlib.pyplot import figure, scatter, show, contourf, title, subplot, xlabel, ylabel, fill_between, legend, grid, plot, ylim
 #numpy-cosas
-from numpy import meshgrid, arange, c_
+from numpy import meshgrid, arange, c_, linspace, mean, std
 
 class Clasificadores():
     '''Clase para llevar a cabo los diversos algoritmos de clasificacion, asi como
        el Cross Validation, Feature Scaling...'''
-    def __init__(self, X, y, Xtest, ytest, FeatScal = True, CV = True):
+    def __init__(self, X, y, Xtest, ytest, FeatScal = True, CV = True, CurvaAprendizaje = False, datos = ''):
         '''X, y, Xtest, ytest son los datos. FeatScal es True si se quiere hacer
            Feature Scaling (True por defecto). CV es True si se quiere hacer el 
            Cross Validation (True por defecto)'''
         self.CV = CV
+        self.CurvAp = CurvaAprendizaje
+        self.datos = datos
         if FeatScal:
             self.FeatScal = MinMaxScaler(copy=False)
             #Para deshacer el featScal: self.FeatScal.inverse_transform(X)
@@ -52,6 +56,7 @@ class Clasificadores():
 	                          GaussianNB(), #Este puede usar partial_fit para ajustar a datos nuevos... Interesante cuando haya un monton de ellos...
 	                          RandomForestClassifier(n_estimators = 10, criterion = 'gini',max_depth = None, min_samples_split = 2, min_samples_leaf = 1), 
 	                          KNeighborsClassifier(n_neighbors = 5)]
+	self.learningCurve = []
 	self.predicciones = {}
 	self.acc = {}
 	self.prec = {}
@@ -123,12 +128,12 @@ class Clasificadores():
             hy = (y_max-y_min)/100.
             x_min, x_max,y_min,y_max = x_min - hx, x_max + hx, y_min - hy, y_max + hy
             xx, yy = meshgrid(arange(x_min, x_max, hx),arange(y_min, y_max, hy))
-            figure()
+            figure(self.datos + ', curvas de decision')
             i = 1
             subplot(2,3,i)
+            title('Datos')
             scatter(self.X[:,0],self.X[:,1],c = self.y, s = 100)
             scatter(self.Xtest[:,0],self.Xtest[:,1],c = self.ytest, s = 100, alpha = 0.6)
-            title('Datos')
             for c in a:
                 i += 1
                 subplot(2,3,i)
@@ -146,12 +151,50 @@ class Clasificadores():
         except ValueError:
             print 'No se pudieron hacer las graficas'
     
+    def CurvaAprendizaje(self):
+        if self.CV:
+            if not self.fitted: self.fit()
+            a = self.newClassifiers
+        else:
+            a = self.clasificadores
+        figure(self.datos + ', curvas de aprendizaje')
+        i=1
+        for c in a:
+            if c.__class__.__name__ == 'GaussianNB': 
+                modo = True
+            else:
+                modo = False
+            numero, training, CV = learning_curve(c, self.X, self.y, 
+                                                    train_sizes = linspace(0.1,1.,10), 
+                                                    cv = 5, 
+                                                    scoring = 'f1_weighted',
+                                                    exploit_incremental_learning = modo
+                                                    )
+            subplot(2,3,i)
+            ylim((0,1))
+            title(c.__class__.__name__)
+            xlabel('# de datos')
+            ylabel('F1')
+            training_mean, training_std = mean(training, axis=1), std(training, axis=1)
+            CV_mean, CV_std = mean(CV, axis=1), std(CV, axis=1)
+            grid()
+            fill_between(numero, training_mean - training_std, training_mean + training_std, color = 'r', alpha = 0.1)
+            fill_between(numero, CV_mean - CV_std, CV_mean + CV_std, color = 'g', alpha = 0.1)
+            plot(numero, training_mean, 'o-', color='r', label = 'Training')
+            plot(numero, CV_mean, 'o-', color='g', label = 'Cross Validation')
+            legend(loc = 4)
+            i += 1
+        show()
+            
+    
     def todo(self):
         '''Lo hace todo para los clasificadores'''
         self.metricas()
         self.graficas()
+        if self.CurvAp:
+            self.CurvaAprendizaje()
 
-def Digitos(cv = True):
+def Digitos(cv = True,CAp = False):
     '''Prepara los datos de los digitos y hace las clasificaciones.'''
     columnas = (20,27)
     print 'Usando los datos de los digitos'
@@ -160,23 +203,23 @@ def Digitos(cv = True):
     Xtest = a['data'][300:,columnas]
     y = a['target'][:300,]
     ytest = a['target'][300:,]
-    c = Clasificadores(X,y,Xtest,ytest, CV = cv)
+    c = Clasificadores(X,y,Xtest,ytest, CV = cv, CurvaAprendizaje = CAp, datos = 'Digitos')
     c.todo()
     #print c.clasificadores[3].feature_importances_
     return c
     
-def Titanic(cv = True):
+def Titanic(cv = True,CAp = False):
     '''Prepara los datos del Titanic y hace las clasificaciones.'''
     columnas = (1,5)
     print 'Usando los datos del Titanic'
     X,y,Xtest,ytest = ProcessTitanicData()
     X = X[:,columnas]
     Xtest = Xtest[:,columnas]
-    c = Clasificadores(X,y,Xtest,ytest, CV = cv)
+    c = Clasificadores(X,y,Xtest,ytest, CV = cv, CurvaAprendizaje = CAp, datos = 'Titanic')
     c.todo()
     #print c.clasificadores[3].feature_importances_
     return c
 
 if __name__ == '__main__':
-    c = Digitos()
-    d = Titanic()
+    c = Digitos(CAp = True)
+    d = Titanic(CAp = True)
