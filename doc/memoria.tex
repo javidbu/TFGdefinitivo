@@ -196,7 +196,7 @@ g(z) = \frac{1}{1+e^{-z}}
 	\label{fig:sigmoid}
 \end{figure}
 
-Sea $\bm{x}$ el vector columna de variables de entrada, y $\bm{\theta}$ el vector columna de pesos, ambos de la misma dimensión. Por convenio, al vector $\bm{x}$ le añadimos una primera componente, $x_0 = 1$, que tiene su peso correspondiente, $\theta_0$. Esta componente añade un término constante a la combinación lineal de las variables de entrada, como ahora veremos. La hipótesis del algoritmo es \eqref{eq:hipLogReg}, donde $g(z)$ es la función logística de \eqref{eq:sigmoid}. Ésta se interpreta como la probabilidad de que, dados el vector $\bm{x}$ y los pesos $\bm{\theta}$, la etiqueta correspondiente a esos datos sea ``1''.
+Sea $\bm{x}$ el vector columna de variables de entrada, y $\bm{\theta}$ el vector columna de pesos, ambos de la misma dimensión. Por convenio, al vector $\bm{x}$ le añadimos una primera componente, $x_0 = 1$, que tiene su peso correspondiente, $\theta_0$. Esta componente añade un término constante a la combinación lineal de las variables de entrada, como ahora veremos\footnote{La componente $\theta_0$ no se suele penalizar al hacer la regularización \eqref{eq:ErrorRegul}, cambiando $\bm{\theta}^T\bm{\theta}$ por $\sum_{j=1}^q \theta_j^2$, donde $q$ es la dimensión del vector de pesos.}. La hipótesis del algoritmo es \eqref{eq:hipLogReg}, donde $g(z)$ es la función logística de \eqref{eq:sigmoid}. Ésta se interpreta como la probabilidad de que, dados el vector $\bm{x}$ y los pesos $\bm{\theta}$, la etiqueta correspondiente a esos datos sea ``1''.
 
 \begin{equation}
 \encuadre{h_{\bm{\theta}}(\bm{x}) = p(y = 1 | \bm{x}; \bm{\theta}) = g(\bm{\theta}^T \bm{x}) = \frac{1}{1+e^{-\bm{\theta}^T \bm{x}}}}
