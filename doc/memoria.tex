@@ -29,6 +29,7 @@
 \newcommand\encuadre[1]{\text{\fbox{${\displaystyle #1}$}}} %\encuadre encuadra ecuaciones
 %ejemplo: \[ \therefore \encuadre{2+2=4} \]
 \newcommand{\ML}{\textit{ML}\xspace}
+\newcommand{\SVM}{\textit{SVM}\xspace}
 
 \begin{document}
 \renewcommand{\tablename}{Tabla} %Para que no aparezca "Cuadro"
@@ -203,7 +204,7 @@ Sea $\bm{x}$ el vector columna de variables de entrada, y $\bm{\theta}$ el vecto
 \label{eq:hipLogReg}
 \end{equation}
 
-Por norma general, predeciremos ``$y=1$'' si $h_{\bm{\theta}}(\bm{x})>0.5$, es decir (ver gráfica \ref{fig:sigmoid}), si $\bm{\theta}^T \bm{x} > 0$, por lo que nuestra superficie de decisión, lineal en las variables $x$, será $\bm{\theta}^T \bm{x} = 0$.
+Por norma general, predeciremos ``$y=1$'' si $h_{\bm{\theta}}(\bm{x})>0.5$, es decir (ver gráfica \ref{fig:sigmoid}), si $\bm{\theta}^T \bm{x} > 0$, por lo que nuestra superficie de decisión, lineal en las variables $\bm{x}$, será $\{\bm{x}\in\mathbb{R}^n:\bm{\theta}^T \bm{x} = 0\}$.
 
 La función de coste nos da el error cometido por la hipótesis, y en el caso de la regresión logística tiene la forma de la ecuación \ref{eq:errLogReg}.
 \begin{equation}
@@ -237,8 +238,38 @@ En general, para un problema de clasificación multiclase, siendo $C_l$ cada una 
 
  Para calcular las probabilidades $p(x_j|C)$, hay que tener en cuenta el tipo de distribución que sigue la variable $j$, dando lugar a diferentes algoritmos, como por ejemplo, el ``Naive Bayes Gaussiano'', el ``Naive Bayes Multinomial'' o el ``Naive Bayes Binomial'', todos ellos nombrados según la distribución de probabilidad de las variables. También se pueden hacer algoritmos de Naive Bayes mixtos, donde a distintas variables les correspondan distintas distribuciones de probabilidad.
 
-\subsection{Support Vector Machine}\label{sec:SVM}
+Las superficies de decisión entre dos clases $C_i$ y $C_j$ serán las que cumplan \eqref{eq:NBDecCurv}.
 
+\begin{equation}
+\{\bm{x} \in \mathbb{R}^n : p(C_i|\bm{x}) = p(C_j|\bm{x}) > p(C_k|\bm{x}) \ \ \forall k \neq i,j\}
+\label{eq:NBDecCurv}
+\end{equation}
+
+\subsection{Support Vector Machine}\label{sec:SVM}
+Las maquinas de soporte vectorial\footnote{Ver capítulo 18 de \cite{IA}.} (\textit{SVM} por sus siglas en inglés) son otro algoritmo de aprendizaje supervisado de \ML. Muchas veces son llamadas también \textit{large margin separator} o \textit{maximum margin separator}, porque la superficie de decisión que toman es la que más separa los datos del training set. Como vemos en la gráfica \ref{fig:highMargin}, todas las líneas separan a la perfección los datos, pero intuitivamente esperamos que la que mejor los separe sea la curva b. ¿Por qué esperamos esto? La respuesta es muy sencilla, esperamos que al tomar nuevos datos, estos sigan la misma distribución que los antiguos, así que las curvas a y c, que tienen puntos muy cercanos, puede que empiecen a clasificar mal alguna entrada de datos, sin embargo, la curva b, que está más separada de los datos actuales, seguramente no tenga problema al clasificar datos nuevos. Lo que hace que las \SVM sean tan potentes es que no tratan de minimizar el error empírico, sino de minimizar el error de generalización que podremos cometer al tomar datos nuevos.
+
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=0.80\textwidth]{graficas/highMargin}
+	\caption{Distintas líneas de decisión. La que elegirá una SVM será la b, por ser la que deja mayor margen, minimiza el error de generalización.}
+	\label{fig:highMargin}
+\end{figure}
+
+Las \SVM tienen la característica de crear una curva de decisión lineal siempre en las variables que emplea. Esto no debería suponer un problema, pues utilizando \textit{kernels} (que no son otra cosa que cambios de variables) cambiamos nuestro espacio de variables a otro espacio que no sea lineal en el anterior, consiguiendo en el nuevo espacio superficies de decisión no lineales en el antiguo, como vemos en la gráfica \ref{fig:kernel}, en la que se ha cambiado del espacio formado por $x_1$ y $x_2$ al formado por la distancia al origen y el ángulo con el eje $x_1$.
+
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=0.80\textwidth]{graficas/kernel}
+	\caption{Con un cambio de variables (\textit{kernel}) podemos crear superficies de decisión no lineales.}
+	\label{fig:kernel}
+\end{figure}
+
+Para la formulación matemática de las \SVM es importante notar que las etiquetas tradicionalmente no son $y^{(i)} \in \{0,1\}$, sino $y^{(i)} \in \{-1,1\}$. Tampoco añadimos el término independiente como una componente más del vector de pesos y la componente $x^{(i)}_0$ del de variables, sino como un término independiente extra, quedando la superficie de decisión como la ecuación \ref{eq:SVMDecCurv}. 
+
+\begin{equation}
+\{\bm{x} \in \mathbb{R}^n:\bm{\theta}^T\bm{x} + b = 0\}
+\label{eq:SVMDecCurv}
+\end{equation}
 
 \subsection{Random Forest}\label{sec:RandForest}
 
