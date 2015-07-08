@@ -246,7 +246,7 @@ Las superficies de decisión entre dos clases $C_i$ y $C_j$ serán las que cumplan
 \end{equation}
 
 \subsection{Support Vector Machine}\label{sec:SVM}
-Las maquinas de soporte vectorial\footnote{Ver capítulo 18 de \cite{IA}.} (\textit{SVM} por sus siglas en inglés) son otro algoritmo de aprendizaje supervisado de \ML. Muchas veces son llamadas también \textit{large margin separator} o \textit{maximum margin separator}, porque la superficie de decisión que toman es la que más separa los datos del training set. Como vemos en la gráfica \ref{fig:highMargin}, todas las líneas separan a la perfección los datos, pero intuitivamente esperamos que la que mejor los separe sea la curva b. ¿Por qué esperamos esto? La respuesta es muy sencilla, esperamos que al tomar nuevos datos, estos sigan la misma distribución que los antiguos, así que las curvas a y c, que tienen puntos muy cercanos, puede que empiecen a clasificar mal alguna entrada de datos, sin embargo, la curva b, que está más separada de los datos actuales, seguramente no tenga problema al clasificar datos nuevos. Lo que hace que las \SVM sean tan potentes es que no tratan de minimizar el error empírico, sino de minimizar el error de generalización que podremos cometer al tomar datos nuevos.
+Las maquinas de soporte vectorial\footnote{Ver \cite{SVM}, \cite{SVM2}, capítulo 10 de \cite{SVM3} y capítulo 18 de \cite{IA}.} (\textit{SVM} por sus siglas en inglés) son otro algoritmo de aprendizaje supervisado de \ML. Muchas veces son llamadas también \textit{large margin separator} o \textit{maximum margin separator}, porque la superficie de decisión que toman es la que más separa los datos del training set. Como vemos en la gráfica \ref{fig:highMargin}, todas las líneas separan a la perfección los datos, pero intuitivamente esperamos que la que mejor los separe sea la curva b. ¿Por qué esperamos esto? La respuesta es muy sencilla, esperamos que al tomar nuevos datos, estos sigan la misma distribución que los antiguos, así que las curvas a y c, que tienen puntos muy cercanos, puede que empiecen a clasificar mal alguna entrada de datos, sin embargo, la curva b, que está más separada de los datos actuales, seguramente no tenga problema al clasificar datos nuevos. Lo que hace que las \SVM sean tan potentes es que no tratan de minimizar el error empírico, sino de minimizar el error de generalización que podremos cometer al tomar datos nuevos.
 
 \begin{figure}[htbp]
 	\centering
@@ -265,16 +265,69 @@ Las \SVM tienen la característica de crear una curva de decisión lineal siempre 
 	\label{fig:kernel}
 \end{figure}
 
-Para la formulación matemática de las \SVM es importante notar que las etiquetas tradicionalmente no son $y^{(i)} \in \{0,1\}$, sino $y^{(i)} \in \{-1,1\}$. Tampoco añadimos el término independiente como una componente más del vector de pesos y la componente $x^{(i)}_0$ del de variables, sino como un término independiente extra, quedando la superficie de decisión como la ecuación \ref{eq:SVMDecCurv}. 
+Para la formulación matemática de las \SVM es importante notar que las etiquetas tradicionalmente no son $y^{(i)} \in \{0,1\}$, sino $y^{(i)} \in \{-1,+1\}$. Tampoco añadimos el término independiente como una componente más del vector de pesos y la componente $x^{(i)}_0$ del de variables, sino como un término independiente extra, quedando la superficie de decisión como la ecuación \ref{eq:SVMDecCurv}. 
 
 \begin{equation}
 \{\bm{x} \in \mathbb{R}^n:\bm{\theta}^T\bm{x} + b = 0\}
 \label{eq:SVMDecCurv}
 \end{equation}
 
+Para conseguir el máximo margen, trataremos de que los puntos más cercanos a \eqref{eq:SVMDecCurv} cumplan que
+\begin{equation}
+\begin{aligned}
+	\bm{\theta}^T\bm{x}^{(i)} + b = +1 \text{ si } y^{(i)}& = +1 \\
+	\bm{\theta}^T\bm{x}^{(i)} + b = -1 \text{ si } y^{(i)}& = -1 
+\end{aligned}
+\label{eq:SVMMargen}
+\end{equation}
+por lo que para cualquier punto tendremos que
+\begin{equation}
+y^{(i)}\left(\bm{\theta}^T\bm{x}^{(i)} + b\right) \geq 1 \ \ \forall i = 1,...,m
+\label{eq:SVMMargen2}
+\end{equation}
+Los puntos que cumplen que $y^{(i)}\left(\bm{\theta}^T\bm{x}^{(i)} + b\right) = 1$ se llaman \textit{vectores de soporte}, y son los que dan el nombre al algoritmo. Nuestra hipótesis será
+\begin{equation}
+\encuadre{h_{\bm{\theta}}(\bm{x}) = \text{signo}(\bm{\theta}^T\bm{x} + b)}
+\label{eq:SVMHip}
+\end{equation}
+
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=0.80\textwidth]{graficas/highMargin2}
+	\caption{Hiperplano de separación (b), con ecuación $\{\bm{x} \in \mathbb{R}^n:\bm{\theta}^T\bm{x} + b = 0\}$ e hiperplanos soporte, (a) con ecuación $\{\bm{x} \in \mathbb{R}^n:\bm{\theta}^T\bm{x} + b = +1\}$ y (c) con ecuación $\{\bm{x} \in \mathbb{R}^n:\bm{\theta}^T\bm{x} + b = -1\}$. Los vectores de soporte son los más cercanos al hiperplano de separación.}
+	\label{fig:highMargin2}
+\end{figure}
+
+Si miramos la gráfica \ref{fig:highMargin2} vemos el hiperplano de separación y los hiperplanos soporte. Las distancias de cada uno de ellos al origen, nombrados como en la gráfica, son
+\begin{equation}
+\begin{aligned}
+d_a &= \frac{|b-1|}{||\bm{\theta}||} \\
+d_b &= \frac{|b|}{||\bm{\theta}||} \\
+d_c &= \frac{|b+1|}{||\bm{\theta}||}
+\end{aligned}
+\label{eq:SVMdist}
+\end{equation}
+por lo que la distancia entre los hiperplanos soporte, que es la que hay que maximizar para hacer lo propio con el margen, es
+\begin{equation}
+d = \frac{2}{||\bm{\theta}||}
+\label{eq:SVMMargin}
+\end{equation}
+
+Finalmente, tenemos que el algoritmo \SVM se reduce a maximizar \eqref{eq:SVMMargin} sujeto a \eqref{eq:SVMMargen2}, que es lo mismo que
+\begin{equation}
+\encuadre{
+\begin{aligned}
+\text{Minimizar }&\ \ \ \  ||\bm{\theta}||^2 \\
+\text{sujeto a  }& y^{(i)}\left(\bm{\theta}^T\bm{x}^{(i)} + b\right) \geq 1 \ \ \forall i = 1,...,m
+\end{aligned}}
+\label{eq:SVMProblema}
+\end{equation}
+
+Como \eqref{eq:SVMProblema} es de un problema de programación cuadrática, y este trabajo no intenta ser un tratado de programación no lineal, la manera de resolver este problema de optimización no se explica aquí, recomendando al lector que quiera profundizar en el tema la lectura de \cite{SVM3}.
+
 \subsection{Random Forest}\label{sec:RandForest}
 
-\subsection{K-Nearest Neighbors}\label{KNN}
+\subsection{K-Nearest Neighbors}\label{sec:KNN}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -306,7 +359,10 @@ Para la formulación matemática de las \SVM es importante notar que las etiquetas
 \bibitem{sanjee} \textsc{S. Jha, M. Guillen, J. C. Westland}. \textit{Expert System with Applications}, \textbf{39}, 12650-12657 (2012).
 \bibitem{LogReg} \textsc{D. W. Hosmer, S. Lemeshow, R. X. Sturdivant}. Applied Logistic Regression, \textit{John Wiley} \& \textit{Sons} (2013).
 \bibitem{IA} \textsc{S. Russel, P. Norvig}. Artificial Intelligence: A Modern Approach, \textit{Prentice Hall} (2010).
-\bibitem{NaiveBayes} \textsc{I. Rish}. An empirical study of the naive Bayes classifier, \textit{IBM Research Report} \textbf{No se como citar esto...} (2001).
+\bibitem{NaiveBayes} \textsc{I. Rish}. An empirical study of the naive Bayes classifier, \textit{IBM Research Report} \textbf{No sé cómo citar esto...} (2001).
+\bibitem{SVM} \textsc{J. E. Hernández, S. Salazar}. \textit{Scientia et Technica}, \textbf{31}, 47-52 (2006)
+\bibitem{SVM2} \textsc{C. Cortes, V. Vapnik}. \textit{Machine Learning}, \textbf{20}, 273-297 (1995)
+\bibitem{SVM3} \textsc{V. Vapnik}. Statistical Learning Theory, \textit{John Wiley} \& \textit{Sons} (1998).
 
 
 \end{thebibliography}
