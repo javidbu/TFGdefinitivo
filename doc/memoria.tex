@@ -167,7 +167,7 @@ A continuación explicamos en qué consiste el parámetro de regularización. Gran p
 Sea un algoritmo de clasificación en el que a cada variable se le asocia un peso $\theta_j$, y en el que cada entrada de datos viene dada por el vector $\bm{x}^{(i)}$, donde $x^{(i)}_j$ sería el valor de la variable $j$ de la entrada $i$. Cada entrada está clasificada con una etiqueta $y^{(i)}$. El algoritmo tratará de seleccionar el vector de pesos $\bm{\theta}$ que optimice un error cometido $J(\bm{\theta})$ (la fórmula concreta de este error dependerá del algoritmo en cuestión). El parámetro de regularización\footnote{A veces se utiliza $\lambda \propto C^{-1}$.} $C$ se introduce como un término adicional al error que se minimiza. Este término suele ser proporcional al inverso de $C$ y a la suma cuadrática de los $\theta_j$, de forma que un valor alto de $C$ respetará más la hipótesis del algoritmo que un valor bajo de $C$. En resumen, el nuevo error sería:
 
 \begin{equation}
-J'(\bm{\theta}) = J(\bm{\theta}) + \frac{1}{C}\bm{\theta}^T\bm{\theta}
+J'(\bm{\theta}) = J(\bm{\theta}) + \frac{1}{C}\bm{\theta}\cdot \bm{\theta}
 \label{eq:ErrorRegul}
 \end{equation}
 
@@ -178,7 +178,7 @@ Reduciendo $C$ se consigue suavizar la hipótesis del algoritmo, minimizando el v
 %            ALGTM                                          %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Algoritmos}\label{sec:alg}
-En esta sección estudiaremos diversos algoritmos de clasificación. La mayor parte de los algoritmos siempre producen una hipótesis y una función de error a minimizar. La hipótesis es una aplicación que va del espacio de las variables (\textit{features}) al de las etiquetas (\textit{labels} o \textit{targets}), es decir, $h_{\bm{\theta}}(\bm{x}): \mathbb{R}^n \rightarrow \mathbb{Z}/p\mathbb{Z} : \bm{x} \mapsto y$, donde $n$ es la dimensión del vector $\bm{x}$, $p$ es el número de clases y $\bm{\theta}$ es el vector de pesos. La forma concreta de la hipótesis depende del algoritmo. La función de error, o función objetivo, mide el error cometido por la hipótesis, y será una función que vaya del espacio de los vectores de pesos al de números reales positivos, es decir, $J: \mathbb{R}^q \rightarrow \mathbb{R}^+ : \bm{\theta} \mapsto J(\bm{\theta})$, donde $q$ es la dimensión del vector de pesos, que la mayor parte de las veces coincide con la dimensión de las variables. La forma concreta de la función objetivo también depende del algoritmo, así que vamos a estudiar los que utilizaremos.
+En esta sección estudiaremos diversos algoritmos de clasificación. La mayor parte de los algoritmos siempre producen una hipótesis y una función de error a minimizar. La hipótesis es una aplicación que va del espacio de las variables (\textit{features}) al de las etiquetas (\textit{labels} o \textit{targets}), es decir, $h_{\bm{\theta}}(\bm{x}): \mathbb{R}^n \rightarrow \mathbb{Z}/p\mathbb{Z} : \bm{x} \mapsto y$, donde $n$ es la dimensión del vector $\bm{x}$, $p$ es el número de clases y $\bm{\theta}$ es el vector de pesos. La forma concreta de la hipótesis depende del algoritmo. La función de error, o función objetivo, mide el error cometido por la hipótesis, y será una función que vaya del espacio de los vectores de pesos al de números reales positivos (incluyendo el 0), es decir, $J: \mathbb{R}^q \rightarrow \mathbb{R}^+ : \bm{\theta} \mapsto J(\bm{\theta})$, donde $q$ es la dimensión del vector de pesos, que la mayor parte de las veces coincide con la dimensión de las variables. La forma concreta de la función objetivo también depende del algoritmo, así que vamos a estudiar los que utilizaremos.
 
 \subsection{Logistic Regression}\label{sec:LogReg}
 El algoritmo de regresión logística\footnote{Ver el capítulo 1 de \cite{LogReg}} es un algoritmo de modelo lineal, es decir, siempre producirá una superficie de decisión que dependa linealmente de las variables de entrada, aunque si queremos una superficie más compleja sólo tendremos que crear nuevas variables no lineales con las de entrada. 
@@ -192,19 +192,19 @@ g(z) = \frac{1}{1+e^{-z}}
 
 \begin{figure}[htbp]
 	\centering
-		\includegraphics[width=0.80\textwidth]{graficas/sigmoid}
+		\includegraphics[width=0.70\textwidth]{graficas/sigmoid}
 	\caption{Función logística. La forma de ``S'' (sigmoidea) es típica de las densidades de probabilidad acumulada en estadística.}
 	\label{fig:sigmoid}
 \end{figure}
 
-Sea $\bm{x}$ el vector columna de variables de entrada, y $\bm{\theta}$ el vector columna de pesos, ambos de la misma dimensión. Por convenio, al vector $\bm{x}$ le añadimos una primera componente, $x_0 = 1$, que tiene su peso correspondiente, $\theta_0$. Esta componente añade un término constante a la combinación lineal de las variables de entrada, como ahora veremos\footnote{La componente $\theta_0$ no se suele penalizar al hacer la regularización \eqref{eq:ErrorRegul}, cambiando $\bm{\theta}^T\bm{\theta}$ por $\sum_{j=1}^q \theta_j^2$, donde $q$ es la dimensión del vector de pesos.}. La hipótesis del algoritmo es \eqref{eq:hipLogReg}, donde $g(z)$ es la función logística de \eqref{eq:sigmoid}. Ésta se interpreta como la probabilidad de que, dados el vector $\bm{x}$ y los pesos $\bm{\theta}$, la etiqueta correspondiente a esos datos sea ``1''.
+Sea $\bm{x}$ el vector columna de variables de entrada, y $\bm{\theta}$ el vector columna de pesos, ambos de la misma dimensión. Por convenio, al vector $\bm{x}$ le añadimos una primera componente, $x_0 = 1$, que tiene su peso correspondiente, $\theta_0$. Esta componente añade un término constante a la combinación lineal de las variables de entrada, como ahora veremos\footnote{La componente $\theta_0$ no se suele penalizar al hacer la regularización \eqref{eq:ErrorRegul}, cambiando $\bm{\theta}\cdot \bm{\theta}$ por $\sum_{j=1}^q \theta_j^2$, donde $q$ es la dimensión del vector de pesos.}. La hipótesis del algoritmo es \eqref{eq:hipLogReg}, donde $g(z)$ es la función logística de \eqref{eq:sigmoid}. Ésta se interpreta como la probabilidad de que, dados el vector $\bm{x}$ y los pesos $\bm{\theta}$, la etiqueta correspondiente a esos datos sea ``1''.
 
 \begin{equation}
-\encuadre{h_{\bm{\theta}}(\bm{x}) = p(y = 1 | \bm{x}; \bm{\theta}) = g(\bm{\theta}^T \bm{x}) = \frac{1}{1+e^{-\bm{\theta}^T \bm{x}}}}
+\encuadre{h_{\bm{\theta}}(\bm{x}) = p(y = 1 | \bm{x}; \bm{\theta}) = g(\bm{\theta}\cdot  \bm{x}) = \frac{1}{1+e^{-\bm{\theta}\cdot  \bm{x}}}}
 \label{eq:hipLogReg}
 \end{equation}
 
-Por norma general, predeciremos ``$y=1$'' si $h_{\bm{\theta}}(\bm{x})>0.5$, es decir (ver gráfica \ref{fig:sigmoid}), si $\bm{\theta}^T \bm{x} > 0$, por lo que nuestra superficie de decisión, lineal en las variables $\bm{x}$, será $\{\bm{x}\in\mathbb{R}^n:\bm{\theta}^T \bm{x} = 0\}$.
+Por norma general, predeciremos ``$y=1$'' si $h_{\bm{\theta}}(\bm{x})>0.5$, es decir (ver gráfica \ref{fig:sigmoid}), si $\bm{\theta}\cdot  \bm{x} > 0$, por lo que nuestra superficie de decisión, lineal en las variables $\bm{x}$, será $\{\bm{x}\in\mathbb{R}^n:\bm{\theta}\cdot  \bm{x} = 0\}$.
 
 La función de coste nos da el error cometido por la hipótesis, y en el caso de la regresión logística tiene la forma de la ecuación \ref{eq:errLogReg}.
 \begin{equation}
@@ -246,11 +246,11 @@ Las superficies de decisión entre dos clases $C_i$ y $C_j$ serán las que cumplan
 \end{equation}
 
 \subsection{Support Vector Machine}\label{sec:SVM}
-Las maquinas de soporte vectorial\footnote{Ver \cite{SVM}, \cite{SVM2}, capítulo 10 de \cite{SVM3} y capítulo 18 de \cite{IA}.} (\textit{SVM} por sus siglas en inglés) son otro algoritmo de aprendizaje supervisado de \ML. Muchas veces son llamadas también \textit{large margin separator} o \textit{maximum margin separator}, porque la superficie de decisión que toman es la que más separa los datos del training set. Como vemos en la gráfica \ref{fig:highMargin}, todas las líneas separan a la perfección los datos, pero intuitivamente esperamos que la que mejor los separe sea la curva b. ¿Por qué esperamos esto? La respuesta es muy sencilla, esperamos que al tomar nuevos datos, estos sigan la misma distribución que los antiguos, así que las curvas a y c, que tienen puntos muy cercanos, puede que empiecen a clasificar mal alguna entrada de datos, sin embargo, la curva b, que está más separada de los datos actuales, seguramente no tenga problema al clasificar datos nuevos. Lo que hace que las \SVM sean tan potentes es que no tratan de minimizar el error empírico, sino de minimizar el error de generalización que podremos cometer al tomar datos nuevos.
+Las maquinas de soporte vectorial\footnote{Ver \cite{SVM}, \cite{SVM2}, capítulo 10 de \cite{SVM3}, capítulo 4 de \cite{SVM4} y capítulo 18 de \cite{IA}.} (\textit{SVM} por sus siglas en inglés) son otro algoritmo de aprendizaje supervisado de \ML. Muchas veces son llamadas también \textit{large margin separator} o \textit{maximum margin separator}, porque la superficie de decisión que toman es la que más separa los datos del training set. Como vemos en la gráfica \ref{fig:highMargin}, todas las líneas separan a la perfección los datos, pero intuitivamente esperamos que la que mejor los separe sea la curva b. ¿Por qué esperamos esto? La respuesta es muy sencilla, esperamos que al tomar nuevos datos, estos sigan la misma distribución que los antiguos, así que las curvas a y c, que tienen puntos muy cercanos, puede que empiecen a clasificar mal alguna entrada de datos, sin embargo, la curva b, que está más separada de los datos actuales, seguramente no tenga problema al clasificar datos nuevos. Lo que hace que las \SVM sean tan potentes es que no tratan de minimizar el error empírico, sino de minimizar el error de generalización que podremos cometer al tomar datos nuevos.
 
 \begin{figure}[htbp]
 	\centering
-		\includegraphics[width=0.80\textwidth]{graficas/highMargin}
+		\includegraphics[width=0.70\textwidth]{graficas/highMargin}
 	\caption{Distintas líneas de decisión. La que elegirá una SVM será la b, por ser la que deja mayor margen, minimiza el error de generalización.}
 	\label{fig:highMargin}
 \end{figure}
@@ -268,33 +268,33 @@ Las \SVM tienen la característica de crear una curva de decisión lineal siempre 
 Para la formulación matemática de las \SVM es importante notar que las etiquetas tradicionalmente no son $y^{(i)} \in \{0,1\}$, sino $y^{(i)} \in \{-1,+1\}$. Tampoco añadimos el término independiente como una componente más del vector de pesos y la componente $x^{(i)}_0$ del de variables, sino como un término independiente extra, quedando la superficie de decisión como la ecuación \ref{eq:SVMDecCurv}. 
 
 \begin{equation}
-\{\bm{x} \in \mathbb{R}^n:\bm{\theta}^T\bm{x} + b = 0\}
+\{\bm{x} \in \mathbb{R}^n:\bm{\theta}\cdot \bm{x} + b = 0\}
 \label{eq:SVMDecCurv}
 \end{equation}
 
 Para conseguir el máximo margen, trataremos de que los puntos más cercanos a \eqref{eq:SVMDecCurv} cumplan que
 \begin{equation}
 \begin{aligned}
-	\bm{\theta}^T\bm{x}^{(i)} + b = +1 \text{ si } y^{(i)}& = +1 \\
-	\bm{\theta}^T\bm{x}^{(i)} + b = -1 \text{ si } y^{(i)}& = -1 
+	\bm{\theta}\cdot \bm{x}^{(i)} + b = +1 \text{ si } y^{(i)}& = +1 \\
+	\bm{\theta}\cdot \bm{x}^{(i)} + b = -1 \text{ si } y^{(i)}& = -1 
 \end{aligned}
 \label{eq:SVMMargen}
 \end{equation}
 por lo que para cualquier punto tendremos que
 \begin{equation}
-y^{(i)}\left(\bm{\theta}^T\bm{x}^{(i)} + b\right) \geq 1 \ \ \forall i = 1,...,m
+y^{(i)}\left(\bm{\theta}\cdot \bm{x}^{(i)} + b\right) \geq 1 \ \ \forall i = 1,...,m
 \label{eq:SVMMargen2}
 \end{equation}
-Los puntos que cumplen que $y^{(i)}\left(\bm{\theta}^T\bm{x}^{(i)} + b\right) = 1$ se llaman \textit{vectores de soporte}, y son los que dan el nombre al algoritmo. Nuestra hipótesis será
+Los puntos que cumplen que $y^{(i)}\left(\bm{\theta}\cdot \bm{x}^{(i)} + b\right) = 1$ se llaman \textit{vectores de soporte}, y son los que dan el nombre al algoritmo. Nuestra hipótesis será
 \begin{equation}
-\encuadre{h_{\bm{\theta}}(\bm{x}) = \text{signo}(\bm{\theta}^T\bm{x} + b)}
+\encuadre{h_{\bm{\theta}}(\bm{x}) = \text{signo}(\bm{\theta}\cdot \bm{x} + b)}
 \label{eq:SVMHip}
 \end{equation}
 
 \begin{figure}[htbp]
 	\centering
-		\includegraphics[width=0.80\textwidth]{graficas/highMargin2}
-	\caption{Hiperplano de separación (b), con ecuación $\{\bm{x} \in \mathbb{R}^n:\bm{\theta}^T\bm{x} + b = 0\}$ e hiperplanos soporte, (a) con ecuación $\{\bm{x} \in \mathbb{R}^n:\bm{\theta}^T\bm{x} + b = +1\}$ y (c) con ecuación $\{\bm{x} \in \mathbb{R}^n:\bm{\theta}^T\bm{x} + b = -1\}$. Los vectores de soporte son los más cercanos al hiperplano de separación.}
+		\includegraphics[width=0.70\textwidth]{graficas/highMargin2}
+	\caption{Hiperplano de separación (b), con ecuación $\{\bm{x} \in \mathbb{R}^n:\bm{\theta}\cdot \bm{x} + b = 0\}$ e hiperplanos soporte, (a) con ecuación $\{\bm{x} \in \mathbb{R}^n:\bm{\theta}\cdot \bm{x} + b = +1\}$ y (c) con ecuación $\{\bm{x} \in \mathbb{R}^n:\bm{\theta}\cdot \bm{x} + b = -1\}$. Los vectores de soporte son los más cercanos al hiperplano de separación.}
 	\label{fig:highMargin2}
 \end{figure}
 
@@ -318,12 +318,43 @@ Finalmente, tenemos que el algoritmo \SVM se reduce a maximizar \eqref{eq:SVMMar
 \encuadre{
 \begin{aligned}
 \text{Minimizar }&\ \ \ \  ||\bm{\theta}||^2 \\
-\text{sujeto a  }& y^{(i)}\left(\bm{\theta}^T\bm{x}^{(i)} + b\right) \geq 1 \ \ \forall i = 1,...,m
+\text{sujeto a  }& y^{(i)}\left(\bm{\theta}\cdot \bm{x}^{(i)} + b\right) \geq 1 \ \ \forall i = 1,...,m
 \end{aligned}}
 \label{eq:SVMProblema}
 \end{equation}
 
 Como \eqref{eq:SVMProblema} es de un problema de programación cuadrática, y este trabajo no intenta ser un tratado de programación no lineal, la manera de resolver este problema de optimización no se explica aquí, recomendando al lector que quiera profundizar en el tema la lectura de \cite{SVM3}.
+
+\subsubsection{Margen blando}
+En gran parte de las bases de datos no podremos separar linealmente las variables, por lo que el método de \textit{high margin} fallará. Para estos casos se utiliza el método de \textit{soft margin} (margen blando), introduciendo las variables de holgura $h_i$ tales que todos los puntos deben cumplir que
+\begin{equation}
+y^{(i)}\left(\bm{\theta}\cdot\bm{x}^{(i)} + b\right) \geq 1 - h_i \ \ \forall i = 1,...,m
+\label{eq:SVMsoftMargin}
+\end{equation}
+Con esto, el problema de minimización se convierte en \eqref{eq:SVMProblemaSoftMargin}.
+
+\begin{equation}
+\encuadre{
+\begin{aligned}
+\text{Minimizar }&\ \ \ \  ||\bm{\theta}||^2 + C\sum_{i=1}^m{h_i}\\
+\text{sujeto a  }& y^{(i)}\left(\bm{\theta}\cdot \bm{x}^{(i)} + b\right) \geq 1 - h_i \ \ \forall i = 1,...,m
+\end{aligned}}
+\label{eq:SVMProblemaSoftMargin}
+\end{equation}
+
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=0.70\textwidth]{graficas/softMargin}
+	\caption{Ejemplo de problema de \textit{soft margin}. Hay algunos puntos que se clasifican mal con tal de mantener un margen amplio con la mayoría de los datos, reduciendo el error de generalización.}
+	\label{fig:softMargin}
+\end{figure}
+
+\subsubsection{Kernels}
+A continuación vamos a explicar los \textit{kernels} que veíamos al principio de esta sección. Éstos son aplicaciones no lineales $K:\mathbb{R}^n \times \mathbb{R}^n\rightarrow\mathbb{R}:(\bm{x}^{(i)},\bm{x}^{(j)})\mapsto K(\bm{x}^{(i)},\bm{x}^{(j)})$. Gracias a los kernels, podemos transformar nuestro espacio de variables $\mathbb{R}^n$ a uno de dimensión superior $\mathbb{R}^{n'}$ en el que se pueda hacer una separación lineal de los datos.
+
+Los kernels tienen la propiedad de que se puede encontrar una transformación $\phi:\mathbb{R}^n \rightarrow \mathbb{R}^{n'}: \bm{x} \mapsto \phi(\bm{x})$ tal que $K(\bm{x}^{(i)},\bm{x}^{(j)}) = \phi(\bm{x}^{(i)}) \cdot \phi(\bm{x}^{(j)})$. Ésta es la transformación del espacio de las variables que se lleva a cabo. La superficie de decisión será lineal en el nuevo espacio de variables, y con la transformación inversa de $\phi$ conseguimos una superficie no lineal en las variables antiguas. La gran ventaja de emplear kernels es que no necesitaremos calcular explícitamente $\phi(\bm{x})$.
+
+Hay muchos tipos de kernels. Los más comunes son: kernel polinomial homogéneo ($K(\bm{x}^{(i)},\bm{x}^{(j)}) = (\bm{x}^{(i)}\cdot \bm{x}^{(j)})^d$) e inhomogéneo ($K(\bm{x}^{(i)},\bm{x}^{(j)}) = (\bm{x}^{(i)}\cdot \bm{x}^{(j)}+1)^d$); kernel de función de base radial gaussiano, también llamado \textit{RBF kernel} ($K(\bm{x}^{(i)},\bm{x}^{(j)}) = \exp{\left(-\frac{||\bm{x}^{(i)} - \bm{x}^{(j)}||^2}{2\sigma^2}\right)}$); kernel lineal, igual que el polinomial homogéneo con $d=1$, que corresponde a no hacer nada en el espacio de variables. No hay ninguno mejor que otro, cada base de datos tendrá uno de ellos que funcione mejor que los demás, pero en otras bases de datos ese kernel puede ser peor. Parte del ``\textit{cocinado}'' al preparar un algoritmo \SVM para una base de datos será encontrar qué kernel y con qué valores de los parámetros ($d$ y $\sigma$, por ejemplo) funcionarán mejor.
 
 \subsection{Random Forest}\label{sec:RandForest}
 
@@ -363,6 +394,7 @@ Como \eqref{eq:SVMProblema} es de un problema de programación cuadrática, y este
 \bibitem{SVM} \textsc{J. E. Hernández, S. Salazar}. \textit{Scientia et Technica}, \textbf{31}, 47-52 (2006)
 \bibitem{SVM2} \textsc{C. Cortes, V. Vapnik}. \textit{Machine Learning}, \textbf{20}, 273-297 (1995)
 \bibitem{SVM3} \textsc{V. Vapnik}. Statistical Learning Theory, \textit{John Wiley} \& \textit{Sons} (1998).
+\bibitem{SVM4} \textsc{J. L. Martínez Pérez}. \textit{Comunicación con computador mediante señales cerebrales. Aplicación a la tecnología de la rehabilitación} (2009). Tesis doctoral de la ETSII (UPM). \textbf{Tampoco sé si se cita así...}
 
 
 \end{thebibliography}
