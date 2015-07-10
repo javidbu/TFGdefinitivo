@@ -357,6 +357,49 @@ Los kernels tienen la propiedad de que se puede encontrar una transformación $\p
 Hay muchos tipos de kernels. Los más comunes son: kernel polinomial homogéneo ($K(\bm{x}^{(i)},\bm{x}^{(j)}) = (\bm{x}^{(i)}\cdot \bm{x}^{(j)})^d$) e inhomogéneo ($K(\bm{x}^{(i)},\bm{x}^{(j)}) = (\bm{x}^{(i)}\cdot \bm{x}^{(j)}+1)^d$); kernel de función de base radial gaussiano, también llamado \textit{RBF kernel} ($K(\bm{x}^{(i)},\bm{x}^{(j)}) = \exp{\left(-\frac{||\bm{x}^{(i)} - \bm{x}^{(j)}||^2}{2\sigma^2}\right)}$); kernel lineal, igual que el polinomial homogéneo con $d=1$, que corresponde a no hacer nada en el espacio de variables. No hay ninguno mejor que otro, cada base de datos tendrá uno de ellos que funcione mejor que los demás, pero en otras bases de datos ese kernel puede ser peor. Parte del ``\textit{cocinado}'' al preparar un algoritmo \SVM para una base de datos será encontrar qué kernel y con qué valores de los parámetros ($d$ y $\sigma$, por ejemplo) funcionarán mejor.
 
 \subsection{Random Forest}\label{sec:RandForest}
+Los Random Forest son un ejemplo de los llamados \textit{ensemble methods}, en los que se utiliza repetidas veces un algoritmo más sencillo, y se combinan los resultados de estas repeticiones para dar un resultado común. En el caso de los Random Forest lo que se utiliza son árboles de decisión (\textit{decision trees}).
+
+\subsubsection{Decision Trees}
+Podemos ver un ejemplo de base de datos en la gráfica \ref{fig:DecTree}a, mientras que en \ref{fig:DecTree}b vemos una posible línea de decisión. Ésta puede parecer muy artificial, muy simple, pero funciona bien y es la que hace un árbol de decisión.
+
+\begin{figure}[htbp]
+	\centering
+		\subfigure[Datos]{\includegraphics[width=0.40\textwidth]{graficas/RandomForestPuntos}}
+		\subfigure[Línea de decisión]{\includegraphics[width=0.40\textwidth]{graficas/RandomForest}}
+	\caption{Ejemplo de línea de decisión tomada por un árbol de decisión.}
+	\label{fig:DecTree}
+\end{figure}
+
+¿Cómo toma esa línea de decisión? El algoritmo consiste en ir separando los datos en regiones. En cada paso separará una región de los datos en dos, y el criterio de separación es sencillamente disminuir la entropía de las regiones. Para poner un ejemplo, en la gráfica \ref{fig:DecTreeDecLine}, primero separaríamos los datos con la línea 1, consiguiendo una región sin entropía a la derecha de la línea. Luego la línea 2, que parte la región de la izquierda de la línea 1 en dos regiones, deja la región de abajo sin entropía. Con dos líneas más conseguimos separar perfectamente los datos.
+
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=0.70\textwidth]{graficas/DecTreeDecLine}
+	\caption{Proceso para encontrar la línea de decisión de un Decision Tree.}
+	\label{fig:DecTreeDecLine}
+\end{figure}
+
+Hay varios criterios para separar las regiones. El primero de ellos, la \textbf{entropía}, se define por
+\begin{equation}
+-\sum_k{p_{mk}\log{p_{mk}}}
+\label{eq:DecTreeEntr}
+\end{equation}
+donde $p_{mk}$ es la proporción, en tanto por uno, de la clase $k$ en la región $m$. Otro criterio es el criterio \textbf{Gini}, definido por
+\begin{equation}
+\sum_k{p_{mk}(1-p_{mk})}
+\label{eq:DecTreeGini}
+\end{equation}
+Hay más criterios, pero éstos son los más importantes y usados. El desorden medido por ambos criterios en función de la proporción de la clase 1 se muestra en la gráfica \ref{fig:DecTreeCriterios}.
+
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=0.70\textwidth]{graficas/DecTreeCriterios}
+	\caption{Desorden en función de $p_1$.}
+	\label{fig:DecTreeCriterios}
+\end{figure}
+
+Vamos a analizar el ejemplo de la gráfica \ref{fig:DecTreeDecLine}. Al principio tenemos una 
+
 
 \subsection{K-Nearest Neighbors}\label{sec:KNN}
 
