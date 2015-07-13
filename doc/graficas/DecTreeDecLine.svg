@@ -39,8 +39,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.4142136"
-     inkscape:cx="218.41986"
-     inkscape:cy="802.56113"
+     inkscape:cx="226.37999"
+     inkscape:cy="824.92734"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -1634,11 +1634,6 @@
        d="m 251.51172,218.37002 -114.30078,0"
        id="path7273"
        inkscape:connector-curvature="0" />
-    <path
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:3,1;stroke-dashoffset:0"
-       d="m 251.53125,161.82705 0,-52.46484"
-       id="path7275"
-       inkscape:connector-curvature="0" />
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:25px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -1664,24 +1659,29 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:25px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="251.0229"
-       y="196.763"
+       x="161.92744"
+       y="159.28635"
        id="text7285"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan7287"
-         x="251.0229"
-         y="196.763">3</tspan></text>
+         x="161.92744"
+         y="159.28635">3</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:25px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="161.92744"
-       y="159.28635"
+       x="254.55843"
+       y="203.83406"
        id="text7289"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan7291"
-         x="161.92744"
-         y="159.28635">4</tspan></text>
+         x="254.55843"
+         y="203.83406">4</tspan></text>
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:3,1;stroke-dashoffset:0"
+       d="m 251.46484,161.84962 71.41779,0"
+       id="path4408"
+       inkscape:connector-curvature="0" />
   </g>
 </svg>
