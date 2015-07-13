@@ -370,7 +370,7 @@ Podemos ver un ejemplo de base de datos en la gráfica \ref{fig:DecTree}a, mientr
 	\label{fig:DecTree}
 \end{figure}
 
-¿Cómo toma esa línea de decisión? El algoritmo consiste en ir separando los datos en regiones. En cada paso separará una región de los datos en dos, y el criterio de separación es sencillamente disminuir la entropía de las regiones. Para poner un ejemplo, en la gráfica \ref{fig:DecTreeDecLine}, primero separaríamos los datos con la línea 1, consiguiendo una región sin entropía a la derecha de la línea. Luego la línea 2, que parte la región de la izquierda de la línea 1 en dos regiones, deja la región de abajo sin entropía. Con dos líneas más conseguimos separar perfectamente los datos.
+¿Cómo toma esa línea de decisión? El algoritmo consiste en ir separando los datos en regiones. En cada paso separará una región de los datos en dos, y el criterio de separación es sencillamente disminuir la imperfección (desorden) de las regiones. Para poner un ejemplo, en la gráfica \ref{fig:DecTreeDecLine}, primero separaríamos los datos con la línea 1, consiguiendo una región sin imperfección a la derecha de la línea. Luego la línea 2, que parte la región de la izquierda de la línea 1 en dos regiones, deja la región de abajo sin desorden. Con dos líneas más conseguimos separar perfectamente los datos.
 
 \begin{figure}[htbp]
 	\centering
@@ -398,7 +398,27 @@ Hay más criterios, pero éstos son los más importantes y usados. El desorden medi
 	\label{fig:DecTreeCriterios}
 \end{figure}
 
-Vamos a analizar el ejemplo de la gráfica \ref{fig:DecTreeDecLine}. Al principio tenemos una 
+Vamos a analizar el ejemplo de la gráfica \ref{fig:DecTreeDecLine}. Al principio tenemos una única región con un 0.6 de positivos (puntos rojos) y un 0.4 de negativos (cruces azules). Utilizaremos \eqref{eq:DecTreeGini} para calcular las imperfecciones en este ejemplo. En esta primera región, pues, tenemos:
+\[0.6\times(1-0.6) + 0.4\times(1-0.4)=0.48\]
+La línea 1 parte la primera región en dos regiones, la de la derecha con 1.0 de proporción de positivos y con el 0.25 del total de la región anterior, y la de la izquierda con proporciones $(0.3,0.7)$ ($(positivo, negativo)$ por comodidad) y el 0.75 de los datos. Tenemos:
+\[0.75\times [ 0.3\times(1-0.3)+0.7\times(1-0.7) ] = 0.315\]
+donde no se han sumado explícitamente las imperfecciones de las regiones bien separadas por ser nulas. La línea 2 parte la última región en una arriba con proporciones $(0.8,0.2)$ y el 0.4 de la región anterior y en otra abajo con proporciones $(0.0,1.0)$. Esto nos queda:
+\[0.4\times0.75\times [ 0.8\times(1-0.8)+0.2\times(1-0.2) ] = 0.096\]
+donde hemos tenido que multiplicar la fracción de datos de esta región con la de la anterior. La línea 3, que vuelve a dividir horizontalmente los datos, deja arriba el 0.5 de ellos con proporción $(1.0,0.0)$ y abajo el otro 0.5 con $(0.4,0.6)$. Tenemos
+\[0.5\times0.4\times0.75\times [ 0.6\times(1-0.6)+0.4\times(1-0.4)] = 0.072\]
+Por último, la línea 4 separa perfectamente los datos de su región, dejándonos con una imperfección nula. Vemos que hemos ido reduciendo la imperfección (0.48, 0.315, 0.096, 0.072, 0.00) con cada línea. Ésto es lo que hace un árbol de decisión.
+
+Uno de los mayores problemas de un árbol de decisión es su tendencia a sobreajustar los datos. Con unos datos como los usados en el ejemplo anterior no había ningún problema, porque eran fácilmente separables, pero con datos más realistas y complejos, podemos tener una línea de decisión como la de la gráfica \ref{fig:DecTreeOverfit}, con finas franjas para unos pocos datos y regiones aisladas para uno o dos puntos. Las bases de datos reales pueden ser aún más complejas que la de la gráfica, haciendo que la línea de decisión del árbol no tenga realmente ningún sentido general. Una de las maneras de resolver esto es exigir que el algoritmo no divida regiones con pocos datos, o que no deje regiones cerradas con menos de cierto número de datos. Estos pasos requieren de mucho ``\textit{cocinado}'' para cada base de datos. Otra forma, bastante más extendida, es emplear varios árboles de decisión inicializados de forma aleatoria, creando un \textbf{Random Forest}.
+
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=0.70\textwidth]{graficas/DecTreeOverfit}
+	\caption{Los árboles de decisión son propensos al sobreajuste.}
+	\label{fig:DecTreeOverfit}
+\end{figure}
+
+\subsubsection{Random Forest}
+Blablabla
 
 
 \subsection{K-Nearest Neighbors}\label{sec:KNN}
