@@ -46,7 +46,7 @@ En este trabajo vamos a estudiar diferentes algoritmos de \textit{Machine Learni
 %            INTRO                                          %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introducción}
-En un mundo cada vez más tecnológico, las bases de datos crecen cada día. Cuando alguien entra en una página web, realiza una compra en un comercio, una empresa realiza un estudio de mercado, se celebran unas elecciones, se están almacenando datos. Con este ingente flujo de datos, la física no se podía quedar detrás, hoy en día los grandes aceleradores de partículas manejan al día millones de sucesos que hay que catalogar, clasificar y estudiar, pero la enorme cantidad de estos datos hace imposible su tratamiento \textit{manual}.
+En un mundo cada vez más tecnológico, las bases de datos crecen cada día. Cuando alguien entra en una página web, realiza una compra en un comercio, una empresa realiza un estudio de mercado, se celebran unas elecciones, se están almacenando datos. Con este ingente flujo de datos, la física no se podía quedar atrás, hoy en día los grandes aceleradores de partículas manejan al día millones de sucesos que hay que catalogar, clasificar y estudiar, pero la enorme cantidad de estos datos hace imposible su tratamiento \textit{manual}.
 
 Al calor del problema del tratamiento de datos surge el \textit{Machine Learning} (de ahora en adelante \ML), con algoritmos cada vez más potentes capaces de sacar el máximo partido a estos datos. En este trabajo estudiaremos en concreto cinco de ellos, todos de clasificación (también los hay de regresión). Estos cinco son \textit{Logistic Regresion}, \textit{Naïve Bayes}, \textit{Support Vector Machine}, \textit{Random Forest} y \textit{K-Nearest Neighbors}, explicados en detalle en la seccion \ref{sec:alg}.
 
@@ -104,74 +104,58 @@ Una vez el algoritmo ha sido entrenado sobre un training set, es hora de probarl
 Un buen algoritmo será aquel que prediga 0 para todos los negativos y 1 para los positivos, pero la realidad es que esto casi nunca ocurre. Necesitamos, por lo tanto, un mecanismo para evaluar la bondad de un algoritmo, y eso se consigue con las métricas definidas a continuación\footnote{Ver \cite{bhat}.}:
 
 \begin{equation}
-\text{Accuracy} = \frac{TP + TN}{TP + FP + TN + FN}
-\label{eq:acc}
+\begin{aligned}
+\text{Accuracy} &= \frac{TP + TN}{TP + FP + TN + FN} & \text{Recall} &= \frac{TP}{TP + FN} \\
+\text{Specificity} &= \frac{TN}{FP + TN} & \text{Precision} &= \frac{TP}{TP + FP} \\
+\text{F1-score} &= \frac{2\cdot \text{Precision}\cdot \text{Recall}}{\text{Precision} + \text{Recall}} & &
+\end{aligned}
+\label{eq:metricas}
 \end{equation}
 
-\begin{equation}
-\text{Recall} = \frac{TP}{TP + FN}
-\label{eq:rec}
-\end{equation}
+La ecuación \textit{Recall} (sensibilidad) nos da una medida de la exactitud de los casos positivos, mientras que \textit{Specificity} (especificidad) nos da la de los casos negativos. \textit{Precision} (precisión) nos da la exactitud de los casos clasificados como positivos. 
 
-\begin{equation}
-\text{Specificity} = \frac{TN}{FP + TN}
-\label{eq:spec}
-\end{equation}
+Aunque pudiera parecer que \textit{Accuracy} (exactitud) es una buena medida de la bondad de la clasificación, no siempre es así. En los casos de clases sesgadas (\textit{skewed classes}), en las que la proporción de una de las dos clases es mucho mayor que la de la otra, un algoritmo que clasifique cualquier entrada de datos como la clase mayoritaria tendría una gran exactitud, aunque no cumpliría con el objetivo de clasificar correctamente los datos. Por ejemplo, supongamos un problema de detección de fraude en transacciones bancarias en el que nuestro algoritmo deba clasificar como 1 las operaciones fraudulentas. En la realidad hay muchas más transacciones legítimas que fraudulentas, en nuestro ejemplo consideraremos que son el 99\% de las transacciones. Si tenemos un algoritmo que prediga siempre que una transacción es legítima, la exactitud será del 99\%, pero no por ello será un buen algoritmo. 
 
-\begin{equation}
-\text{Precision} = \frac{TP}{TP + FP}
-\label{eq:prec}
-\end{equation}
+El valor F1 soluciona este problema. Se trata de una media armónica de la precisión y la sensibilidad. A lo largo de este trabajo consideraremos ésta como la métrica para decidir si un algoritmo es mejor que otro.
 
-\begin{equation}
-\text{F1-score} = \frac{2\cdot \text{Precision}\cdot \text{Recall}}{\text{Precision} + \text{Recall}}
-\label{eq:F1}
-\end{equation}
-
-La ecuación \eqref{eq:rec} (sensibilidad) nos da una medida de la exactitud de los casos positivos, mientras que \eqref{eq:spec} (especificidad) nos da la de los casos negativos. \eqref{eq:prec} (precisión) nos da la exactitud de los casos clasificados como positivos. 
-
-Aunque pudiera parecer que \eqref{eq:acc} (exactitud) es una buena medida de la bondad de la clasificación, no siempre es así. En los casos de clases sesgadas (\textit{skewed classes}), en las que la proporción de una de las dos clases es mucho mayor que la de la otra, un algoritmo que clasifique cualquier entrada de datos como la clase mayoritaria tendría una gran exactitud, aunque no cumpliría con el objetivo de clasificar correctamente los datos. Por ejemplo, supongamos un problema de detección de fraude en transacciones bancarias en el que nuestro algoritmo deba clasificar como 1 las operaciones fraudulentas. En la realidad hay muchas más transacciones legítimas que fraudulentas, en nuestro ejemplo consideraremos que son el 99\% de las transacciones. Si tenemos un algoritmo que prediga siempre que una transacción es legítima, la exactitud será del 99\%, pero no por ello será un buen algoritmo. 
-
-El valor F1, ecuación \eqref{eq:F1}, soluciona este problema. Se trata de una media armónica de la precisión y la sensibilidad. A lo largo de este trabajo consideraremos ésta como la métrica para decidir si un algoritmo es mejor que otro.
-
-Para estudiar un algoritmo seguimos unos pasos definidos. Primero, entrenaremos el algoritmo con el training set, tras lo que el algoritmo define una \textit{decisión} que utilizará para clasificar nuevos datos. A continuación, con el algoritmo ya entrenado, procedemos a predecir las clases de cada entrada de datos del test set, con lo que podremos calcular nuestras métricas como vimos en las ecuaciones \ref{eq:acc} a \ref{eq:F1}. Al final, tenemos un algoritmo entrenado que generaliza su decisión mejor o peor en función de los valores de las métricas.
+Para estudiar un algoritmo seguimos unos pasos definidos. Primero, entrenaremos el algoritmo con el training set, tras lo que el algoritmo define una \textit{decisión} que utilizará para clasificar nuevos datos. A continuación, con el algoritmo ya entrenado, procedemos a predecir las clases de cada entrada de datos del test set, con lo que podremos calcular nuestras métricas como vimos en las ecuaciones \eqref{eq:metricas}. Al final, tenemos un algoritmo entrenado que generaliza su decisión mejor o peor en función de los valores de las métricas.
 
 El concepto de generalizar viene de que normalmente tenemos un conjunto de datos ya clasificados, que usaremos para entrenar el algoritmo, pero este algoritmo lo necesitamos no para clasificar ese conjunto, sino para clasificar nuevos conjuntos de datos que estén aún sin clasificar. Por esto no medimos las métricas sobre el mismo conjunto con el que entrenamos, sino que lo hacemos sobre un conjunto distinto, para ver si el algoritmo no sólo clasifica bien el training set, sino cualquier nuevo conjunto de datos del que dispongamos.
 
 \subsection{Cross Validation}\label{sec:CV}
-La mayoría de los algoritmos de \ML  dependen de unos parámetros que hay que fijar manualmente. Por ejemplo, muchos de ellos utilizan el \textit{parámetro de regularización}, $C$, que veremos a continuación. El problema es que los valores de estos parámetros influyen en gran medida en la bondad de la clasificación, y una mala elección de los parámetros nos puede hacer pensar que un algoritmo es malo, cuando la realidad es que lo estamos utilizando mal. 
+La mayoría de los algoritmos de \ML  dependen de unos parámetros que hay que fijar manualmente. Por ejemplo, muchos de ellos utilizan el \textit{parámetro de smoothing}, $C$, que veremos a continuación. El problema es que los valores de estos parámetros influyen en gran medida en la bondad de la clasificación, y una mala elección de los parámetros nos puede hacer pensar que un algoritmo es malo, cuando la realidad es que lo estamos utilizando mal. 
 
 Para fijar correctamente estos parámetros, nos ayudamos del Cross Validation set. Hasta ahora el procedimiento a seguir era entrenar el algoritmo con el training set, y ver la bondad del mismo con el test set. Ahora, para fijar correctamente estos parámetros, usaremos un tercer conjunto, el Cross Validation set, o CV set. El procedimiento a seguir ahora es el siguiente:
 
 Primero, elegimos valores para nuestros parámetros. Con esos valores, entrenamos el algoritmo con el training set. Evaluamos las métricas con el CV set, y volvemos a realizar estos pasos con valores distintos de los parámetros, eligiendo el conjunto de parámetros que mejor prediga las clases del CV set. Por último, con el algoritmo entrenado con los mejores parámetros, evaluamos las métricas en el test set. Estas métricas son las que nos dirán cómo de acertado será nuestro algoritmo al clasificar datos nuevos.
 
-Al igual que antes, el proceso de evaluar métricas se realiza en conjuntos de datos que no hayamos utilizado para entrenar el algoritmo, aunque esta vez tampoco usamos el conjunto que nos ha servido para ajustar los parámetros. Ésto se debe a que, al usar el CV set para ajustar los parámetros, éste ya no nos dice cómo generaliza nuestro algoritmo a datos nuevos, pues el algoritmo final depende de la información que aporta este conjunto. Para ver cómo generaliza, tenemos que alimentar nuestro algoritmo con datos que todavía no se hayan usado.
+Al igual que antes, el proceso de evaluar métricas se realiza en conjuntos de datos que no hayamos utilizado para entrenar el algoritmo, aunque esta vez tampoco usamos el conjunto que nos ha servido para ajustar los parámetros. Ésto se debe a que, al usar el CV set para ajustar los parámetros, éste ya no nos dice cómo generaliza nuestro algoritmo a datos nuevos, pues el algoritmo final depende de la información que aporta el CV set. Para ver cómo generaliza, tenemos que alimentar nuestro algoritmo con datos que todavía no se hayan usado.
 
-\subsection{Varianza, Parcialidad y Regularización}\label{sec:BiasVariance}
-Al entrenar un algoritmo nos enfrentamos a dos errores diametralmente opuestos, la \textit{parcialidad} y la \textit{varianza}. Tendremos alta parcialidad (\textit{underfitting}) cuando nuestra hipótesis es demasiado sencilla o tengamos pocas variables de entrada. La consecuencia es que nuestro algoritmo no generaliza bien los datos nuevos porque tampoco ajusta bien los datos del training set, no somos capaces de extraer información relevante de los datos que tenemos. Para solucionarlo, lo que podemos hacer es tomar datos nuevos con más variables, crear variables derivadas de las que ya tengamos, hacer una hipótesis más compleja o modificar el parámetro de regularización, que veremos en seguida.
+\subsection{Varianza, Sesgo y Regularización}\label{sec:BiasVariance}
+Al entrenar un algoritmo nos enfrentamos a dos errores diametralmente opuestos, el \textit{sesgo} y la \textit{varianza}. Tendremos alto sesgo (\textit{underfitting}) cuando nuestra hipótesis es demasiado sencilla o tengamos pocas variables de entrada. La consecuencia es que nuestro algoritmo no generaliza bien los datos nuevos porque tampoco ajusta bien los datos del training set, no somos capaces de extraer información relevante de los datos que tenemos. Para solucionarlo, lo que podemos hacer es tomar datos nuevos con más variables, crear variables derivadas de las que ya tengamos, hacer una hipótesis más compleja o modificar el parámetro de smoothing, que veremos en seguida.
 
-Por el contrario, tendremos alta varianza (\textit{overfitting}) en nuestro algoritmo cuando nuestra hipótesis es demasiado compleja y no tenemos suficientes datos. Nuestro algoritmo no generalizará bien para datos nuevos porque se ciñe demasiado a los datos del training set, perdiendo la tendencia general de estos datos al darle más importancia a las variaciones específicas de este conjunto. Cometeremos un muy bajo error en los datos del training set, pagando un alto error en el test set. Para solucionarlo podremos tomar más datos, simplificar la hipótesis o modificar el parámetro de regularización. Podemos ver un claro ejemplo de ambos problemas en la gráfica \ref{fig:BiasVariance}.
+Por el contrario, tendremos alta varianza (\textit{overfitting}) en nuestro algoritmo cuando nuestra hipótesis es demasiado compleja y no tenemos suficientes datos. Nuestro algoritmo no generalizará bien para datos nuevos porque se ciñe demasiado a los datos del training set, perdiendo la tendencia general de estos datos al darle más importancia a las variaciones específicas de este conjunto. Cometeremos un muy bajo error en los datos del training set, pagando un alto error en el test set. Para solucionarlo podremos tomar más datos, simplificar la hipótesis o modificar el parámetro de smoothing. Podemos ver un claro ejemplo de ambos problemas en la gráfica \ref{fig:BiasVariance}.
 
 \begin{figure}[htbp]
 \centering
 \subfigure[Datos]{\includegraphics[width=0.4\textwidth]{graficas/DatosBiasVariance}}
 \subfigure[Bien ajustado]{\includegraphics[width=0.4\textwidth]{graficas/NoBiasVariance}}
-\subfigure[Alta parcialidad (underfitting)]{\includegraphics[width=0.4\textwidth]{graficas/highBias}}
+\subfigure[Alto sesgo (underfitting)]{\includegraphics[width=0.4\textwidth]{graficas/highBias}}
 \subfigure[Alta varianza (overfitting)]{\includegraphics[width=0.4\textwidth]{graficas/highVariance}}
-\caption{Datos para la regresión (a), regresión correcta (b), regresión con alta parcialidad (c) y regresión con alta varianza (d).}
+\caption{Datos para la regresión (a), regresión correcta (b), regresión con alto sesgo (c) y regresión con alta varianza (d).}
 \label{fig:BiasVariance}
 \end{figure}
 
-A continuación explicamos en qué consiste el parámetro de regularización. Gran parte de los algoritmos se basan en una hipótesis en la que se asigna unos pesos a cada variable (\textit{feature weights}). El algoritmo optimizará estos pesos para que la predicción realizada por la hipótesis coincida lo máximo posible con las etiquetas de cada entrada de datos. Estos pesos, por lo tanto, serán mayores cuanto más influya la variable en la clasificación. El parámetro de regularización se encarga controlar la importancia que se da a las variables, con el objetivo de no depender demasiado de ellas, evitando caer en problemas de alta varianza. Una formulación más precisa sería la siguiente:
+A continuación explicamos en qué consiste el parámetro de smoothing. Gran parte de los algoritmos se basan en una hipótesis en la que se asigna unos pesos a cada variable (\textit{feature weights}). El algoritmo optimizará estos pesos para que la predicción realizada por la hipótesis coincida lo máximo posible con las etiquetas de cada entrada de datos. Estos pesos, por lo tanto, serán mayores cuanto más influya la variable en la clasificación. El parámetro de smoothing se encarga controlar la importancia que se da a las variables, con el objetivo de no depender demasiado de ellas, evitando caer en problemas de alta varianza. Una formulación más precisa sería la siguiente:
 
-Sea un algoritmo de clasificación en el que a cada variable se le asocia un peso $\theta_j$, y en el que cada entrada de datos viene dada por el vector $\bm{x}^{(i)}$, donde $x^{(i)}_j$ sería el valor de la variable $j$ de la entrada $i$. Cada entrada está clasificada con una etiqueta $y^{(i)}$. El algoritmo tratará de seleccionar el vector de pesos $\bm{\theta}$ que optimice un error cometido $J(\bm{\theta})$ (la fórmula concreta de este error dependerá del algoritmo en cuestión). El parámetro de regularización\footnote{A veces se utiliza $\lambda \propto C^{-1}$.} $C$ se introduce como un término adicional al error que se minimiza. Este término suele ser proporcional al inverso de $C$ y a la suma cuadrática de los $\theta_j$, de forma que un valor alto de $C$ respetará más la hipótesis del algoritmo que un valor bajo de $C$. En resumen, el nuevo error sería:
+Sea un algoritmo de clasificación en el que a cada variable se le asocia un peso $\theta_j$, y en el que cada entrada de datos viene dada por el vector $\bm{x}^{(i)}$, donde $x^{(i)}_j$ sería el valor de la variable $j$ de la entrada $i$. Cada entrada está clasificada con una etiqueta $y^{(i)}$. El algoritmo tratará de seleccionar el vector de pesos $\bm{\theta}$ que optimice un error cometido $J(\bm{\theta})$ (la fórmula concreta de este error dependerá del algoritmo en cuestión). El parámetro de smoothing\footnote{A veces se utiliza el parámetro de regularización $\lambda \propto C^{-1}$.} $C$ se introduce como un término adicional al error que se minimiza. Este término suele ser proporcional al inverso de $C$ y a la suma cuadrática de los $\theta_j$, de forma que un valor alto de $C$ respetará más la hipótesis del algoritmo que un valor bajo de $C$. En resumen, el nuevo error sería:
 
 \begin{equation}
 J'(\bm{\theta}) = J(\bm{\theta}) + \frac{1}{C}\bm{\theta}\cdot \bm{\theta}
 \label{eq:ErrorRegul}
 \end{equation}
 
-Reduciendo $C$ se consigue suavizar la hipótesis del algoritmo, minimizando el vector de pesos $\bm{\theta}$, reduciendo la varianza del algoritmo. Por otro lado, si aumentamos $C$ permitimos al algoritmo ajustar los pesos más de acuerdo con su hipótesis, permitiendo que ésta sea más compleja y reduciendo la parcialidad del mismo. Por lo tanto, el parámetro de regularización nos ayuda a mejorar nuestro algoritmo, y lo podremos fijar con el CV set, como vimos en el apartado \ref{sec:CV}.
+Reduciendo $C$ se consigue suavizar la hipótesis del algoritmo, minimizando el vector de pesos $\bm{\theta}$, reduciendo la varianza del algoritmo. Por otro lado, si aumentamos $C$ permitimos al algoritmo ajustar los pesos más de acuerdo con su hipótesis, permitiendo que ésta sea más compleja y reduciendo el sesgo del mismo. Por lo tanto, el parámetro de smoothing nos ayuda a mejorar nuestro algoritmo, y lo podremos fijar con el CV set, como vimos en el apartado \ref{sec:CV}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -197,7 +181,7 @@ g(z) = \frac{1}{1+e^{-z}}
 	\label{fig:sigmoid}
 \end{figure}
 
-Sea $\bm{x}$ el vector columna de variables de entrada, y $\bm{\theta}$ el vector columna de pesos, ambos de la misma dimensión. Por convenio, al vector $\bm{x}$ le añadimos una primera componente, $x_0 = 1$, que tiene su peso correspondiente, $\theta_0$. Esta componente añade un término constante a la combinación lineal de las variables de entrada, como ahora veremos\footnote{La componente $\theta_0$ no se suele penalizar al hacer la regularización \eqref{eq:ErrorRegul}, cambiando $\bm{\theta}\cdot \bm{\theta}$ por $\sum_{j=1}^q \theta_j^2$, donde $q$ es la dimensión del vector de pesos.}. La hipótesis del algoritmo es \eqref{eq:hipLogReg}, donde $g(z)$ es la función logística de \eqref{eq:sigmoid}. Ésta se interpreta como la probabilidad de que, dados el vector $\bm{x}$ y los pesos $\bm{\theta}$, la etiqueta correspondiente a esos datos sea ``1''.
+Sea $\bm{x}$ el vector de variables de entrada, y $\bm{\theta}$ el vector de pesos, ambos de la misma dimensión. Por convenio, al vector $\bm{x}$ le añadimos una primera componente, $x_0 = 1$, que tiene su peso correspondiente, $\theta_0$. Esta componente añade un término constante a la combinación lineal de las variables de entrada, como ahora veremos\footnote{La componente $\theta_0$ no se suele penalizar al hacer la regularización \eqref{eq:ErrorRegul}, cambiando $\bm{\theta}\cdot \bm{\theta}$ por $\sum_{j=1}^q \theta_j^2$, donde $q$ es la dimensión del vector de pesos.}. La hipótesis del algoritmo es \eqref{eq:hipLogReg}, donde $g(z)$ es la función logística de \eqref{eq:sigmoid}. Ésta se interpreta como la probabilidad de que, dados el vector $\bm{x}$ y los pesos $\bm{\theta}$, la etiqueta correspondiente a esos datos sea ``1''.
 
 \begin{equation}
 \encuadre{h_{\bm{\theta}}(\bm{x}) = p(y = 1 | \bm{x}; \bm{\theta}) = g(\bm{\theta}\cdot  \bm{x}) = \frac{1}{1+e^{-\bm{\theta}\cdot  \bm{x}}}}
@@ -221,14 +205,14 @@ donde $m$ es el número de entradas de datos. Nótese que el primer término del su
 \end{figure}
 
 \subsection{Naïve Bayes}\label{sec:NB}
-El clasificador ``Bayes ingenuo'' es probablemente uno de los más simples que existen\footnote{Ver capítulo 20 de \cite{IA}.}. Se basa en asumir ingenuamente que las variables de las entradas de datos de una clase determinada son independientes, lo que nos puede asustar al oirlo por primera vez, aunque veremos que, a pesar del calibre de la simplificación, funciona sorprendentemente bien a pesar de que las variables no sean realmente independientes\footnote{Ver \cite{NaiveBayes}.}. Esta asunción se expresa con la siguiente expresión
+El clasificador ``Bayes ingenuo'' es probablemente uno de los más simples que existen\footnote{Ver capítulo 20 de \cite{IA}.}. Se basa en asumir ingenuamente que las variables de las entradas de datos de una clase determinada son independientes, lo que nos puede asustar al oirlo por primera vez, aunque veremos que, a pesar del calibre de la simplificación, funciona sorprendentemente bien aunque las variables no sean realmente independientes\footnote{Ver \cite{NaiveBayes}.}. Esta asunción se expresa con la siguiente expresión
 \begin{equation}
 p(\bm{x}|C) = \prod_{j=1}^n{p(x_j|C)}
 \label{eq:NaiveBayes}
 \end{equation}
 donde $\bm{x}$ es el vector de variables, cuyas componentes son $x_j$, y $C$ es una determinada clase (en nuestros problemas de clasificación binaria, $C$ será 0 ó 1). 
 
-Gracias al teorema de Bayes, sabemos que la probabilidad de que dado el vector de variables $\bm{x}$ se de la clase $C_l$ es:
+Gracias al teorema de Bayes, sabemos que la probabilidad de que dado el vector de variables $\bm{x}$, éste sea de la clase $C_l$ es:
 \begin{equation}
 \encuadre{p(C_l|\bm{x}) = \frac{p(C_l)p(\bm{x}|C_l)}{p(\bm{x})}}
 \label{eq:TeoremaBayes}
@@ -236,7 +220,7 @@ Gracias al teorema de Bayes, sabemos que la probabilidad de que dado el vector d
 
 En general, para un problema de clasificación multiclase, siendo $C_l$ cada una de las clases, el algoritmo asignará a cada entrada nueva de datos la clase $C_k$ que maximice la probabilidad de la ecuación \ref{eq:TeoremaBayes}. Ésta es la hipótesis del algoritmo. Nótese que, dado un vector $\bm{x}$, $p(\bm{x})$ es una constante, por lo que sólo tenemos que preocuparnos por maximizar el numerador, teniendo en cuenta \eqref{eq:NaiveBayes}.
 
- Para calcular las probabilidades $p(x_j|C)$, hay que tener en cuenta el tipo de distribución que sigue la variable $j$, dando lugar a diferentes algoritmos, como por ejemplo, el ``Naive Bayes Gaussiano'', el ``Naive Bayes Multinomial'' o el ``Naive Bayes Binomial'', todos ellos nombrados según la distribución de probabilidad de las variables. También se pueden hacer algoritmos de Naive Bayes mixtos, donde a distintas variables les correspondan distintas distribuciones de probabilidad.
+ Para calcular las probabilidades $p(x_j|C)$, hay que tener en cuenta el tipo de distribución que sigue la variable $j$, dando lugar a diferentes algoritmos, como por ejemplo, el ``Naïve Bayes Gaussiano'', el ``Naïve Bayes Multinomial'' o el ``Naïve Bayes Binomial'', todos ellos nombrados según la distribución de probabilidad de las variables. También se pueden hacer algoritmos de Naïve Bayes mixtos, donde a distintas variables les correspondan distintas distribuciones de probabilidad.
 
 Las superficies de decisión entre dos clases $C_i$ y $C_j$ serán las que cumplan \eqref{eq:NBDecCurv}.
 
@@ -246,7 +230,7 @@ Las superficies de decisión entre dos clases $C_i$ y $C_j$ serán las que cumplan
 \end{equation}
 
 \subsection{Support Vector Machine}\label{sec:SVM}
-Las maquinas de soporte vectorial\footnote{Ver \cite{SVM}, \cite{SVM2}, capítulo 10 de \cite{SVM3}, capítulo 4 de \cite{SVM4} y capítulo 18 de \cite{IA}.} (\textit{SVM} por sus siglas en inglés) son otro algoritmo de aprendizaje supervisado de \ML. Muchas veces son llamadas también \textit{large margin separator} o \textit{maximum margin separator}, porque la superficie de decisión que toman es la que más separa los datos del training set. Como vemos en la gráfica \ref{fig:highMargin}, todas las líneas separan a la perfección los datos, pero intuitivamente esperamos que la que mejor los separe sea la curva b. ¿Por qué esperamos esto? La respuesta es muy sencilla, esperamos que al tomar nuevos datos, estos sigan la misma distribución que los antiguos, así que las curvas a y c, que tienen puntos muy cercanos, puede que empiecen a clasificar mal alguna entrada de datos, sin embargo, la curva b, que está más separada de los datos actuales, seguramente no tenga problema al clasificar datos nuevos. Lo que hace que las \SVM sean tan potentes es que no tratan de minimizar el error empírico, sino de minimizar el error de generalización que podremos cometer al tomar datos nuevos.
+Las maquinas de soporte vectorial\footnote{Ver \cite{SVM}, \cite{SVM2}, capítulo 10 de \cite{SVM3}, capítulo 4 de \cite{SVM4} y capítulo 18 de \cite{IA}.} (\textit{SVM} por sus siglas en inglés) son otro algoritmo de aprendizaje supervisado de \ML. Muchas veces son llamadas también \textit{large margin separator} o \textit{maximum margin separator}, porque la superficie de decisión que toman es la que más separa los datos del training set. Como vemos en la gráfica \ref{fig:highMargin}, todas las líneas separan a la perfección los datos, pero intuitivamente esperamos que la que mejor los separe sea la curva b. ¿Por qué esperamos esto? La respuesta es muy sencilla, esperamos que al tomar nuevos datos, estos sigan la misma distribución que los antiguos, así que las curvas a y c, que tienen puntos muy cercanos, puede que empiecen a clasificar mal alguna entrada de datos. Sin embargo, la curva b, que está más separada de los datos actuales, seguramente no tenga problema al clasificar datos nuevos. Lo que hace que las \SVM sean tan potentes es que no tratan de minimizar el error empírico, sino de minimizar el error de generalización que podremos cometer al tomar datos nuevos.
 
 \begin{figure}[htbp]
 	\centering
@@ -293,12 +277,13 @@ Los puntos que cumplen que $y^{(i)}\left(\bm{\theta}\cdot \bm{x}^{(i)} + b\right
 
 \begin{figure}[htbp]
 	\centering
-		\includegraphics[width=0.70\textwidth]{graficas/highMargin2}
-	\caption{Hiperplano de separación (b), con ecuación $\{\bm{x} \in \mathbb{R}^n:\bm{\theta}\cdot \bm{x} + b = 0\}$ e hiperplanos soporte, (a) con ecuación $\{\bm{x} \in \mathbb{R}^n:\bm{\theta}\cdot \bm{x} + b = +1\}$ y (c) con ecuación $\{\bm{x} \in \mathbb{R}^n:\bm{\theta}\cdot \bm{x} + b = -1\}$. Los vectores de soporte son los más cercanos al hiperplano de separación.}
+		\subfigure[High margin]{\includegraphics[width=0.40\textwidth]{graficas/highMargin2}}
+		\subfigure[Soft margin]{\includegraphics[width=0.40\textwidth]{graficas/softMargin}}
+	\caption{Gráfica \textbf{a}: Hiperplano de separación (b), con ecuación $\{\bm{x} \in \mathbb{R}^n:\bm{\theta}\cdot \bm{x} + b = 0\}$ e hiperplanos soporte, (a) con ecuación $\{\bm{x} \in \mathbb{R}^n:\bm{\theta}\cdot \bm{x} + b = +1\}$ y (c) con ecuación $\{\bm{x} \in \mathbb{R}^n:\bm{\theta}\cdot \bm{x} + b = -1\}$. Los vectores de soporte son los más cercanos al hiperplano de separación. Gráfica \textbf{b}: Ejemplo de problema de \textit{soft margin}. Hay algunos puntos que se clasifican mal con tal de mantener un margen amplio con la mayoría de los datos, reduciendo el error de generalización.}
 	\label{fig:highMargin2}
 \end{figure}
 
-Si miramos la gráfica \ref{fig:highMargin2} vemos el hiperplano de separación y los hiperplanos soporte. Las distancias de cada uno de ellos al origen, nombrados como en la gráfica, son
+Si miramos la gráfica \ref{fig:highMargin2}a vemos el hiperplano de separación y los hiperplanos soporte. Las distancias de cada uno de ellos al origen, nombrados como en la gráfica, son
 \begin{equation}
 \begin{aligned}
 d_a &= \frac{|b-1|}{||\bm{\theta}||} \\
@@ -323,10 +308,10 @@ Finalmente, tenemos que el algoritmo \SVM se reduce a maximizar \eqref{eq:SVMMar
 \label{eq:SVMProblema}
 \end{equation}
 
-Como \eqref{eq:SVMProblema} es de un problema de programación cuadrática, y este trabajo no intenta ser un tratado de programación no lineal, la manera de resolver este problema de optimización no se explica aquí, recomendando al lector que quiera profundizar en el tema la lectura de \cite{SVM3}.
+Como \eqref{eq:SVMProblema} es un problema de programación cuadrática, y este trabajo no intenta ser un tratado de programación no lineal, la manera de resolver este problema de optimización no se explica aquí, recomendando al lector que quiera profundizar en el tema la lectura de \cite{SVM3}.
 
 \subsubsection{Margen blando}
-En gran parte de las bases de datos no podremos separar linealmente las variables, por lo que el método de \textit{high margin} fallará. Para estos casos se utiliza el método de \textit{soft margin} (margen blando), introduciendo las variables de holgura $h_i$ tales que todos los puntos deben cumplir que
+En gran parte de las bases de datos no podremos separar linealmente las variables (gráfica \ref{fig:highMargin2}b), por lo que el método de \textit{high margin} fallará. Para estos casos se utiliza el método de \textit{soft margin} (margen blando), introduciendo las variables de holgura $h_i$ tales que todos los puntos deben cumplir que
 \begin{equation}
 y^{(i)}\left(\bm{\theta}\cdot\bm{x}^{(i)} + b\right) \geq 1 - h_i \ \ \forall i = 1,...,m
 \label{eq:SVMsoftMargin}
@@ -341,13 +326,6 @@ Con esto, el problema de minimización se convierte en \eqref{eq:SVMProblemaSoftM
 \end{aligned}}
 \label{eq:SVMProblemaSoftMargin}
 \end{equation}
-
-\begin{figure}[htbp]
-	\centering
-		\includegraphics[width=0.70\textwidth]{graficas/softMargin}
-	\caption{Ejemplo de problema de \textit{soft margin}. Hay algunos puntos que se clasifican mal con tal de mantener un margen amplio con la mayoría de los datos, reduciendo el error de generalización.}
-	\label{fig:softMargin}
-\end{figure}
 
 \subsubsection{Kernels}
 A continuación vamos a explicar los \textit{kernels} que veíamos al principio de esta sección. Éstos son aplicaciones no lineales $K:\mathbb{R}^n \times \mathbb{R}^n\rightarrow\mathbb{R}:(\bm{x}^{(i)},\bm{x}^{(j)})\mapsto K(\bm{x}^{(i)},\bm{x}^{(j)})$. Gracias a los kernels, podemos transformar nuestro espacio de variables $\mathbb{R}^n$ a uno de dimensión superior $\mathbb{R}^{n'}$ en el que se pueda hacer una separación lineal de los datos.
@@ -427,18 +405,13 @@ Blablabla
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %            DATOS                                          %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Bases de datos}\label{sec:dat}
+\section{Aplicaciones}\label{sec:dat}
 
 \subsection{Reconocimiento de dígitos}\label{sec:digitos}
 
 \subsection{Supervivientes del Titanic}\label{sec:titanic}
 
 \subsection{Búsqueda del bosón de Higgs}\label{sec:higgs}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%            RESUL                                          %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Resultados}\label{sec:resultados}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %            CONCL                                          %
