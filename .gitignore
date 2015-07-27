@@ -11,3 +11,4 @@
 *.pdf
 !doc/memoria.pdf
 *.djvu
+higgs/*
