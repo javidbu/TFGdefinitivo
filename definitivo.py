@@ -13,6 +13,7 @@ from sklearn.learning_curve import learning_curve
 #Preprocesamiento de datos
 from sklearn.datasets import load_digits
 from PreProcTitanic import ProcessTitanicData
+from PreProcHiggs import ProcessHiggsData
 from sklearn.preprocessing import MinMaxScaler
 #Graficas
 from matplotlib.pyplot import figure, scatter, show, contourf, title, subplot, xlabel, ylabel, fill_between, legend, grid, plot, ylim
@@ -220,6 +221,18 @@ def Titanic(cv = True,CAp = False):
     #print c.clasificadores[3].feature_importances_
     return c
 
+def Higgs(cv = True, CAp = False):
+    '''Prepara los datos del Titanic y hace las clasificaciones.'''
+    #columnas = (,)
+    print 'Usando los datos del Higgs'
+    X, y, Xtest, ytest = ProcessHiggsData()
+    #X = X[:,columnas]
+    #Xtest = Xtest[:,columnas]
+    c = Clasificadores(X, y, Xtest, ytest, CV = cv, CurvaAprendizaje = CAp, datos = 'Higgs')
+    c.todo()
+    print c.clasificadores[3].feature_importances_
+    
 if __name__ == '__main__':
-    c = Digitos(CAp = True)
-    d = Titanic(CAp = True)
+    #d = Digitos(CAp = True)
+    #t = Titanic(CAp = True)
+    h = Higgs(False, False)#No poner nunca True para la curva de aprendizaje hasta el final, tarda la del pulpo morado...
