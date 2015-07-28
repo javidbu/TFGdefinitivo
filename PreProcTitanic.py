@@ -17,7 +17,8 @@ def ProcessTitanicData(CV = False):
         '''Convierte los datos de la columna 6, la edad, pasando a float los datos
            existentes y poniendo el valor 0 a los datos que falten'''
         return float(x or 0)
-        
+
+    #Leemos los datos        
     #COMO EN LOS NOMBRES HAY COMAS, TENGO QUE PONER UNA COLUMNA MAS
     with open('titanic/train.csv','r') as f:
         X = genfromtxt(f,skip_header = 1,
@@ -29,19 +30,8 @@ def ProcessTitanicData(CV = False):
         y = genfromtxt(f,skip_header = 1, 
                     delimiter = ',', 
                     usecols = (1))
-        
-    # LOS DATOS DEL TEST.CSV DEL KAGGLE NO TIENEN TARGET... 
-    #HAY QUE HACERSE UN TEST SET DE LOS DATOS DE TRAIN.CSV
-    #with open('titanic/test.csv','r') as f:
-    #    Xtest = genfromtxt(f,skip_header = 1, 
-    #                       delimiter = ',', 
-    #                       converters = {4: convert5, 5: convert6}, 
-    #                       usecols = (1,4,5,6,7,9))
-    #with open('titanic/test.csv','r') as f:
-    #    ytest = genfromtxt(f,skip_header = 1, 
-    #                       delimiter = ',', 
-    #                       usecols = (1))
-        
+
+    #Separamos los datos en los diferentes sets  
     if not CV:
         train_perct = 0.8
         X,Xtest,y,ytest = train_test_split(X,y,train_size = train_perct)
