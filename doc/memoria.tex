@@ -402,6 +402,19 @@ Blablabla
 
 
 \subsection{K-Nearest Neighbors}\label{sec:KNN}
+Llegamos a otro algoritmo más sencillo aún que el Naïve Bayes, si esto puede ser posible. El K-Nearest Neighbors (KNN) se explica casi únicamente al leer el nombre\footnote{Ver \cite{NN1} y \cite{NN2}}. Se trata de un algoritmo que asigna a cada entrada nueva de datos la clase más común entre las K entradas clasificadas más cercanas (del training set), utilizando una métrica dada (normalmente la euclídea). Como parámetros a ajustar de este algoritmo, tenemos únicamente la métrica a utilizar y el número de vecinos.
+
+\begin{figure}[htbp]
+	\centering
+		\subfigure[Datos]{\includegraphics[width=0.40\textwidth]{graficas/KNN}}
+		\subfigure[1 vecino]{\includegraphics[width=0.40\textwidth]{graficas/KNN1}}
+		\subfigure[1 vecino, overfitting]{\includegraphics[width=0.40\textwidth]{graficas/KNN1Overfit}}
+		\subfigure[3 vecinos, ya no hay overfitting]{\includegraphics[width=0.40\textwidth]{graficas/KNN3}}
+	\label{fig:KNN}
+	\caption{Con pocos vecinos, el algoritmo es propenso al overfitting.}
+\end{figure}
+
+En la grafica \ref{fig:KNN}, vemos la sencillez del algoritmo. Hay que tener cuidado con el número de vecinos, porque si escogemos pocos podemos caer en overfitting. También es importante antes de entrenar el algoritmo, hacer un \textit{feature scaling}\footnote{El \textit{feature scaling} cambia todas las variables para que sus valores se encuentren en el intervalo [0,1]. Es importante hacerlo tanto para éste algoritmo como para el Support Vector Machine (sobre todo el kernel gaussiano), aunque nosotros lo hacemos para todos los algoritmos por comodidad.}, de manera que no haya una variable cuyas distancias entre datos sean mucho menores que el resto de variables, dando a todas ellas la misma importancia.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -454,7 +467,7 @@ Los mejores parámetros que hemos encontrado son los siguientes: Para el SVC, el 
 	\label{tab:digitosMetricas}
 \end{table}
 
-Hemos llegado a un problema (bendito problema): que tres de nuestros algoritmos funcionan perfectamente. Para elegir cuál es el que nos compensa usar, habrá que ver si buscamos rapidez, robustez (que aguante bien posibles alteraciones en los datos), optimizar la memoria... El mejor algoritmo dependerá de la aplicación real que hagamos de él, pero este ejemplo nos sirve para mostrar que no hay un algoritmo mejor que otro, que, dependiendo de la base de datos, pueden funcionar todos igual de bien (el SVC, que ha sido el peor, tiene un valor F1 de 0.95, bastante alto).
+Hemos llegado a un problema (bendito problema): que tres de nuestros algoritmos funcionan perfectamente. Para elegir cuál es el que nos compensa usar, habrá que ver si buscamos rapidez, robustez (que aguante bien posibles alteraciones en los datos), optimizar la memoria... El mejor algoritmo dependerá de la aplicación real que hagamos de él, pero este ejemplo nos sirve para mostrar que no hay un algoritmo mejor que otro, que, dependiendo de la base de datos, pueden funcionar todos igual de bien (el SVC, que ha sido el peor, tiene un valor F1 de 0.95, bastante alto, y seguramente haciendo un ajuste más fino de los parámetros conseguiríamos un valor mejor).
 
 \subsection{Supervivientes del Titanic}\label{sec:titanic}
 
@@ -479,7 +492,11 @@ Hemos llegado a un problema (bendito problema): que tres de nuestros algoritmos 
 \bibitem{SVM3} \textsc{V. Vapnik}. Statistical Learning Theory, \textit{John Wiley} \& \textit{Sons} (1998).
 \bibitem{SVM4} \textsc{J. L. Martínez Pérez}. \textit{Comunicación con computador mediante señales cerebrales. Aplicación a la tecnología de la rehabilitación} (2009). Tesis doctoral de la ETSII (UPM). \textbf{Tampoco sé si se cita así...}
 \bibitem{DecTree} \textsc{J. R. Quinlan}. \textit{Machine Learning}, \textbf{1}, 81-106 (1986).
-%Geman amit y wilder, Joint induction of shape features and tree classifiers
+%ALGO DE RANDOM FOREST...
+\bibitem{NN1} \textsc{T. M. Cover, P. Hart}. \textit{IEEE Transactions on Information
+Theory}, \textbf{13}, 21-27 (1967)
+\bibitem{NN2} \textsc{T. M. Cover}. \textit{IEEE Transactions on Information
+Theory}, \textbf{14}, 21-27 (1968)
 
 
 
