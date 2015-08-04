@@ -1,5 +1,6 @@
 from numpy import linspace, exp, log
-from matplotlib.pyplot import plot, figure, grid, xlabel, ylabel, legend, show, savefig
+from matplotlib.pyplot import plot, figure, grid, xlabel, ylabel, legend, show, savefig, imshow, subplot, cm
+from sklearn.datasets import load_digits
 
 #Tamanho fuente
 fsize = 20
@@ -17,6 +18,7 @@ yent = -xDT*log(xDT) - (1-xDT)*log(1-xDT)
 yGini = 2*xDT*(1-xDT)
 
 #Graficas
+#sigmoid
 figure()
 plot(xsigmoid, ysigmoid, linewidth=2)
 grid()
@@ -25,6 +27,7 @@ ylabel('g(z)',fontsize=fsize)
 
 savefig('C:/Users/Javi/Desktop/TFGdefinitivo/doc/graficas/sigmoid.ps')
 
+#LogReg
 figure()
 plot(xerr, yerr1, label='y = 1', linewidth=2)
 plot(xerr, yerr0, label='y = 0', linewidth=2)
@@ -34,6 +37,7 @@ legend(loc=9,fontsize=fsize)
 
 savefig('C:/Users/Javi/Desktop/TFGdefinitivo/doc/graficas/costLogReg.ps')
 
+#RandFor
 figure()
 plot(xDT, yent, label='entropia', linewidth=2)
 plot(xDT, yGini, label='Gini', linewidth=2)
@@ -43,4 +47,13 @@ legend(loc=8, fontsize=fsize)
 
 savefig('C:/Users/Javi/Desktop/TFGdefinitivo/doc/graficas/DecTreeCriterios.ps')
 
+#digitos
+a = load_digits(2)
+figure()
+for i in range(8):
+    subplot(2,4,i+1)
+    imshow(a.images[i], cmap = cm.gray_r, interpolation='nearest')
+
+savefig('C:/Users/Javi/Desktop/TFGdefinitivo/doc/graficas/digitos.svg')
+    
 #show()
