@@ -473,32 +473,60 @@ Para ilustrar lo que hemos conseguido, podemos realizar las gráficas con las var
 
 \begin{figure}[htbp]
 	\centering
-		\includegraphics[width=1.00\textwidth]{graficas/digitos,_curvas_de_decision21-28.ps}
+		\includegraphics[width=1.00\textwidth]{graficas/digitos,_curvas_de_decision21-28}
 	\caption{Curvas de decisión para los diferentes algoritmos utilizando los valores de los píxeles 21 (x) y 28 (y)}
 	\label{fig:digVar1}
 \end{figure}
 
 \begin{figure}[htbp]
 	\centering
-		\includegraphics[width=1.00\textwidth]{graficas/digitos,_curvas_de_decision29-47.ps}
+		\includegraphics[width=1.00\textwidth]{graficas/digitos,_curvas_de_decision29-47}
 	\caption{Curvas de decisión para los diferentes algoritmos utilizando los valores de los píxeles 29 (x) y 47 (y)}
 	\label{fig:digVar2}
 \end{figure}
 
 \subsection{Supervivientes del Titanic}\label{sec:titanic}
-Esta base de datos se encuentra en la página web del Kaggle \textbf{METER UN LINK AQUI}, una web en la que se proponen concursos abiertos de Machine Learning. Este ejemplo concreto se trata de un problema que proponen como iniciación para los nuevos usuarios, y consiste en conseguir detectar qué pasajeros sobrevivieron al accidente. Las variables con las que contamos son las siguientes: la categoría del billete, que es una variable categórica (1ª, 2ª o 3ª clase); el sexo, variable binaria; la edad; el número de parientes y esposas a bordo (sin contar padres ni hijos); el número de padres e hijos a bordo; el precio del billete; el lugar de embarque, variable categórica con valores C, S y Q \textbf{RELLENAR LOS NOMBRES DE LOS LUGARES DE EMBARQUE...} y otra información no útil como el nombre del pasajero o un ID único para cada uno de ellos. Disponemos de los datos de 891 pasajeros ya clasificados como supervivientes o no, que usaremos para el training, CV y test set.
+Esta base de datos se encuentra en la página web del Kaggle \textbf{METER UN LINK AQUI}, una web en la que se proponen concursos abiertos de Machine Learning. Este ejemplo concreto consiste en un problema que proponen como iniciación para los nuevos usuarios, y consiste en conseguir detectar qué pasajeros sobrevivieron al accidente. Las variables con las que contamos son las siguientes: la categoría del billete, que es una variable categórica (1ª, 2ª o 3ª clase); el sexo, variable binaria; la edad; el número de parientes y esposas a bordo (sin contar padres ni hijos); el número de padres e hijos a bordo; el precio del billete; el lugar de embarque, variable categórica con valores C, S y Q \textbf{RELLENAR LOS NOMBRES DE LOS LUGARES DE EMBARQUE...} y otra información no útil como el nombre del pasajero o un ID único para cada uno de ellos. Disponemos de los datos de 891 pasajeros ya clasificados como supervivientes o no, que usaremos para el training, CV y test set.
 
-Al igual que con los dígitos, hacemos una primera curva de aprendizaje para asegurar que no vamos a necesitar más datos de entrenamiento, o que no tenemos demasiados. Esta curva se recoge en la gráfica \ref{fig:titanic,_curvas_de_aprendizaje}. En ella podemos ver un efecto interesante, mientras que para casi todos los algoritmos las curvas del training set y las del CV set están próximas y son paralelas, en la gráfica del Random Forest vemos cómo en el training set el algoritmo consigue clasificar bastante bien los datos (valores de F1 en torno a 1), mientras que en el CV set está fallando mucho más (valores entre 0.7 y 0.85), aunque mejora ligeramente al aumentar los datos. Lo ideal sería que el valor F1 del CV set estuviese cercano al del training set, pero en este caso en el que hay tanta diferencia el algoritmo está sobreajustando los datos (overfitting), consigue métricas muy buenas para el training set, a costa de generalizar peor los datos del CV set. Sería bueno ver si, después de ajustar los parámetros con el procedimiento explicado en el apartado \ref{sec:CV}, seguimos cometiendo este overfitting, en cuyo caso habría que obtener más datos de pasajeros del Titanic o desechar directamente el algoritmo.
-
-
+Al igual que con los dígitos, hacemos una primera curva de aprendizaje para asegurar que no vamos a necesitar más datos de entrenamiento, o que no tenemos demasiados. Esta curva se recoge en la gráfica \ref{fig:titanic,_curvas_de_aprendizaje}. En ella podemos ver un efecto interesante: mientras que para casi todos los algoritmos las curvas del training set y las del CV set están próximas y son paralelas, en la gráfica del Random Forest vemos cómo en el training set el algoritmo consigue clasificar bastante bien los datos (valores de F1 en torno a 1), mientras que en el CV set está fallando mucho más (valores entre 0.7 y 0.85), aunque mejora ligeramente al aumentar los datos. Lo ideal sería que el valor F1 del CV set estuviese cercano al del training set, pero en este caso en el que hay tanta diferencia el algoritmo está sobreajustando los datos (overfitting), consigue métricas muy buenas para el training set, a costa de generalizar peor los datos del CV set. Sería bueno ver si, después de ajustar los parámetros con el procedimiento explicado en el apartado \ref{sec:CV}, seguimos cometiendo este overfitting, en cuyo caso habría que obtener más datos de pasajeros del Titanic o desechar directamente el algoritmo.
 
 \begin{figure}[htbp]
 	\centering
-		\includegraphics[width=1.00\textwidth]{graficas/titanic,_curvas_de_aprendizaje.ps}
+		\includegraphics[width=1.00\textwidth]{graficas/titanic,_curvas_de_aprendizaje}
 	\caption{Curvas de aprendizaje del problema del Titanic.}
 	\label{fig:titanic,_curvas_de_aprendizaje}
 \end{figure}
 
+Después de hacer el proceso del Cross Validation, con la misma malla de parámetros que en apartado \ref{sec:digitos}, los mejores parámetros que hemos encontrado son los siguientes: Para el SVC, el kernel RBF con $C=10$ y $\gamma=1.0$; para el Logistic Regression, $C=100$, para el Random Forest, 15 árboles, con 8 datos como mínimo para separar una rama y con 1 dato como mínimo para cada hoja; y para el KNN 3 vecinos. Las métricas medidas por cada algoritmo se recogen en la tabla \ref{tab:TitanicMetricas}.
+
+\begin{table}[htbp]
+	\centering
+		\begin{tabular}{ccccc}
+		  \toprule
+			Algoritmo & Accuracy & Precision & Recall & F1-Score \\
+			\midrule
+			Multinomial NB & 0.7821 & 0.7231 & 0.6912 & 0.7068 \\
+			SVC & 0.7933 & 0.7246 & 0.7353 & 0.7299 \\
+			Logistic Regression & 0.7709 & 0.6957 & 0.7059 & 0.7007 \\
+			Random Forest & 0.8156 & 0.7397 & 0.7941 & 0.7660 \\
+			KNN & 0.7821 & 6986 & 0.7500 & 0.7234 \\
+			\bottomrule
+			\end{tabular}
+	\caption{Métricas del Titanic para los distintos algoritmos.}
+	\label{tab:TitanicMetricas}
+\end{table}
+
+
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=1.00\textwidth]{graficas/titanic,_curvas_de_aprendizajeDESPUES_DEL_CV}
+	\caption{Curvas de aprendizaje del problema del Titanic después de hacer el Cross Validation.}
+	\label{fig:titanic,_curvas_de_aprendizajeDESPUES_DEL_CV}
+\end{figure}
+
+En la gráfica \ref{fig:titanic,_curvas_de_aprendizajeDESPUES_DEL_CV} vemos que no ha mejorado mucho el overfitting del Random Forest, lo cual se puede deber a que tenemos muy pocas variables, muchas de ellas con pocos valores posibles (categóricas), por lo que los árboles de decisión no tienen muchas posibilidades de separar los datos de muchas formas.
+
+En la tabla \ref{tab:TitanicMetricas} podemos elegir el mejor algoritmo que hayamos logrado. Podríamos pensar que es el Random Forest, con un valor F1 de 0.7660, pero como sabemos que está sobreajustando los datos no está generalizando bien \textbf{¿ESTOY SEGURO DE ESTO?}. Los dos mejores algoritmos, una vez despreciamos el Random Forest, son el Support Vector Machine y el K-Nearest Neighbors, con 0.7299 y 0.7234 como valores F1 respectivamente. Aunque estos valores no son muy diferentes, si nos volvemos a fijar en la gráfica \ref{fig:titanic,_curvas_de_aprendizajeDESPUES_DEL_CV} vemos que la curva del CV set y la del training set están más próximas en el SVC que en el KNN, por lo que el SVC tiene menos sesgo, generalizará mejor para datos nuevos. El KNN sería mejor si dispusiésemos de nuevos datos, como se refleja en la gráfica, pero con los datos que tenemos, el SVC es el mejor algoritmo para esta base de datos.
 
 \subsection{Búsqueda del bosón de Higgs}\label{sec:higgs}
 
