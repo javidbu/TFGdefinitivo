@@ -337,7 +337,7 @@ Los kernels tienen la propiedad de que se puede encontrar una transformación $\p
 Hay muchos tipos de kernels. Los más comunes son: kernel polinomial homogéneo ($K(\bm{x}^{(i)},\bm{x}^{(j)}) = (\bm{x}^{(i)}\cdot \bm{x}^{(j)})^d$) e inhomogéneo ($K(\bm{x}^{(i)},\bm{x}^{(j)}) = (\bm{x}^{(i)}\cdot \bm{x}^{(j)}+1)^d$); kernel de función de base radial gaussiano, también llamado \textit{RBF kernel} ($K(\bm{x}^{(i)},\bm{x}^{(j)}) = \exp{\left(-\frac{||\bm{x}^{(i)} - \bm{x}^{(j)}||^2}{2\sigma^2}\right)}$); kernel lineal, igual que el polinomial homogéneo con $d=1$, que corresponde a no hacer nada en el espacio de variables. No hay ninguno mejor que otro, cada base de datos tendrá uno de ellos que funcione mejor que los demás, pero en otras bases de datos ese kernel puede ser peor. Parte del ``\textit{cocinado}'' al preparar un algoritmo \SVM para una base de datos será encontrar qué kernel y con qué valores de los parámetros ($d$ y $\sigma$, por ejemplo) funcionará mejor.
 
 \subsection{Random Forest}\label{sec:RandForest}
-Los Random Forest son un ejemplo de los llamados \textit{ensemble methods}, en los que se utiliza repetidas veces un algoritmo más sencillo, y se combinan los resultados de estas repeticiones para dar un resultado común. En el caso de los Random Forest lo que se utiliza son árboles de decisión (\textit{decision trees}).
+Los Random Forest\footnote{Ver \cite{RF} y \cite{DecTree}.} son un ejemplo de los llamados \textit{ensemble methods}, en los que se utiliza repetidas veces un algoritmo más sencillo, y se combinan los resultados de estas repeticiones para dar un resultado común. En el caso de los Random Forest lo que se utiliza son árboles de decisión (\textit{decision trees}).
 
 \subsubsection{Decision Trees}
 Podemos ver un ejemplo de base de datos en la gráfica \ref{fig:DecTree}a, mientras que en \ref{fig:DecTree}b vemos una posible línea de decisión. Ésta puede parecer muy artificial, muy simple, pero funciona bien y es la que hace un árbol de decisión.
@@ -359,7 +359,7 @@ Podemos ver un ejemplo de base de datos en la gráfica \ref{fig:DecTree}a, mientr
 	\label{fig:DecTreeDecLine}
 \end{figure}
 
-Hay varios criterios para separar las regiones. El primero de ellos, la \textbf{entropía}, se define por
+Hay varios criterios para medir el desorden de las regiones. El primero de ellos, la \textbf{entropía}, se define por
 \begin{equation}
 -\sum_k{p_{mk}\log{p_{mk}}}
 \label{eq:DecTreeEntr}
@@ -398,8 +398,11 @@ Uno de los mayores problemas de un árbol de decisión es su tendencia a sobreajus
 \end{figure}
 
 \subsubsection{Random Forest}
-Blablabla
+Ahora que ya sabemos lo que es un Árbol de Decisión, los Random Forest se construyen a partir de éstos, haciendo crecer varios árboles, cada uno de los cuales utiliza un conjunto aleatorio de N muestras del training set y M variables que irá separando como hemos visto. Con todos los árboles crecidos (entrenados), para cada entrada de datos nueva el Random Forest le asignará la clase más votada por los árboles.
 
+La forma de elegir las N muestras y M variables para cada árbol depende del tipo de Random Forest que hagamos, aunque siempre tienen que tener las mismas distribuciones de probabilidad para todos los árboles, y los árboles tienen que ser independientes entre sí, pues el error de generalización aumenta con la correlación entre árboles. 
+
+Aunque no vamos a entrar en detalles, por no hacer la explicación demasiado larga y tediosa, conviene saber que los Random Forest tienen un método para calcular las variables más importantes en nuestro training set, de forma que si tenemos muchas variables, podremos entrenar un primer Random Forest, ver qué variables han sido más importantes y entrenar un segundo Random Forest sólo con esas variables, ahorrando tiempo de cálculo y memoria. En el apartado \ref{sec:dat}, cada vez que hablemos de variables importantes en una base de datos nos estaremos refiriendo a las variables más importantes para un Random Forest.
 
 \subsection{K-Nearest Neighbors}\label{sec:KNN}
 Llegamos a otro algoritmo más sencillo aún que el Naïve Bayes, si esto puede ser posible. El K-Nearest Neighbors (KNN) se explica casi únicamente al leer el nombre\footnote{Ver \cite{NN1} y \cite{NN2}}. Se trata de un algoritmo que asigna a cada entrada nueva de datos la clase más común entre las K entradas clasificadas más cercanas (del training set), utilizando una métrica dada (normalmente la euclídea). Como parámetros a ajustar de este algoritmo, tenemos únicamente la métrica a utilizar y el número de vecinos.
@@ -474,7 +477,7 @@ Para ilustrar lo que hemos conseguido, podemos realizar las gráficas con las var
 \begin{figure}[htbp]
 	\centering
 		\includegraphics[width=1.00\textwidth]{graficas/digitos,_curvas_de_decision21-28}
-	\caption{Curvas de decisión para los diferentes algoritmos utilizando los valores de los píxeles 21 (x) y 28 (y)}
+	\caption{Curvas de decisión para los diferentes algoritmos utilizando los valores de los píxeles 21 (x) y 28 (y). Los puntos rojos y los azules corresponden a la clase 1 y a la 0, respectivamente. Los puntos semitransparentes son los del test set.}
 	\label{fig:digVar1}
 \end{figure}
 
@@ -486,7 +489,7 @@ Para ilustrar lo que hemos conseguido, podemos realizar las gráficas con las var
 \end{figure}
 
 \subsection{Supervivientes del Titanic}\label{sec:titanic}
-Esta base de datos se encuentra en la página web del Kaggle \textbf{METER UN LINK AQUI}, una web en la que se proponen concursos abiertos de Machine Learning. Este ejemplo concreto consiste en un problema que proponen como iniciación para los nuevos usuarios, y consiste en conseguir detectar qué pasajeros sobrevivieron al accidente. Las variables con las que contamos son las siguientes: la categoría del billete, que es una variable categórica (1ª, 2ª o 3ª clase); el sexo, variable binaria; la edad; el número de parientes y esposas a bordo (sin contar padres ni hijos); el número de padres e hijos a bordo; el precio del billete; el lugar de embarque, variable categórica con valores C, S y Q \textbf{RELLENAR LOS NOMBRES DE LOS LUGARES DE EMBARQUE...} y otra información no útil como el nombre del pasajero o un ID único para cada uno de ellos. Disponemos de los datos de 891 pasajeros ya clasificados como supervivientes o no, que usaremos para el training, CV y test set.
+Esta base de datos se encuentra en la \href{https://www.kaggle.com/c/titanic/data}{página web del Kaggle}, una web en la que se proponen concursos abiertos de Machine Learning. Este ejemplo concreto consiste en un problema que proponen como iniciación para los nuevos usuarios, y consiste en conseguir detectar qué pasajeros sobrevivieron al accidente. Las variables con las que contamos son las siguientes: la categoría del billete, que es una variable categórica (1ª, 2ª o 3ª clase); el sexo, variable binaria; la edad; el número de parientes y esposas a bordo (sin contar padres ni hijos); el número de padres e hijos a bordo; el precio del billete; el lugar de embarque, variable categórica con valores C, Q y S, refiriéndose a Cherbourg, Queenstown y Southampton, y otra información no útil como el nombre del pasajero o un ID único para cada uno de ellos. Disponemos de los datos de 891 pasajeros ya clasificados como supervivientes o no, que usaremos para el training, CV y test set.
 
 Al igual que con los dígitos, hacemos una primera curva de aprendizaje para asegurar que no vamos a necesitar más datos de entrenamiento, o que no tenemos demasiados. Esta curva se recoge en la gráfica \ref{fig:titanic,_curvas_de_aprendizaje}. En ella podemos ver un efecto interesante: mientras que para casi todos los algoritmos las curvas del training set y las del CV set están próximas y son paralelas, en la gráfica del Random Forest vemos cómo en el training set el algoritmo consigue clasificar bastante bien los datos (valores de F1 en torno a 1), mientras que en el CV set está fallando mucho más (valores entre 0.7 y 0.85), aunque mejora ligeramente al aumentar los datos. Lo ideal sería que el valor F1 del CV set estuviese cercano al del training set, pero en este caso en el que hay tanta diferencia el algoritmo está sobreajustando los datos (overfitting), consigue métricas muy buenas para el training set, a costa de generalizar peor los datos del CV set. Sería bueno ver si, después de ajustar los parámetros con el procedimiento explicado en el apartado \ref{sec:CV}, seguimos cometiendo este overfitting, en cuyo caso habría que obtener más datos de pasajeros del Titanic o desechar directamente el algoritmo.
 
@@ -526,9 +529,22 @@ Después de hacer el proceso del Cross Validation, con la misma malla de parámetr
 
 En la gráfica \ref{fig:titanic,_curvas_de_aprendizajeDESPUES_DEL_CV} vemos que no ha mejorado mucho el overfitting del Random Forest, lo cual se puede deber a que tenemos muy pocas variables, muchas de ellas con pocos valores posibles (categóricas), por lo que los árboles de decisión no tienen muchas posibilidades de separar los datos de muchas formas.
 
-En la tabla \ref{tab:TitanicMetricas} podemos elegir el mejor algoritmo que hayamos logrado. Podríamos pensar que es el Random Forest, con un valor F1 de 0.7660, pero como sabemos que está sobreajustando los datos no está generalizando bien \textbf{¿ESTOY SEGURO DE ESTO?}. Los dos mejores algoritmos, una vez despreciamos el Random Forest, son el Support Vector Machine y el K-Nearest Neighbors, con 0.7299 y 0.7234 como valores F1 respectivamente. Aunque estos valores no son muy diferentes, si nos volvemos a fijar en la gráfica \ref{fig:titanic,_curvas_de_aprendizajeDESPUES_DEL_CV} vemos que la curva del CV set y la del training set están más próximas en el SVC que en el KNN, por lo que el SVC tiene menos sesgo, generalizará mejor para datos nuevos. El KNN sería mejor si dispusiésemos de nuevos datos, como se refleja en la gráfica, pero con los datos que tenemos, el SVC es el mejor algoritmo para esta base de datos.
+En la tabla \ref{tab:TitanicMetricas} podemos elegir el mejor algoritmo que hayamos logrado. Podríamos pensar que es el Random Forest, con un valor F1 de 0.7660, pero, como sabemos que está sobreajustando los datos, no está generalizando bien \textbf{¿ESTOY SEGURO DE ESTO?}. Los dos mejores algoritmos, una vez despreciamos el Random Forest, son el Support Vector Machine y el K-Nearest Neighbors, con 0.7299 y 0.7234 como valores F1 respectivamente. Aunque estos valores no son muy diferentes, si nos volvemos a fijar en la gráfica \ref{fig:titanic,_curvas_de_aprendizajeDESPUES_DEL_CV} vemos que la curva del CV set y la del training set están más próximas en el SVC que en el KNN, por lo que el SVC tiene menos sesgo, generalizará mejor para datos nuevos. El KNN sería mejor si dispusiésemos de nuevos datos, como se refleja en la gráfica, pero con los datos que tenemos, el SVC es el mejor algoritmo para esta base de datos.
 
 \subsection{Búsqueda del bosón de Higgs}\label{sec:higgs}
+Por último, vamos a estudiar una base de datos grande, la del bosón de Higgs. Ésta también viene de un concurso del \href{https://www.kaggle.com/c/higgs-boson/data}{Kaggle} celebrado en 2012. Consta de 250000 datos, cada uno con 17 variables primitivas, medidas directamente, y 13 variables derivadas de las anteriores. Muchas entradas de datos tienen variables sin su valor, en esos casos introduciremos un valor nuevo en la variable, que será la media de todos los valores de esa variable.
+
+Lo primero de todo, como la base de datos es bastante grande, es pintar las curvas de aprendizaje, que las tenemos en la gráfica \ref{fig:higgs,_curvas_de_aprendizaje}.
+
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=1.00\textwidth]{C:/Users/Javi/Desktop/TFGdefinitivo/doc/graficas/higgs,_curvas_de_aprendizaje.ps}
+	\caption{Curvas de aprendizaje del bosón de Higgs.}
+	\label{fig:higgs,_curvas_de_aprendizaje}
+\end{figure}
+
+En la gráfica \ref{fig:higgs,_curvas_de_aprendizaje} podemos ver cómo tanto el Random Forest como el KNN están sobreajustando los datos. El SVC parece que mejora al utilizar más datos, subiendo hasta 0.1 su valor F1 desde el 10\% de los datos hasta el 100\% de ellos. Tanto el Logistic Regression como el Gaussian NB no mejoran demasiado con más datos, así que utilizaremos sólo el 10\% de ellos, consiguiendo una notable aceleración en el tiempo de cálculo. Si tras el CV vemos que el Random Forest o el KNN dejan de sobreajustar, o que el SVC generaliza bien los datos, nos plantearemos la posibilidad de usar todos los datos para el entrenamiento de los algoritmos.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %            CONCL                                          %
@@ -540,7 +556,7 @@ En la tabla \ref{tab:TitanicMetricas} podemos elegir el mejor algoritmo que haya
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{thebibliography}{99}
 \bibitem{bhat} \textsc{S. Bhattacharyya, S. Jha, K. Tharakunnel y J. C. Westland}. \textit{Decision Support Systems}, \textbf{50}, 602-613 (2011).
-\bibitem{sanjee} \textsc{S. Jha, M. Guillen, J. C. Westland}. \textit{Expert System with Applications}, \textbf{39}, 12650-12657 (2012).
+%\bibitem{sanjee} \textsc{S. Jha, M. Guillen, J. C. Westland}. \textit{Expert System with Applications}, \textbf{39}, 12650-12657 (2012).
 \bibitem{LogReg} \textsc{D. W. Hosmer, S. Lemeshow, R. X. Sturdivant}. Applied Logistic Regression, \textit{John Wiley} \& \textit{Sons} (2013).
 \bibitem{IA} \textsc{S. Russel, P. Norvig}. Artificial Intelligence: A Modern Approach, \textit{Prentice Hall} (2010).
 \bibitem{NaiveBayes} \textsc{I. Rish}. An empirical study of the naive Bayes classifier, \textit{IBM Research Report} \textbf{No sé cómo citar esto...} (2001).
@@ -548,8 +564,8 @@ En la tabla \ref{tab:TitanicMetricas} podemos elegir el mejor algoritmo que haya
 \bibitem{SVM2} \textsc{C. Cortes, V. Vapnik}. \textit{Machine Learning}, \textbf{20}, 273-297 (1995)
 \bibitem{SVM3} \textsc{V. Vapnik}. Statistical Learning Theory, \textit{John Wiley} \& \textit{Sons} (1998).
 \bibitem{SVM4} \textsc{J. L. Martínez Pérez}. \textit{Comunicación con computador mediante señales cerebrales. Aplicación a la tecnología de la rehabilitación} (2009). Tesis doctoral de la ETSII (UPM). \textbf{Tampoco sé si se cita así...}
+\bibitem{RF} \textsc{L. Breiman}. \textit{Machine Learning}, \textbf{45}, 5-32 (2001).
 \bibitem{DecTree} \textsc{J. R. Quinlan}. \textit{Machine Learning}, \textbf{1}, 81-106 (1986).
-%ALGO DE RANDOM FOREST...
 \bibitem{NN1} \textsc{T. M. Cover, P. Hart}. \textit{IEEE Transactions on Information
 Theory}, \textbf{13}, 21-27 (1967)
 \bibitem{NN2} \textsc{T. M. Cover}. \textit{IEEE Transactions on Information
