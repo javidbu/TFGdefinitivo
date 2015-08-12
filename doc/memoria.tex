@@ -337,7 +337,7 @@ Los kernels tienen la propiedad de que se puede encontrar una transformación $\p
 Hay muchos tipos de kernels. Los más comunes son: kernel polinomial homogéneo ($K(\bm{x}^{(i)},\bm{x}^{(j)}) = (\bm{x}^{(i)}\cdot \bm{x}^{(j)})^d$) e inhomogéneo ($K(\bm{x}^{(i)},\bm{x}^{(j)}) = (\bm{x}^{(i)}\cdot \bm{x}^{(j)}+1)^d$); kernel de función de base radial gaussiano, también llamado \textit{RBF kernel} ($K(\bm{x}^{(i)},\bm{x}^{(j)}) = \exp{\left(-\frac{||\bm{x}^{(i)} - \bm{x}^{(j)}||^2}{2\sigma^2}\right)}$); kernel lineal, igual que el polinomial homogéneo con $d=1$, que corresponde a no hacer nada en el espacio de variables. No hay ninguno mejor que otro, cada base de datos tendrá uno de ellos que funcione mejor que los demás, pero en otras bases de datos ese kernel puede ser peor. Parte del ``\textit{cocinado}'' al preparar un algoritmo \SVM para una base de datos será encontrar qué kernel y con qué valores de los parámetros ($d$ y $\sigma$, por ejemplo) funcionará mejor.
 
 \subsection{Random Forest}\label{sec:RandForest}
-Los Random Forest\footnote{Ver \cite{RF} y \cite{DecTree}.} son un ejemplo de los llamados \textit{ensemble methods}, en los que se utiliza repetidas veces un algoritmo más sencillo, y se combinan los resultados de estas repeticiones para dar un resultado común. En el caso de los Random Forest lo que se utiliza son árboles de decisión (\textit{decision trees}).
+Los Random Forest\footnote{Ver \cite{RF}, \cite{RF2} y \cite{DecTree}.} son un ejemplo de los llamados \textit{ensemble methods}, en los que se utiliza repetidas veces un algoritmo más sencillo, y se combinan los resultados de estas repeticiones para dar un resultado común. En el caso de los Random Forest lo que se utiliza son árboles de decisión (\textit{decision trees}).
 
 \subsubsection{Decision Trees}
 Podemos ver un ejemplo de base de datos en la gráfica \ref{fig:DecTree}a, mientras que en \ref{fig:DecTree}b vemos una posible línea de decisión. Ésta puede parecer muy artificial, muy simple, pero funciona bien y es la que hace un árbol de decisión.
@@ -512,7 +512,7 @@ Después de hacer el proceso del Cross Validation, con la misma malla de parámetr
 			SVC & 0.7933 & 0.7246 & 0.7353 & 0.7299 \\
 			Logistic Regression & 0.7709 & 0.6957 & 0.7059 & 0.7007 \\
 			Random Forest & 0.8156 & 0.7397 & 0.7941 & 0.7660 \\
-			KNN & 0.7821 & 6986 & 0.7500 & 0.7234 \\
+			KNN & 0.7821 & 0.6986 & 0.7500 & 0.7234 \\
 			\bottomrule
 			\end{tabular}
 	\caption{Métricas del Titanic para los distintos algoritmos.}
@@ -543,8 +543,61 @@ Lo primero de todo, como la base de datos es bastante grande, es pintar las curv
 	\label{fig:higgs,_curvas_de_aprendizaje}
 \end{figure}
 
-En la gráfica \ref{fig:higgs,_curvas_de_aprendizaje} podemos ver cómo tanto el Random Forest como el KNN están sobreajustando los datos. El SVC parece que mejora al utilizar más datos, subiendo hasta 0.1 su valor F1 desde el 10\% de los datos hasta el 100\% de ellos. Tanto el Logistic Regression como el Gaussian NB no mejoran demasiado con más datos, así que utilizaremos sólo el 10\% de ellos, consiguiendo una notable aceleración en el tiempo de cálculo. Si tras el CV vemos que el Random Forest o el KNN dejan de sobreajustar, o que el SVC generaliza bien los datos, nos plantearemos la posibilidad de usar todos los datos para el entrenamiento de los algoritmos.
+En la gráfica \ref{fig:higgs,_curvas_de_aprendizaje} podemos ver cómo tanto el Random Forest como el KNN están sobreajustando los datos. El SVC parece que mejora al utilizar más datos, incrementando en 0.1 su valor F1 desde el 10\% de los datos hasta el 100\% de ellos. Tanto el Logistic Regression como el Gaussian NB no mejoran demasiado con más datos, así que utilizaremos sólo el 10\% de ellos, consiguiendo una notable aceleración en el tiempo de cálculo. Si tras el CV vemos que el Random Forest o el KNN dejan de sobreajustar, o que el SVC generaliza bien los datos, nos plantearemos la posibilidad de usar todos los datos para el entrenamiento de los algoritmos.
 
+Tras el proceso de Cross Validation sobre el 10\% de los datos obtenemos las métricas de la tabla \ref{tab:HiggsMetricas}. Los mejores parámetros encontrados son: para el SVC, kernel lineal con $C=1000$ y $\gamma = 0.1$; para el Logistic Regression $C=100$; para el Random Forest 15 árboles, con un mínimo de 10 muestras para separar una rama, y con un mínimo de 4 muestras por hoja; para el KNN, 5 vecinos. Algunos de estos parámetros son los extremos de la malla inicial que estamos utilizando, por ejemplo el valor de $C$ del SVC, el número de árboles o las muestras mínimas para separar una rama del Random Forest, lo cual nos anima a volver a hacer un Cross Validation con una malla más ``fina'' en torno a estos parámetros. Además, estos dos algoritmos son los que mejores métricas han dado, merece la pena perder un poco de tiempo en tratar de mejorarlos.
+
+\begin{table}[htbp]
+	\centering
+		\begin{tabular}{ccccc}
+		  \toprule
+			Algoritmo & Accuracy & Precision & Recall & F1-Score \\
+			\midrule
+			Gaussian NB & 0.6858 & 0.7367 & 0.8144 & 0.7736 \\
+			SVC & 0.8129 & 0.8413 & 0.8826 & 0.8614 \\
+			Logistic Regression & 0.7412 & 0.7810 & 0.8608 & 0.8190 \\
+			Random Forest & 0.8252 & 0.8450 & 0.9000 & 0.8716 \\
+			KNN & 0.7249 & 0.7855 & 0.8015 & 0.7934 \\
+			\bottomrule
+			\end{tabular}
+	\caption{Métricas del Higgs para los distintos algoritmos.}
+	\label{tab:HiggsMetricas}
+\end{table}
+
+La nueva malla que probamos para estos algoritmos es así: para el SVC, con el kernel rbf, $\gamma \in \{0.01, 0.03, 0.1, 0.3, 1.0\}$ y $C\in\{100, 300, 1000, 3000, 10000\}$; mientras que para el Random Forest usamos 10, 13, 15, 17 y 20 árboles, con 8, 9, 10 y 11 como mínimo de muestras para separar una rama, y con 2, 3, 4, 5 y 6 como mínimo de muestras por hoja. 
+
+Los nuevos parámetros encontrados son, para el SVC, $C=10000$y $\gamma=0.03$, y para el Random Forest, 20 árboles, con 11 muestras para separar una rama y con 5 muestras como mínimo por hoja. Las métricas conseguidas por estos algoritmos se recogen en la tabla \ref{tab:HiggsNuevasMetricas}.
+
+\begin{table}[htbp]
+	\centering
+		\begin{tabular}{ccccc}
+		  \toprule
+			Algoritmo & Accuracy & Precision & Recall & F1-Score \\
+			\midrule
+			SVC & 0.8133 & 0.8408 & 0.8842 & 0.8619 \\
+			Random Forest & 0.8270 & 0.8476 & 0.8993 & 0.8727 \\
+			\bottomrule
+			\end{tabular}
+	\caption{Métricas del Higgs para los nuevos algoritmos.}
+	\label{tab:HiggsNuevasMetricas}
+\end{table}
+
+Como podemos ver, comparando las tablas \ref{tab:HiggsMetricas} y \ref{tab:HiggsNuevasMetricas}, no han mejorado mucho nuestros algoritmos, y los parámetros vuelven a estar en los extremos de las mallas. Seguramente en la vida real estos valores de las métricas no serían suficientes, y tendríamos que seguir probando hasta tener valores mejores. En la práctica, debido al tiempo de cálculo, para el objetivo de este estudio no nos importa tanto tener el mejor algoritmo sino saber usarlo, así que nos quedaremos con éstos como los mejores parámetros.
+
+Como vimos en la sección \ref{sec:RandForest}, el Random Forest nos proporciona un método para ver la importancia relativa de las variables. Gracias a ello vemos que las diez variables más importantes para esta base de datos son la 1, 2, 3, 12, 14, 8, 11, 20, 4 y 10, con importancias relativas de 0.1513, 0.1330, 0.0935, 0.0731, 0.0632, 0.0493, 0.0448, 0.0401, 0.0289 y 0.0277. \textbf{RELLENAR NOMBRES DE LAS VARIABLES, ESTAN EN EL EXCEL DE LA CARPETA HIGGS.}
+
+Representamos ahora en la gráfica \ref{fig:HiggsAprendizajePostCV} las curvas de aprendizaje con los nuevos algoritmos, para ver cómo generalizan, y si hace falta usar todos los datos. 
+
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=1.00\textwidth]{graficas/higgs,_curvas_de_aprendizaje_post_CV}
+	\caption{Curvas de aprendizaje para el Higgs después de hacer el Cross Validation}
+	\label{fig:HiggsAprendizajePostCV}
+\end{figure}
+
+Podemos ver que el KNN y el Random Forest siguen sobreajustando los datos, y no parece que esto se vaya a solucionar trabajando con más datos, por la escasa pendiente de ambas curvas. Tampoco van a mejorar significativamente el Logistic Regression ni el Gaussian NB, pues tampoco tienen mucha pendiente sus curvas. El SVC presenta una curva de aprendizaje ``de libro'', en la que el valor F1 del training set va descendiendo, mientras que el del CV set va aumentando, ambos con mayor pendiente al principio, disminuyendo ésta al usar más datos. En la gráfica podemos ver que el SVC tampoco va a mejorar mucho más usando más datos, porque al final de la gráfica las dos curvas se están estabilizando, así que descartamos la idea de volver a correr los algoritmos con todos los datos de los que disponíamos.
+
+Para terminar, como el Random Forest seguía sobreajustando los datos, podemos decir que para esta base de datos el mejor algoritmo es el Support Vector Machine. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %            CONCL                                          %
@@ -565,6 +618,7 @@ En la gráfica \ref{fig:higgs,_curvas_de_aprendizaje} podemos ver cómo tanto el R
 \bibitem{SVM3} \textsc{V. Vapnik}. Statistical Learning Theory, \textit{John Wiley} \& \textit{Sons} (1998).
 \bibitem{SVM4} \textsc{J. L. Martínez Pérez}. \textit{Comunicación con computador mediante señales cerebrales. Aplicación a la tecnología de la rehabilitación} (2009). Tesis doctoral de la ETSII (UPM). \textbf{Tampoco sé si se cita así...}
 \bibitem{RF} \textsc{L. Breiman}. \textit{Machine Learning}, \textbf{45}, 5-32 (2001).
+\bibitem{RF2} \textsc{L. Rokach, O. Maimon}. Data Mining with Decision Trees, Theory and Applications, \textit{World Scientific} (2015).
 \bibitem{DecTree} \textsc{J. R. Quinlan}. \textit{Machine Learning}, \textbf{1}, 81-106 (1986).
 \bibitem{NN1} \textsc{T. M. Cover, P. Hart}. \textit{IEEE Transactions on Information
 Theory}, \textbf{13}, 21-27 (1967)
