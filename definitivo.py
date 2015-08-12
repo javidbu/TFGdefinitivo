@@ -3,7 +3,7 @@ from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_sc
 #Modelos
 from sklearn.svm import SVC
 from sklearn.linear_model import LogisticRegression
-from sklearn.naive_bayes import GaussianNB #Igual nos interesa tambien MultinomialNB...
+from sklearn.naive_bayes import GaussianNB, MultinomialNB #Igual nos interesa tambien MultinomialNB...
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
 #Cross Validation
@@ -52,11 +52,29 @@ class Clasificadores():
 	                GridSearchCV(KNeighborsClassifier(n_neighbors=5),self.param[3],cv=5, scoring='f1_weighted')]
 	   self.newClassifiers = [GaussianNB().fit(self.X,self.y)]#Esto es asi porque el NaiveBayes no tiene parametros para el CV
         else:
-	   self.clasificadores = [SVC(C=1, kernel = 'rbf'), 
-	                          LogisticRegression(C=1), 
+            #Los mejores para la base de datos de los digitos
+	   #self.clasificadores = [SVC(C=1, cache_size=200, class_weight=None, coef0=0.0, degree=3, gamma=0.0001, kernel='rbf', max_iter=-1, probability=False, random_state=None, shrinking=True, tol=0.001, verbose=False), 
+	   #                       LogisticRegression(C=1, class_weight=None, dual=False, fit_intercept=True, intercept_scaling=1, max_iter=100, multi_class='ovr', penalty='l2', random_state=None, solver='liblinear', tol=0.0001, verbose=0), 
+	   #                       GaussianNB(),
+	   #                       RandomForestClassifier(bootstrap=True, class_weight=None, criterion='gini', max_depth=None, max_features='auto', max_leaf_nodes=None, min_samples_leaf=2, min_samples_split=4, min_weight_fraction_leaf=0.0, n_estimators=10, n_jobs=1, oob_score=False, random_state=None, verbose=0, warm_start=False), 
+	   #                       KNeighborsClassifier(algorithm='auto', leaf_size=30, metric='minkowski', metric_params=None, n_neighbors=2, p=2, weights='uniform')]
+	    #Los mejores para la base de datos del Titanic
+	   #self.clasificadores = [SVC(C=10, kernel = 'rbf', gamma = 1.0), 
+	   #                       LogisticRegression(C=100), 
+	   #                       MultinomialNB(),
+	   #                       RandomForestClassifier(n_estimators = 15, criterion = 'gini',max_depth = None, min_samples_split = 8, min_samples_leaf = 1), 
+	   #                       KNeighborsClassifier(n_neighbors = 3)]
+	   #Los mejores para el Higgs
+	   self.clasificadores = [SVC(C=10000, gamma=0.03, kernel = 'rbf'), 
+	                          LogisticRegression(C=100), 
 	                          GaussianNB(), #Este puede usar partial_fit para ajustar a datos nuevos... Interesante cuando haya un monton de ellos...
-	                          RandomForestClassifier(n_estimators = 10, criterion = 'gini',max_depth = None, min_samples_split = 2, min_samples_leaf = 1), 
+	                          RandomForestClassifier(n_estimators = 20, criterion = 'gini',max_depth = None, min_samples_split = 11, min_samples_leaf = 5), 
 	                          KNeighborsClassifier(n_neighbors = 5)]
+	   #self.clasificadores = [SVC(C=1, kernel = 'rbf'), 
+	   #                       LogisticRegression(C=1), 
+	   #                       GaussianNB(), #Este puede usar partial_fit para ajustar a datos nuevos... Interesante cuando haya un monton de ellos...
+	   #                       RandomForestClassifier(n_estimators = 10, criterion = 'gini',max_depth = None, min_samples_split = 2, min_samples_leaf = 1), 
+	   #                       KNeighborsClassifier(n_neighbors = 5)]
 	self.learningCurve = []
 	self.predicciones = {}
 	self.acc = {}
@@ -197,25 +215,27 @@ class Clasificadores():
 
 def Digitos(cv = True,CAp = False):
     '''Prepara los datos de los digitos y hace las clasificaciones.'''
-    columnas = (20,27)
+    #columnas = (20,27)
+    #columnas = (28,46)
     print 'Usando los datos de los digitos'
     a = load_digits(2)
-    X = a['data'][:300,columnas]
-    Xtest = a['data'][300:,columnas]
+    X = a['data'][:300,]#columnas]
+    Xtest = a['data'][300:,]#columnas]
     y = a['target'][:300,]
     ytest = a['target'][300:,]
     c = Clasificadores(X,y,Xtest,ytest, CV = cv, CurvaAprendizaje = CAp, datos = 'Digitos')
     c.todo()
+    #c.CurvaAprendizaje()
     #print c.clasificadores[3].feature_importances_
     return c
     
 def Titanic(cv = True,CAp = False):
     '''Prepara los datos del Titanic y hace las clasificaciones.'''
-    columnas = (1,5)
+    #columnas = (1,4)
     print 'Usando los datos del Titanic'
     X,y,Xtest,ytest = ProcessTitanicData()
-    X = X[:,columnas]
-    Xtest = Xtest[:,columnas]
+    X = X[:,]#columnas]
+    Xtest = Xtest[:,]#columnas]
     c = Clasificadores(X,y,Xtest,ytest, CV = cv, CurvaAprendizaje = CAp, datos = 'Titanic')
     c.todo()
     #print c.clasificadores[3].feature_importances_
@@ -223,16 +243,18 @@ def Titanic(cv = True,CAp = False):
 
 def Higgs(cv = True, CAp = False):
     '''Prepara los datos del Titanic y hace las clasificaciones.'''
-    #columnas = (,)
+    columnas = (1,2)
     print 'Usando los datos del Higgs'
     X, y, Xtest, ytest = ProcessHiggsData()
-    #X = X[:,columnas]
-    #Xtest = Xtest[:,columnas]
+    X = X[:20000,columnas]
+    y = y[:20000]
+    Xtest = Xtest[:,columnas]
     c = Clasificadores(X, y, Xtest, ytest, CV = cv, CurvaAprendizaje = CAp, datos = 'Higgs')
     c.todo()
-    print c.clasificadores[3].feature_importances_
+    #print c.clasificadores[3].feature_importances_
+    return c
     
 if __name__ == '__main__':
-    #d = Digitos(CAp = True)
-    #t = Titanic(CAp = True)
+    #d = Digitos(False,False)
+    #t = Titanic(False, False)
     h = Higgs(False, False)#No poner nunca True para la curva de aprendizaje hasta el final, tarda la del pulpo morado...
