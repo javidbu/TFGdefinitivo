@@ -39,7 +39,8 @@
 \tableofcontents %Añade un índice (igual da algún warning)
 
 \begin{abstract}
-En este trabajo vamos a estudiar diferentes algoritmos de Aprendizaje Automático (\textit{Machine Learning}) para la clasificación de sucesos. Para comprobar su funcionamiento, los utilizaremos sobre distintas bases de datos, una de reconocimiento de dígitos, una de supervivientes del Titanic y la última de búsqueda del bosón de Higgs.
+En este trabajo vamos a estudiar diferentes algoritmos de Aprendizaje Automático (\textit{Machine Learning}) para la clasificación de sucesos. Para comprobar su funcionamiento, los utilizaremos sobre distintas bases de datos, % una de reconocimiento de dígitos, una de supervivientes del Titanic y la última de búsqueda del bosón de Higgs.
+una de supervivientes del Titanic y otra de búsqueda del bosón de Higgs.
 \end{abstract}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -425,67 +426,67 @@ En la grafica \ref{fig:KNN}, vemos la sencillez del algoritmo. Hay que tener cui
 \section{Aplicaciones}\label{sec:dat}
 En esta sección veremos cómo se aplican los anteriores algoritmos a bases de datos reales. Para cada una de ellas explicaremos las variables de que se disponen, las peculiaridades de los datos y los resultados que extraemos.
 
-\subsection{Reconocimiento de dígitos}\label{sec:digitos}
-Gracias al paquete \texttt{sklearn} de Python disponemos de una serie de bases de datos para hacer pruebas. La que vamos a usar es la de reconocimiento de digitos, que consiste en una serie de imágenes de $8\times8$ píxeles, cada una representando un dígito del 0 al 9. Por similitud con la base de datos del Higgs, nosotros solo utilizaremos las imagenes con digitos 0 y 1, transformando el problema en uno de clasificación binaria.
-
-\begin{figure}[htbp]
-	\centering
-		\includegraphics[width=0.70\textwidth]{graficas/digitos}
-	\caption{Ejemplos de imágenes de la base de datos.}
-	\label{fig:digitos}
-\end{figure}
-
-Las variables de esta base de datos son las intensidades de cada uno de los píxeles, con valores comprendidos entre 0 y 16, leídos por filas desde arriba. Tenemos por tanto 64 variables para cada una de las 360 imágenes, que son nuestras entradas de datos.
-
-Procedemos a estudiar los datos. Lo primero que se suele hacer es una curva de aprendizaje, en la que representamos la bondad de cada algoritmo en función del número de datos estudiados. Esto se hace para ver si necesitamos tomar más datos, o si por el contrario podemos despreciar algunos, ganando en velocidad de cálculo. La curva de aprendizaje de esta base de datos se recoge en la gráfica \ref{fig:digitos,_curvas_de_aprendizaje}.
-
-\begin{figure}[htbp]
-	\centering
-		\includegraphics[width=1.00\textwidth]{graficas/digitos,_curvas_de_aprendizaje}
-	\caption{Curvas de aprendizaje para la base de datos de los dígitos.}
-	\label{fig:digitos,_curvas_de_aprendizaje}
-\end{figure}
-
-En la gráfica \ref{fig:digitos,_curvas_de_aprendizaje} podemos ver cómo los algoritmos de Logistic Regression, Support Vector Machine y K-Nearest Neighbors consiguen un buen valor F1 aún con pocos datos, y que la curva del training set y la del CV set son prácticamente paralelas, así que usar más datos no va a ser mejor, y de hecho podemos usar menos datos. El resto de algoritmos presentan un comportamiento más común, en el que la curva del training set va reduciendo su valor F1 al aumentar el número de datos, mientras que la del CV set van aumentando al aumentar los datos. El mejor número de datos a utilizar sería aquel para el que las dos curvas sean prácticamente paralelas, así que según las gráficas podríamos utilizar sólo 100 entradas de datos. En la realidad, al ser ésta una base de datos bastante pequeña, los algoritmos no tardan mucho en ser entrenados, así que usaremos la base de datos entera.
-
-Realizamos ahora el Cross Validation. La malla inicial de parámetros, común a todas las bases de datos, es la siguiente: Para el SVC (Support Vector Classifier) usamos el kernel RBF con los valores de C 1, 10, 100, 1000, y los valores de $\gamma$ 0.0001, 0.001, 0.01, 0.1, 1.0, y el kernel lineal con los mismos valores de C. Como el Naïve Bayes no depende de parámetros no podemos hacer sobre él ningún cross validation. Para el Logistic Regression usamos los mismos valores de C. Para el Random Forest usamos 5, 10 y 15 árboles, para el mínimo de datos requerido para poder separar una rama usamos 2, 4, 6, 8 y 10 datos, y para el mínimo de datos por hoja usamos 1, 2, 3, 4 y 5 datos. Para el KNN (K-Nearest Neighbors) usamos como número de vecinos 2, 3, 4, 5 y 6.
-
-Los mejores parámetros que hemos encontrado tras hacer el Cross Validation son los siguientes: Para el SVC, el kernel RBF con $C=1$ y $\gamma=0.001$; para el Logistic Regression, $C=1$, para el Random Forest, 15 árboles, con 6 datos como mínimo para separar una rama y con 1 dato como mínimo para cada hoja; y para el KNN 2 vecinos. Las métricas medidas por cada algoritmo se recogen en la tabla \ref{tab:digitosMetricas}.
-
-\begin{table}[htbp]
-	\centering
-		\begin{tabular}{ccccc}
-		  \toprule
-			Algoritmo & Accuracy & Precision & Recall & F1-Score \\
-			\midrule
-			Gaussian NB & 0.9667 & 0.9688 & 0.9688 & 0.9688 \\
-			SVC & 0.9500 & 0.9677 & 0.9375 & 0.9524 \\
-			Logistic Regression & 1.0000 & 1.0000 & 1.0000 & 1.0000 \\
-			Random Forest & 1.0000 & 1.0000 & 1.0000 & 1.0000 \\
-			KNN & 1.0000 & 1.0000 & 1.0000 & 1.0000 \\
-			\bottomrule
-			\end{tabular}
-	\caption{Métricas de los dígitos para los distintos algoritmos.}
-	\label{tab:digitosMetricas}
-\end{table}
-
-Hemos llegado a un problema (bendito problema): que tres de nuestros algoritmos funcionan perfectamente. Para elegir cuál es el que nos compensa usar, habrá que ver si buscamos rapidez, robustez (que aguante bien posibles alteraciones en los datos), optimizar la memoria... El mejor algoritmo dependerá de la aplicación real que hagamos de él, pero este ejemplo nos sirve para mostrar que no hay un algoritmo mejor que otro, que, dependiendo de la base de datos, pueden funcionar todos igual de bien (el SVC, que ha sido el peor, tiene un valor F1 de 0.95, bastante alto, y seguramente haciendo un ajuste más fino de los parámetros conseguiríamos un valor mejor).
-
-Para ilustrar lo que hemos conseguido, podemos realizar las gráficas con las variables más influyentes que se han encontrado, consiguiendo las gráficas \ref{fig:digVar1} y \ref{fig:digVar2}, en las que se ha hecho un feature scaling para que las variables estén en el intervalo [0,1].
-
-\begin{figure}[htbp]
-	\centering
-		\includegraphics[width=1.00\textwidth]{graficas/digitos,_curvas_de_decision21-28}
-	\caption{Curvas de decisión para los diferentes algoritmos utilizando los valores de los píxeles 21 (x) y 28 (y). Los puntos rojos y los azules corresponden a la clase 1 y a la 0, respectivamente. Los puntos semitransparentes son los del test set.}
-	\label{fig:digVar1}
-\end{figure}
-
-\begin{figure}[htbp]
-	\centering
-		\includegraphics[width=1.00\textwidth]{graficas/digitos,_curvas_de_decision29-47}
-	\caption{Curvas de decisión para los diferentes algoritmos utilizando los valores de los píxeles 29 (x) y 47 (y)}
-	\label{fig:digVar2}
-\end{figure}
+%\subsection{Reconocimiento de dígitos}\label{sec:digitos}
+%Gracias al paquete \texttt{sklearn} de Python disponemos de una serie de bases de datos para hacer pruebas. La que vamos a usar es la de reconocimiento de digitos, que consiste en una serie de imágenes de $8\times8$ píxeles, cada una representando un dígito del 0 al 9. Por similitud con la base de datos del Higgs, nosotros solo utilizaremos las imagenes con digitos 0 y 1, transformando el problema en uno de clasificación binaria.
+%
+%\begin{figure}[htbp]
+	%\centering
+		%\includegraphics[width=0.70\textwidth]{graficas/digitos}
+	%\caption{Ejemplos de imágenes de la base de datos.}
+	%\label{fig:digitos}
+%\end{figure}
+%
+%Las variables de esta base de datos son las intensidades de cada uno de los píxeles, con valores comprendidos entre 0 y 16, leídos por filas desde arriba. Tenemos por tanto 64 variables para cada una de las 360 imágenes, que son nuestras entradas de datos.
+%
+%Procedemos a estudiar los datos. Lo primero que se suele hacer es una curva de aprendizaje, en la que representamos la bondad de cada algoritmo en función del número de datos estudiados. Esto se hace para ver si necesitamos tomar más datos, o si por el contrario podemos despreciar algunos, ganando en velocidad de cálculo. La curva de aprendizaje de esta base de datos se recoge en la gráfica \ref{fig:digitos,_curvas_de_aprendizaje}.
+%
+%\begin{figure}[htbp]
+	%\centering
+		%\includegraphics[width=1.00\textwidth]{graficas/digitos,_curvas_de_aprendizaje}
+	%\caption{Curvas de aprendizaje para la base de datos de los dígitos.}
+	%\label{fig:digitos,_curvas_de_aprendizaje}
+%\end{figure}
+%
+%En la gráfica \ref{fig:digitos,_curvas_de_aprendizaje} podemos ver cómo los algoritmos de Logistic Regression, Support Vector Machine y K-Nearest Neighbors consiguen un buen valor F1 aún con pocos datos, y que la curva del training set y la del CV set son prácticamente paralelas, así que usar más datos no va a ser mejor, y de hecho podemos usar menos datos. El resto de algoritmos presentan un comportamiento más común, en el que la curva del training set va reduciendo su valor F1 al aumentar el número de datos, mientras que la del CV set van aumentando al aumentar los datos. El mejor número de datos a utilizar sería aquel para el que las dos curvas sean prácticamente paralelas, así que según las gráficas podríamos utilizar sólo 100 entradas de datos. En la realidad, al ser ésta una base de datos bastante pequeña, los algoritmos no tardan mucho en ser entrenados, así que usaremos la base de datos entera.
+%
+%Realizamos ahora el Cross Validation. La malla inicial de parámetros, común a todas las bases de datos, es la siguiente: Para el SVC (Support Vector Classifier) usamos el kernel RBF con los valores de C 1, 10, 100, 1000, y los valores de $\gamma$ 0.0001, 0.001, 0.01, 0.1, 1.0, y el kernel lineal con los mismos valores de C. Como el Naïve Bayes no depende de parámetros no podemos hacer sobre él ningún cross validation. Para el Logistic Regression usamos los mismos valores de C. Para el Random Forest usamos 5, 10 y 15 árboles, para el mínimo de datos requerido para poder separar una rama usamos 2, 4, 6, 8 y 10 datos, y para el mínimo de datos por hoja usamos 1, 2, 3, 4 y 5 datos. Para el KNN (K-Nearest Neighbors) usamos como número de vecinos 2, 3, 4, 5 y 6.
+%
+%Los mejores parámetros que hemos encontrado tras hacer el Cross Validation son los siguientes: Para el SVC, el kernel RBF con $C=1$ y $\gamma=0.001$; para el Logistic Regression, $C=1$, para el Random Forest, 15 árboles, con 6 datos como mínimo para separar una rama y con 1 dato como mínimo para cada hoja; y para el KNN 2 vecinos. Las métricas medidas por cada algoritmo se recogen en la tabla \ref{tab:digitosMetricas}.
+%
+%\begin{table}[htbp]
+	%\centering
+		%\begin{tabular}{ccccc}
+		  %\toprule
+			%Algoritmo & Accuracy & Precision & Recall & F1-Score \\
+			%\midrule
+			%Gaussian NB & 0.9667 & 0.9688 & 0.9688 & 0.9688 \\
+			%SVC & 0.9500 & 0.9677 & 0.9375 & 0.9524 \\
+			%Logistic Regression & 1.0000 & 1.0000 & 1.0000 & 1.0000 \\
+			%Random Forest & 1.0000 & 1.0000 & 1.0000 & 1.0000 \\
+			%KNN & 1.0000 & 1.0000 & 1.0000 & 1.0000 \\
+			%\bottomrule
+			%\end{tabular}
+	%\caption{Métricas de los dígitos para los distintos algoritmos.}
+	%\label{tab:digitosMetricas}
+%\end{table}
+%
+%Hemos llegado a un problema (bendito problema): que tres de nuestros algoritmos funcionan perfectamente. Para elegir cuál es el que nos compensa usar, habrá que ver si buscamos rapidez, robustez (que aguante bien posibles alteraciones en los datos), optimizar la memoria... El mejor algoritmo dependerá de la aplicación real que hagamos de él, pero este ejemplo nos sirve para mostrar que no hay un algoritmo mejor que otro, que, dependiendo de la base de datos, pueden funcionar todos igual de bien (el SVC, que ha sido el peor, tiene un valor F1 de 0.95, bastante alto, y seguramente haciendo un ajuste más fino de los parámetros conseguiríamos un valor mejor).
+%
+%Para ilustrar lo que hemos conseguido, podemos realizar las gráficas con las variables más influyentes que se han encontrado, consiguiendo las gráficas \ref{fig:digVar1} y \ref{fig:digVar2}, en las que se ha hecho un feature scaling para que las variables estén en el intervalo [0,1].
+%
+%\begin{figure}[htbp]
+	%\centering
+		%\includegraphics[width=1.00\textwidth]{graficas/digitos,_curvas_de_decision21-28}
+	%\caption{Curvas de decisión para los diferentes algoritmos utilizando los valores de los píxeles 21 (x) y 28 (y). Los puntos rojos y los azules corresponden a la clase 1 y a la 0, respectivamente. Los puntos semitransparentes son los del test set.}
+	%\label{fig:digVar1}
+%\end{figure}
+%
+%\begin{figure}[htbp]
+	%\centering
+		%\includegraphics[width=1.00\textwidth]{graficas/digitos,_curvas_de_decision29-47}
+	%\caption{Curvas de decisión para los diferentes algoritmos utilizando los valores de los píxeles 29 (x) y 47 (y)}
+	%\label{fig:digVar2}
+%\end{figure}
 
 \subsection{Supervivientes del Titanic}\label{sec:titanic}
 Esta base de datos se encuentra en la página web del Kaggle\footnote{\url{https://www.kaggle.com/c/titanic/data}}, una web en la que se proponen concursos abiertos de Machine Learning. Este ejemplo concreto consiste en un problema que proponen como iniciación para los nuevos usuarios, y consiste en conseguir detectar qué pasajeros sobrevivieron al accidente. Las variables con las que contamos son las siguientes: la categoría del billete, que es una variable categórica (1ª, 2ª o 3ª clase); el sexo, variable binaria; la edad; el número de parientes y esposas a bordo (sin contar padres ni hijos); el número de padres e hijos a bordo; el precio del billete; el lugar de embarque, variable categórica con valores C, Q y S, refiriéndose a Cherbourg, Queenstown y Southampton, y otra información no útil como el nombre del pasajero o un ID único para cada uno de ellos. Disponemos de los datos de 891 pasajeros ya clasificados como supervivientes o no, que usaremos para el training, CV y test set.
@@ -499,7 +500,9 @@ Al igual que con los dígitos, hacemos una primera curva de aprendizaje para aseg
 	\label{fig:titanic,_curvas_de_aprendizaje}
 \end{figure}
 
-Después de hacer el proceso del Cross Validation, con la misma malla de parámetros que en el apartado \ref{sec:digitos}, los mejores parámetros que hemos encontrado son los siguientes: Para el SVC, el kernel RBF con $C=10$ y $\gamma=1.0$; para el Logistic Regression, $C=100$, para el Random Forest, 15 árboles, con 8 datos como mínimo para separar una rama y con 1 dato como mínimo para cada hoja; y para el KNN 3 vecinos. Las métricas medidas por cada algoritmo se recogen en la tabla \ref{tab:TitanicMetricas}.
+Realizamos ahora el Cross Validation. La malla inicial de parámetros, común a ambas bases de datos, es la siguiente: Para el SVC (Support Vector Classifier) usamos el kernel RBF con los valores de C 1, 10, 100, 1000, y los valores de $\gamma$ 0.0001, 0.001, 0.01, 0.1, 1.0, y el kernel lineal con los mismos valores de C. Como el Naïve Bayes no depende de parámetros no podemos hacer sobre él ningún cross validation. Para el Logistic Regression usamos los mismos valores de C. Para el Random Forest usamos 5, 10 y 15 árboles, para el mínimo de datos requerido para poder separar una rama usamos 2, 4, 6, 8 y 10 datos, y para el mínimo de datos por hoja usamos 1, 2, 3, 4 y 5 datos. Para el KNN (K-Nearest Neighbors) usamos como número de vecinos 2, 3, 4, 5 y 6.
+
+Después de hacer el proceso del Cross Validation, los mejores parámetros que hemos encontrado son los siguientes: Para el SVC, el kernel RBF con $C=10$ y $\gamma=1.0$; para el Logistic Regression, $C=100$, para el Random Forest, 15 árboles, con 8 datos como mínimo para separar una rama y con 1 dato como mínimo para cada hoja; y para el KNN 3 vecinos. Las métricas medidas por cada algoritmo se recogen en la tabla \ref{tab:TitanicMetricas}.
 
 \begin{table}[htbp]
 	\centering
