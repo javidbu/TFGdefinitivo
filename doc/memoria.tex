@@ -534,7 +534,7 @@ En la gráfica \ref{fig:titanic,_curvas_de_aprendizajeDESPUES_DEL_CV} vemos que n
 En la tabla \ref{tab:TitanicMetricas} podemos elegir el mejor algoritmo que hayamos logrado. Podríamos pensar que es el RF, con un valor F1 de 0.7660, pero, como sabemos que está sobreajustando los datos, no está generalizando bien \textbf{¿ESTOY SEGURO DE ESTO?}. Los dos mejores algoritmos, una vez despreciamos el RF, son el SVM y el KNN, con 0.7299 y 0.7234 como valores F1 respectivamente. Aunque estos valores no son muy diferentes, si nos volvemos a fijar en la gráfica \ref{fig:titanic,_curvas_de_aprendizajeDESPUES_DEL_CV} vemos que la curva del CVC y la del conjunto de aprendizaje están más próximas en el SVC que en el KNN, por lo que el SVC tiene menos sesgo, generalizará mejor para datos nuevos. El KNN sería mejor si dispusiésemos de nuevos datos, como se refleja en la gráfica, pero con los datos que tenemos, el SVC es el mejor algoritmo para esta base de datos.
 
 \subsection{Búsqueda del bosón de Higgs}\label{sec:higgs}
-Por último, vamos a estudiar una base de datos grande, la del bosón de Higgs. Ésta también viene de un concurso del Kaggle\footnote{\url{https://www.kaggle.com/c/higgs-boson/data}} celebrado en 2012. Consta de 250000 datos, cada uno con 17 variables primitivas, medidas directamente, y 13 variables derivadas de las anteriores. Muchas entradas de datos tienen variables sin ningún valor, bien porque no se haya podido medir o porque no tiene ningún sentido físico, en esos casos introduciremos un valor nuevo en la variable, que será la media de todos los valores de esa variable.
+Por último, vamos a estudiar una base de datos grande, la del bosón de Higgs. Ésta también viene de un concurso del Kaggle\footnote{\url{https://www.kaggle.com/c/higgs-boson/data}} celebrado en 2012. Consiste en distinguir si un evento es la señal de un bosón de higgs (\textit{signal}) o solo ruido de fondo (\textit{background}) y consta de 250000 datos, cada uno con 17 variables primitivas, medidas directamente, y 13 variables derivadas de las anteriores. Muchas entradas de datos tienen variables sin ningún valor, bien porque no se haya podido medir o porque no tiene ningún sentido físico, en esos casos introduciremos un valor nuevo en la variable, que será la media de todos los valores de esa variable.
 
 Lo primero de todo, como la base de datos es bastante grande, es pintar las curvas de aprendizaje, recogidas en la gráfica \ref{fig:higgs,_curvas_de_aprendizaje}.
 
@@ -644,5 +644,49 @@ Theory}, \textbf{14}, 21-27 (1968)
 
 
 \end{thebibliography}
+
+\section{Apéndices}
+\subsection{Variables del Higgs}
+A continuación copio literalmente la explicación de cada una de las variables del problema del apartado \ref{sec:higgs}. 
+
+\begin{enumerate}
+	\item \texttt{EventId} An unique integer identifier of the event. Not to be used as a feature.
+	\item \texttt{DER_mass_MMC} The estimated mass $m_H$ of the Higgs boson candidate, obtained through a probabilistic phase space integration (may be undefined if the topology of the event is too far from the expected topology).
+	\item \texttt{DER_mass_transverse_met_lep} The transverse mass between the missing transverse energy and the lepton.
+	\item \texttt{DER_mass_vis} The invariant mass of the hadronic tau and the lepton. 
+	\item \texttt{DER_pt_h} The modulus of the vector sum of the transverse momentum of the hadronic tau, the lepton, and the missing transverse energy vector.
+	\item \texttt{DER_deltaeta_jet_jet} The absolute value of the pseudorapidity separation between the two jets (undefined if \texttt{PRI_jet_num} $\leq$ 1). 
+	\item \texttt{DER_mass_jet_jet} The invariant mass of the two jets (undefined if \texttt{PRI_jet_num} $\leq$ 1). 
+	\item \texttt{DER_prodeta_jet_jet} The product of the pseudorapidities of the two jets (undefined if \texttt{PRI_jet_num} $\leq$ 1).
+	\item \texttt{DER_deltar_tau_lep} The R separation between the hadronic tau and the lepton. 
+	\item \texttt{DER_pt_tot} The modulus of the vector sum of the missing transverse momenta and the transverse momenta of the hadronic tau, the lepton, the leading jet (if \texttt{PRI_jet_num} $\=$ 1) and the subleading jet (if \texttt{PRI_jet_num} $\=$ 2) (but not of any additional jets)
+	\item \texttt{DER_sum_pt} The sum of the moduli of the transverse momenta of the hadronic tau, the lepton, the leading jet (if \texttt{PRI_jet_num} $\=$ 1) and the subleading jet (if \texttt{PRI_jet_num} $\=$ 2) and the other jets (if \texttt{PRI_jet_num} $\=$ 3). 
+	\item \texttt{DER_pt_ratio_lep_tau} The ratio of the transverse momenta of the lepton and the hadronic tau. 
+	\item \texttt{DER_met_phi_centrality} The centrality of the azimuthal angle of the missing transverse energy vector w.r.t. the hadronic tau and the lepton
+	\[C=\frac{A+B}{\sqrt{A^2+B^2}}\],
+	where $A=\sin{\phi_{met}-\phi_{lep}}$, $B=\sin{\phi_{had}-\phi_{met}}$, and $\phi_{met}$, $\phi_{lep}$, and $\phi_{had}$ are the azimuthal angles of the missing transverse energy vector, the lepton, and the hadronic tau, respectively. The centrality in $\sqrt{2}$ if the missing transverse energy vector $\vec{E}_T^{miss}$ is on the bisector of the transverse momenta of the lepton and the hadronic tau. It decreases to 1 if $\vec{E}_T^{miss}$ is collinear with one of these vectors and it decreases further to $-\sqrt{2}$ when $\vec{E}_T^{miss}$ is exactly opposite to the bisector.
+	\item \texttt{DER_lep_eta_centrality} The centrality of the pseudorapidity of the lepton w.r.t. the two jets (undefined if \texttt{PRI_jet_num} $\leq$ 1)
+	\[\exp{\left[\frac{-4}{(\eta_1-\eta_2)^2}\left(\eta_{lep}-\frac{\eta_1+\eta_2}{2}\right)^2\right]}\],
+	where $\eta_{lep}$ is the preudorapidity of the lepton and $\eta_1$ and $\eta_2$ are the pseudorapidities of the two jets. The centrality is 1 when the lepton is on the bisector of the two jets, decreases to $1/e$ when it is collinear to one of the jets, and decreases further to zero at infinity.
+	\item \texttt{PRI_tau_pt} The transverse momentum $\sqrt{p_x^2+p_y^2}$ of the hadronic tau. 
+	\item \texttt{PRI_tau_eta} The pseudorapidity $\eta$ of the hadronic tau. 
+	\item \texttt{PRI_tau_phi} The azimuth angle $\phi$ of the hadronic tau.
+	\item \texttt{PRI_lep_pt} The transverse momentum $\sqrt{p_x^2+p_y^2}$ of the lepton (electron or muon). 
+	\item \texttt{PRI_lep_eta} The pseudorapidity $\eta$ of the lepton. 
+	\item \texttt{PRI_lep_phi} The azimuth angle $\phi$ of the lepton.
+	\item \texttt{PRI_met} The missing transverse energy $\vec{E}_T^{miss}$. 
+	\item \texttt{PRI_met_phi} The azimuth angle $\phi$ of the missing transverse energy.
+	\item \texttt{PRI_met_sumet} The total transverse energy in the detector.
+	\item \texttt{PRI_jet_num} The number of jets (integer with value of 0, 1, 2 or 3; possible larger values have been caped at 3).
+	\item \texttt{PRI_jet_leading_pt} The transverse momentum $\sqrt{p_x^2+p_y^2}$ of the leading jet, that is the jet with largest transverse momentum (undefined if \texttt{PRI_jet_num} = 0).
+	\item \texttt{PRI_jet_leading_eta} The pseudorapidity $\eta$ of the leading jet (undefined if \texttt{PRI_jet_num} = 0).
+	\item \texttt{PRI_jet_leating_phi} The azimuth angle $\phi$ of the leading jet (undefined if \texttt{PRI_jet_num} = 0). 
+	\item \texttt{PRI_jet_subleading_pt} The transverse momentum $\sqrt{p_x^2+p_y^2}$ of the subleading jet, that is the jet with the second largest transverse momentum (undefined if \texttt{PRI_jet_num} $\leq$ 1).
+	\item \texttt{PRI_jet_subleading_eta} The pseudorapidity $\eta$ of the subleading jet (undefined if \texttt{PRI_jet_num} $\leq$ 1). 
+	\item \texttt{PRI_jet_subleading_phi} The azimuth angle $\phi$ of the subleading jet (undefined if \texttt{PRI_jet_num} $\leq$ 1).
+	\item \texttt{PRI_jet_all_pt} The scalar sum of the transverse momentum of all the jets of the events. 
+	\item \texttt{Label} The event label (string) $y_i\in {s,b}$ (s for signal, b for background). Not to be used as a feature.
+\end{enumerate}
+
 
 \end{document}
