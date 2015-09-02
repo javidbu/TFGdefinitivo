@@ -489,9 +489,9 @@ En esta sección veremos cómo se aplican los anteriores algoritmos a bases de dat
 %\end{figure}
 
 \subsection{Supervivientes del Titanic}\label{sec:titanic}
-Esta base de datos se encuentra en la página web del Kaggle\footnote{\url{https://www.kaggle.com/c/titanic/data}}, una web en la que se proponen concursos abiertos de Machine Learning. Este ejemplo concreto consiste en un problema que proponen como iniciación para los nuevos usuarios, y consiste en conseguir detectar qué pasajeros sobrevivieron al accidente. Las variables con las que contamos son las siguientes: la categoría del billete, que es una variable categórica (1ª, 2ª o 3ª clase); el sexo, variable binaria; la edad; el número de parientes y esposas a bordo (sin contar padres ni hijos); el número de padres e hijos a bordo; el precio del billete; el lugar de embarque, variable categórica con valores C, Q y S, refiriéndose a Cherbourg, Queenstown y Southampton, y otra información no útil como el nombre del pasajero o un ID único para cada uno de ellos. Disponemos de los datos de 891 pasajeros ya clasificados como supervivientes o no, que usaremos para el training, CV y test set.
+Esta base de datos se encuentra en la página web del Kaggle\footnote{\url{https://www.kaggle.com/c/titanic/data}}, una web en la que se proponen concursos abiertos de \ML. Este ejemplo concreto consiste en un problema que proponen como iniciación para los nuevos usuarios, y consiste en conseguir detectar qué pasajeros sobrevivieron al accidente. Las variables con las que contamos son las siguientes: la categoría del billete, que es una variable categórica (1ª, 2ª o 3ª clase); el sexo, variable binaria; la edad; el número de parientes y esposas a bordo (sin contar padres ni hijos); el número de padres e hijos a bordo; el precio del billete; el lugar de embarque, variable categórica con valores C, Q y S, refiriéndose a Cherbourg, Queenstown y Southampton, y otra información no útil como el nombre del pasajero o un ID único para cada uno de ellos. Disponemos de los datos de 891 pasajeros ya clasificados como supervivientes o no, que usaremos para los conjuntos de aprendizaje, validación cruzada y test.
 
-Al igual que con los dígitos, hacemos una primera curva de aprendizaje para asegurar que no vamos a necesitar más datos de entrenamiento, o que no tenemos demasiados. Esta curva se recoge en la gráfica \ref{fig:titanic,_curvas_de_aprendizaje}. En ella podemos ver un efecto interesante: mientras que para casi todos los algoritmos las curvas del training set y las del CV set están próximas y son paralelas, en la gráfica del Random Forest vemos cómo en el training set el algoritmo consigue clasificar bastante bien los datos (valores de F1 en torno a 1), mientras que en el CV set está fallando mucho más (valores entre 0.7 y 0.85), aunque mejora ligeramente al aumentar los datos. Lo ideal sería que el valor F1 del CV set estuviese cercano al del training set, pero en este caso en el que hay tanta diferencia el algoritmo está sobreajustando los datos (overfitting), consigue métricas muy buenas para el training set, a costa de generalizar peor los datos del CV set. Sería bueno ver si, después de ajustar los parámetros con el procedimiento explicado en el apartado \ref{sec:CV}, seguimos cometiendo este overfitting, en cuyo caso habría que obtener más datos de pasajeros del Titanic o desechar directamente el algoritmo.
+Procedemos a estudiar los datos. Lo primero que se suele hacer es una curva de aprendizaje, en la que representamos la bondad de cada algoritmo en función del número de datos estudiados. Esto se hace para ver si necesitamos tomar más datos, o si por el contrario podemos despreciar algunos, ganando en velocidad de cálculo. Esta curva se recoge en la gráfica \ref{fig:titanic,_curvas_de_aprendizaje}. En ella podemos ver un efecto interesante: mientras que para casi todos los algoritmos las curvas del conjunto de aprendizaje y las del CVC están próximas y son paralelas, en la gráfica del RF vemos cómo en el training set el algoritmo consigue clasificar bastante bien los datos (valores de F1 en torno a 1), mientras que en el CVC está fallando mucho más (valores entre 0.7 y 0.85), aunque mejora ligeramente al aumentar los datos. Lo ideal sería que el valor F1 del CVC estuviese cercano al del conjunto de aprendizaje, pero en este caso en el que hay tanta diferencia el algoritmo está sobreajustando los datos (\textit{overfitting}), consigue métricas muy buenas para el conjunto de aprendizaje, a costa de generalizar peor los datos del CVC. Sería bueno ver si, después de ajustar los parámetros con el procedimiento explicado en el apartado \ref{sec:CV}, seguimos cometiendo este sobreajuste, en cuyo caso habría que obtener más datos de pasajeros del Titanic o desechar directamente el algoritmo.
 
 \begin{figure}[htbp]
 	\centering
@@ -500,9 +500,9 @@ Al igual que con los dígitos, hacemos una primera curva de aprendizaje para aseg
 	\label{fig:titanic,_curvas_de_aprendizaje}
 \end{figure}
 
-Realizamos ahora el Cross Validation. La malla inicial de parámetros, común a ambas bases de datos, es la siguiente: Para el SVC (Support Vector Classifier) usamos el kernel RBF con los valores de C 1, 10, 100, 1000, y los valores de $\gamma$ 0.0001, 0.001, 0.01, 0.1, 1.0, y el kernel lineal con los mismos valores de C. Como el Naïve Bayes no depende de parámetros no podemos hacer sobre él ningún cross validation. Para el Logistic Regression usamos los mismos valores de C. Para el Random Forest usamos 5, 10 y 15 árboles, para el mínimo de datos requerido para poder separar una rama usamos 2, 4, 6, 8 y 10 datos, y para el mínimo de datos por hoja usamos 1, 2, 3, 4 y 5 datos. Para el KNN (K-Nearest Neighbors) usamos como número de vecinos 2, 3, 4, 5 y 6.
+Realizamos ahora la validación cruzada. La malla inicial de parámetros, común a ambas bases de datos, es la siguiente: Para el SVC (\textit{Support Vector Classifier}, máquinas de soporte vectorial usadas como clasificadores) usamos el \textit{kernel} RBF con los valores de C 1, 10, 100, 1000, y los valores de $\gamma$ 0.0001, 0.001, 0.01, 0.1, 1.0, y el \textit{kernel} lineal con los mismos valores de C. Como el NB no depende de parámetros no podemos hacer sobre él ninguna validación cruzada. Para el LR usamos los mismos valores de C. Para el RF usamos 5, 10 y 15 árboles, para el mínimo de datos requerido para poder separar una rama usamos 2, 4, 6, 8 y 10 datos, y para el mínimo de datos por hoja usamos 1, 2, 3, 4 y 5 datos. Para el KNN usamos como número de vecinos 2, 3, 4, 5 y 6.
 
-Después de hacer el proceso del Cross Validation, los mejores parámetros que hemos encontrado son los siguientes: Para el SVC, el kernel RBF con $C=10$ y $\gamma=1.0$; para el Logistic Regression, $C=100$, para el Random Forest, 15 árboles, con 8 datos como mínimo para separar una rama y con 1 dato como mínimo para cada hoja; y para el KNN 3 vecinos. Las métricas medidas por cada algoritmo se recogen en la tabla \ref{tab:TitanicMetricas}.
+Después de hacer la validación cruzada, los mejores parámetros que hemos encontrado son los siguientes: Para el SVC, el \textit{kernel} RBF con $C=10$ y $\gamma=1.0$; para el LR, $C=100$, para el RF, 15 árboles, con 8 datos como mínimo para separar una rama y con 1 dato como mínimo para cada hoja; y para el KNN 3 vecinos. Las métricas medidas por cada algoritmo se recogen en la tabla \ref{tab:TitanicMetricas}.
 
 \begin{table}[htbp]
 	\centering
@@ -525,16 +525,16 @@ Después de hacer el proceso del Cross Validation, los mejores parámetros que hem
 \begin{figure}[htbp]
 	\centering
 		\includegraphics[width=1.00\textwidth]{graficas/titanic,_curvas_de_aprendizajeDESPUES_DEL_CV}
-	\caption{Curvas de aprendizaje del problema del Titanic después de hacer el Cross Validation.}
+	\caption{Curvas de aprendizaje del problema del Titanic después de hacer la validación cruzada.}
 	\label{fig:titanic,_curvas_de_aprendizajeDESPUES_DEL_CV}
 \end{figure}
 
-En la gráfica \ref{fig:titanic,_curvas_de_aprendizajeDESPUES_DEL_CV} vemos que no ha mejorado mucho el overfitting del Random Forest, lo cual se puede deber a que tenemos muy pocas variables, muchas de ellas con pocos valores posibles (categóricas), por lo que los árboles de decisión no tienen muchas posibilidades de separar los datos de muchas formas.
+En la gráfica \ref{fig:titanic,_curvas_de_aprendizajeDESPUES_DEL_CV} vemos que no ha mejorado mucho el \textit{overfitting} del RF, lo cual se puede deber a que tenemos muy pocas variables, muchas de ellas con pocos valores posibles (categóricas), por lo que los árboles de decisión no tienen muchas posibilidades de separar los datos de muchas formas.
 
-En la tabla \ref{tab:TitanicMetricas} podemos elegir el mejor algoritmo que hayamos logrado. Podríamos pensar que es el Random Forest, con un valor F1 de 0.7660, pero, como sabemos que está sobreajustando los datos, no está generalizando bien \textbf{¿ESTOY SEGURO DE ESTO?}. Los dos mejores algoritmos, una vez despreciamos el Random Forest, son el Support Vector Machine y el K-Nearest Neighbors, con 0.7299 y 0.7234 como valores F1 respectivamente. Aunque estos valores no son muy diferentes, si nos volvemos a fijar en la gráfica \ref{fig:titanic,_curvas_de_aprendizajeDESPUES_DEL_CV} vemos que la curva del CV set y la del training set están más próximas en el SVC que en el KNN, por lo que el SVC tiene menos sesgo, generalizará mejor para datos nuevos. El KNN sería mejor si dispusiésemos de nuevos datos, como se refleja en la gráfica, pero con los datos que tenemos, el SVC es el mejor algoritmo para esta base de datos.
+En la tabla \ref{tab:TitanicMetricas} podemos elegir el mejor algoritmo que hayamos logrado. Podríamos pensar que es el RF, con un valor F1 de 0.7660, pero, como sabemos que está sobreajustando los datos, no está generalizando bien \textbf{¿ESTOY SEGURO DE ESTO?}. Los dos mejores algoritmos, una vez despreciamos el RF, son el SVM y el KNN, con 0.7299 y 0.7234 como valores F1 respectivamente. Aunque estos valores no son muy diferentes, si nos volvemos a fijar en la gráfica \ref{fig:titanic,_curvas_de_aprendizajeDESPUES_DEL_CV} vemos que la curva del CVC y la del conjunto de aprendizaje están más próximas en el SVC que en el KNN, por lo que el SVC tiene menos sesgo, generalizará mejor para datos nuevos. El KNN sería mejor si dispusiésemos de nuevos datos, como se refleja en la gráfica, pero con los datos que tenemos, el SVC es el mejor algoritmo para esta base de datos.
 
 \subsection{Búsqueda del bosón de Higgs}\label{sec:higgs}
-Por último, vamos a estudiar una base de datos grande, la del bosón de Higgs. Ésta también viene de un concurso del Kaggle\footnote{\url{https://www.kaggle.com/c/higgs-boson/data}} celebrado en 2012. Consta de 250000 datos, cada uno con 17 variables primitivas, medidas directamente, y 13 variables derivadas de las anteriores. Muchas entradas de datos tienen variables sin su valor, bien porque no se haya podido medir o porque no tiene ningún sentido físico, en esos casos introduciremos un valor nuevo en la variable, que será la media de todos los valores de esa variable.
+Por último, vamos a estudiar una base de datos grande, la del bosón de Higgs. Ésta también viene de un concurso del Kaggle\footnote{\url{https://www.kaggle.com/c/higgs-boson/data}} celebrado en 2012. Consta de 250000 datos, cada uno con 17 variables primitivas, medidas directamente, y 13 variables derivadas de las anteriores. Muchas entradas de datos tienen variables sin ningún valor, bien porque no se haya podido medir o porque no tiene ningún sentido físico, en esos casos introduciremos un valor nuevo en la variable, que será la media de todos los valores de esa variable.
 
 Lo primero de todo, como la base de datos es bastante grande, es pintar las curvas de aprendizaje, recogidas en la gráfica \ref{fig:higgs,_curvas_de_aprendizaje}.
 
@@ -545,9 +545,9 @@ Lo primero de todo, como la base de datos es bastante grande, es pintar las curv
 	\label{fig:higgs,_curvas_de_aprendizaje}
 \end{figure}
 
-En la gráfica \ref{fig:higgs,_curvas_de_aprendizaje} podemos ver cómo tanto el \textit{Random Forest} como el \textit{KNN} están sobreajustando los datos. El \textit{SVC} parece que mejora al utilizar más datos, incrementando en 0.1 su valor F1 desde el 10\% de los datos hasta el 100\% de ellos. Tanto el \textit{Logistic Regression} como el \textit{Gaussian NB} no mejoran demasiado con más datos, así que utilizaremos sólo el 10\% de ellos, consiguiendo una notable aceleración en el tiempo de cálculo. Si tras la validación cruzada vemos que el \textit{Random Forest} o el \textit{KNN} dejan de sobreajustar, o que el \textit{SVC} generaliza bien los datos, nos plantearemos la posibilidad de usar todos los datos para el entrenamiento de los algoritmos.
+En la gráfica \ref{fig:higgs,_curvas_de_aprendizaje} podemos ver cómo tanto el RF como el KNN están sobreajustando los datos. El SVC parece que mejora al utilizar más datos, incrementando en 0.1 su valor F1 desde el 10\% de los datos hasta el 100\% de ellos. Tanto el LR como el NB gaussiano no mejoran demasiado con más datos, así que utilizaremos sólo el 10\% de ellos, consiguiendo una notable aceleración en el tiempo de cálculo. Si tras la validación cruzada vemos que el RF o el KNN dejan de sobreajustar, o que el SVC generaliza bien los datos, nos plantearemos la posibilidad de usar todos los datos para el entrenamiento de los algoritmos.
 
-Tras el proceso de validación cruzada sobre el 10\% de los datos obtenemos las métricas de la tabla \ref{tab:HiggsMetricas}. Los mejores parámetros encontrados son: para el \textit{SVC}, \textit{kernel} lineal con $C=1000$ y $\gamma = 0.1$; para el \textit{Logistic Regression} $C=100$; para el \textit{Random Forest} 15 árboles, con un mínimo de 10 muestras para separar una rama, y con un mínimo de 4 muestras por hoja; para el \textit{KNN}, 5 vecinos. Algunos de estos parámetros son los extremos de la malla inicial que estamos utilizando, por ejemplo el valor de $C$ del \textit{SVC}, el número de árboles o las muestras mínimas para separar una rama del \textit{Random Forest}, lo cual nos anima a volver a hacer una validación cruzada con una malla más ``fina'' en torno a estos parámetros. Además, estos dos algoritmos son los que mejores métricas han dado, merece la pena perder un poco de tiempo en tratar de mejorarlos.
+Tras el proceso de validación cruzada sobre el 10\% de los datos obtenemos las métricas de la tabla \ref{tab:HiggsMetricas}. Los mejores parámetros encontrados son: para el SVC, \textit{kernel} RBF con $C=1000$ y $\gamma = 0.1$; para el LR $C=100$; para el RF 15 árboles, con un mínimo de 10 muestras para separar una rama, y con un mínimo de 4 muestras por hoja; para el KNN, 5 vecinos. Algunos de estos parámetros son los extremos de la malla inicial que estamos utilizando, por ejemplo el valor de $C$ del SVC, el número de árboles o las muestras mínimas para separar una rama del RF, lo cual nos anima a volver a hacer una validación cruzada con una malla más ``fina'' en torno a estos parámetros. Además, estos dos algoritmos son los que mejores métricas han dado, merece la pena perder un poco de tiempo en tratar de mejorarlos.
 
 \begin{table}[htbp]
 	\centering
@@ -555,20 +555,20 @@ Tras el proceso de validación cruzada sobre el 10\% de los datos obtenemos las m
 		  \toprule
 			Algoritmo & Accuracy & Precision & Recall & F1-Score \\
 			\midrule
-			\textit{Gaussian NB} & 0.6858 & 0.7367 & 0.8144 & 0.7736 \\
-			\textit{SVC} & 0.8129 & 0.8413 & 0.8826 & 0.8614 \\
-			\textit{Logistic Regression} & 0.7412 & 0.7810 & 0.8608 & 0.8190 \\
-			\textit{Random Forest} & 0.8252 & 0.8450 & 0.9000 & 0.8716 \\
-			\textit{KNN} & 0.7249 & 0.7855 & 0.8015 & 0.7934 \\
+			Gaussian NB & 0.6858 & 0.7367 & 0.8144 & 0.7736 \\
+			SVC & 0.8129 & 0.8413 & 0.8826 & 0.8614 \\
+			Logistic Regression & 0.7412 & 0.7810 & 0.8608 & 0.8190 \\
+			Random Forest & 0.8252 & 0.8450 & 0.9000 & 0.8716 \\
+			KNN & 0.7249 & 0.7855 & 0.8015 & 0.7934 \\
 			\bottomrule
 			\end{tabular}
 	\caption{Métricas del Higgs para los distintos algoritmos.}
 	\label{tab:HiggsMetricas}
 \end{table}
 
-La nueva malla que probamos para estos algoritmos es así: para el \textit{SVC}, con el \textit{kernel} rbf, $\gamma \in \{0.01, 0.03, 0.1, 0.3, 1.0\}$ y $C\in\{100, 300, 1000, 3000, 10000\}$; mientras que para el \textit{Random Forest} usamos 10, 13, 15, 17 y 20 árboles, con 8, 9, 10 y 11 como mínimo de muestras para separar una rama, y con 2, 3, 4, 5 y 6 como mínimo de muestras por hoja. 
+La nueva malla que probamos para estos algoritmos es así: para el SVC, con el \textit{kernel} RBF, $\gamma \in \{0.01, 0.03, 0.1, 0.3, 1.0\}$ y $C\in\{100, 300, 1000, 3000, 10000\}$; mientras que para el RF usamos 10, 13, 15, 17 y 20 árboles, con 8, 9, 10 y 11 como mínimo de muestras para separar una rama, y con 2, 3, 4, 5 y 6 como mínimo de muestras por hoja. 
 
-Los nuevos parámetros encontrados son, para el \textit{SVC}, $C=10000$y $\gamma=0.03$, y para el \textit{Random Forest}, 20 árboles, con 11 muestras para separar una rama y con 5 muestras como mínimo por hoja. Las métricas conseguidas por estos algoritmos se recogen en la tabla \ref{tab:HiggsNuevasMetricas}.
+Los nuevos parámetros encontrados son, para el SVC, $C=10000$ y $\gamma=0.03$, y para el RF, 20 árboles, con 11 muestras para separar una rama y con 5 muestras como mínimo por hoja. Las métricas conseguidas por estos algoritmos se recogen en la tabla \ref{tab:HiggsNuevasMetricas}.
 
 \begin{table}[htbp]
 	\centering
@@ -576,8 +576,8 @@ Los nuevos parámetros encontrados son, para el \textit{SVC}, $C=10000$y $\gamma=
 		  \toprule
 			Algoritmo & Accuracy & Precision & Recall & F1-Score \\
 			\midrule
-			\textit{SVC} & 0.8133 & 0.8408 & 0.8842 & 0.8619 \\
-			\textit{Random Forest} & 0.8270 & 0.8476 & 0.8993 & 0.8727 \\
+			SVC & 0.8133 & 0.8408 & 0.8842 & 0.8619 \\
+			Random Forest & 0.8270 & 0.8476 & 0.8993 & 0.8727 \\
 			\bottomrule
 			\end{tabular}
 	\caption{Métricas del Higgs para los nuevos algoritmos.}
@@ -586,7 +586,7 @@ Los nuevos parámetros encontrados son, para el \textit{SVC}, $C=10000$y $\gamma=
 
 Como podemos ver, comparando las tablas \ref{tab:HiggsMetricas} y \ref{tab:HiggsNuevasMetricas}, no han mejorado mucho nuestros algoritmos, y los parámetros vuelven a estar en los extremos de las mallas. Seguramente en la vida real estos valores de las métricas no serían suficientes, y tendríamos que seguir probando hasta tener valores mejores. En la práctica, debido al tiempo de cálculo, para el objetivo de este estudio no nos importa tanto tener el mejor algoritmo sino saber usarlo, así que nos quedaremos con éstos como los mejores parámetros.
 
-Como vimos en la sección \ref{sec:RandForest}, el \textit{Random Forest} nos proporciona un método para ver la importancia relativa de las variables. Gracias a ello vemos que las diez variables más importantes para esta base de datos son DER\_\-mass\_\-MMC, DER\_\-mass\_\-transverse\_\-met\_\-lep, DER\_\-mass\_\-vis, DER\_\-met\_\-phi\_\-centrality, PRI\_\-tau\_\-pt, DER\_\-deltar\_\-tau\_\-lep, DER\_\-pt\_\-ratio\_\-lep\_\-tau, PRI\_\-met, DER\_\-pt\_\-h y DER\_\-sum\_\-pt\footnote{Ver \cite{higgsDoc} para mayor información sobre estas variables}, con importancias relativas de 0.1513, 0.1330, 0.0935, 0.0731, 0.0632, 0.0493, 0.0448, 0.0401, 0.0289 y 0.0277 respectivamente. No nos sorprende que la variable más importante sea precisamente la masa estimada del candidato a bosón, pues es una característica casi definitoria del bosón. 
+Como vimos en la sección \ref{sec:RandForest}, el RF nos proporciona un método para ver la importancia relativa de las variables. Gracias a ello vemos que las diez variables más importantes para esta base de datos son DER\_\-mass\_\-MMC, DER\_\-mass\_\-transverse\_\-met\_\-lep, DER\_\-mass\_\-vis, DER\_\-met\_\-phi\_\-centrality, PRI\_\-tau\_\-pt, DER\_\-deltar\_\-tau\_\-lep, DER\_\-pt\_\-ratio\_\-lep\_\-tau, PRI\_\-met, DER\_\-pt\_\-h y DER\_\-sum\_\-pt\footnote{Ver \cite{higgsDoc} para mayor información sobre estas variables}, con importancias relativas de 0.1513, 0.1330, 0.0935, 0.0731, 0.0632, 0.0493, 0.0448, 0.0401, 0.0289 y 0.0277 respectivamente. No nos sorprende que la variable más importante sea precisamente la masa estimada del candidato a bosón, pues es una característica casi definitoria del bosón. 
 
 Representamos ahora en la gráfica \ref{fig:HiggsAprendizajePostCV} las curvas de aprendizaje con los nuevos algoritmos, para ver cómo generalizan, y si hace falta usar todos los datos. 
 
@@ -597,9 +597,9 @@ Representamos ahora en la gráfica \ref{fig:HiggsAprendizajePostCV} las curvas de
 	\label{fig:HiggsAprendizajePostCV}
 \end{figure}
 
-Podemos ver que el \textit{KNN} y el \textit{Random Forest} siguen sobreajustando los datos, y no parece que esto se vaya a solucionar trabajando con más datos, por la escasa pendiente de ambas curvas. Tampoco van a mejorar significativamente el Logistic Regression ni el Gaussian NB, pues tampoco tienen mucha pendiente sus curvas. El SVC presenta una curva de aprendizaje ``de libro'', en la que el valor F1 del training set va descendiendo, mientras que el del CV set va aumentando, ambos con mayor pendiente al principio, disminuyendo ésta al usar más datos. En la gráfica podemos ver que el SVC tampoco va a mejorar mucho más usando más datos, porque al final de la gráfica las dos curvas se están estabilizando, así que descartamos la idea de volver a correr los algoritmos con todos los datos de los que disponíamos.
+Podemos ver que el KNN y el RF siguen sobreajustando los datos, y no parece que esto se vaya a solucionar trabajando con más datos, por la escasa pendiente de ambas curvas. Tampoco van a mejorar significativamente el LR ni el NB gaussiano, pues tampoco tienen mucha pendiente sus curvas. El SVC presenta una curva de aprendizaje ``de libro'', en la que el valor F1 del conjunto de aprendizaje va descendiendo, mientras que el del CVC va aumentando, ambos con mayor pendiente al principio, disminuyendo ésta al usar más datos. En la gráfica podemos ver que el SVC tampoco va a mejorar mucho más usando más datos, porque al final de la gráfica las dos curvas se están estabilizando, así que descartamos la idea de volver a correr los algoritmos con todos los datos de los que disponíamos.
 
-Para terminar, como el Random Forest seguía sobreajustando los datos, podemos decir que para esta base de datos el mejor algoritmo es el Support Vector Machine. 
+Para terminar, como el RF seguía sobreajustando los datos, podemos decir que para esta base de datos el mejor algoritmo es la Máquina de Soporte Vectorial. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %            CONCL                                          %
