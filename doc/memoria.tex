@@ -629,45 +629,44 @@ De este trabajo podemos concluir que no existe un algoritmo mejor que el resto, 
 \subsection{Variables del Higgs}\label{sec:features}
 A continuación copio literalmente la explicación de cada una de las variables del problema del apartado \ref{sec:higgs}. 
 
-\textit{
 \begin{enumerate}
-	\item \texttt{EventId} An unique integer identifier of the event. Not to be used as a feature.
-	\item \texttt{DER_mass_MMC} The estimated mass $m_H$ of the Higgs boson candidate, obtained through a probabilistic phase space integration (may be undefined if the topology of the event is too far from the expected topology).
-	\item \texttt{DER_mass_transverse_met_lep} The transverse mass between the missing transverse energy and the lepton.
-	\item \texttt{DER_mass_vis} The invariant mass of the hadronic tau and the lepton. 
-	\item \texttt{DER_pt_h} The modulus of the vector sum of the transverse momentum of the hadronic tau, the lepton, and the missing transverse energy vector.
-	\item \texttt{DER_deltaeta_jet_jet} The absolute value of the pseudorapidity separation between the two jets (undefined if \texttt{PRI_jet_num} $\leq$ 1). 
-	\item \texttt{DER_mass_jet_jet} The invariant mass of the two jets (undefined if \texttt{PRI_jet_num} $\leq$ 1). 
-	\item \texttt{DER_prodeta_jet_jet} The product of the pseudorapidities of the two jets (undefined if \texttt{PRI_jet_num} $\leq$ 1).
-	\item \texttt{DER_deltar_tau_lep} The R separation between the hadronic tau and the lepton. 
-	\item \texttt{DER_pt_tot} The modulus of the vector sum of the missing transverse momenta and the transverse momenta of the hadronic tau, the lepton, the leading jet (if \texttt{PRI_jet_num} $\=$ 1) and the subleading jet (if \texttt{PRI_jet_num} $\=$ 2) (but not of any additional jets)
-	\item \texttt{DER_sum_pt} The sum of the moduli of the transverse momenta of the hadronic tau, the lepton, the leading jet (if \texttt{PRI_jet_num} $\=$ 1) and the subleading jet (if \texttt{PRI_jet_num} $\=$ 2) and the other jets (if \texttt{PRI_jet_num} $\=$ 3). 
-	\item \texttt{DER_pt_ratio_lep_tau} The ratio of the transverse momenta of the lepton and the hadronic tau. 
-	\item \texttt{DER_met_phi_centrality} The centrality of the azimuthal angle of the missing transverse energy vector w.r.t. the hadronic tau and the lepton
+	\item \texttt{EventId} \textit{An unique integer identifier of the event. Not to be used as a feature.}
+	\item \texttt{DER\_mass\_MMC} \textit{The estimated mass} $m_H$ \textit{of the Higgs boson candidate, obtained through a probabilistic phase space integration (may be undefined if the topology of the event is too far from the expected topology).}
+	\item \texttt{DER\_mass\_transverse\_met\_lep} \textit{The transverse mass between the missing transverse energy and the lepton.}
+	\item \texttt{DER\_mass\_vis} \textit{The invariant mass of the hadronic tau and the lepton. }
+	\item \texttt{DER\_pt\_h} \textit{The modulus of the vector sum of the transverse momentum of the hadronic tau, the lepton, and the missing transverse energy vector.}
+	\item \texttt{DER\_deltaeta\_jet\_jet} \textit{The absolute value of the pseudorapidity separation between the two jets (undefined if \texttt{PRI\_\-jet\_\-num} $\leq$ 1). }
+	\item \texttt{DER\_mass\_jet\_jet} \textit{The invariant mass of the two jets (undefined if \texttt{PRI\_\-jet\_\-num} $\leq$ 1). }
+	\item \texttt{DER\_prodeta\_jet\_jet} \textit{The product of the pseudorapidities of the two jets (undefined if \texttt{PRI\_\-jet\_\-num} $\leq$ 1).}
+	\item \texttt{DER\_deltar\_tau\_lep} \textit{The R separation between the hadronic tau and the lepton. }
+	\item \texttt{DER\_pt\_tot} \textit{The modulus of the vector sum of the missing transverse momenta and the transverse momenta of the hadronic tau, the lepton, the leading jet (if \texttt{PRI\_\-jet\_\-num} = 1) and the subleading jet (if \texttt{PRI\_\-jet\_\-num} = 2) (but not of any additional jets).}
+	\item \texttt{DER\_sum\_pt} \textit{The sum of the moduli of the transverse momenta of the hadronic tau, the lepton, the leading jet (if \texttt{PRI\_\-jet\_\-num} = 1) and the subleading jet (if \texttt{PRI\_\-jet\_\-num} = 2) and the other jets (if \texttt{PRI\_\-jet\_\-num} = 3). }
+	\item \texttt{DER\_pt\_ratio\_lep\_tau} \textit{The ratio of the transverse momenta of the lepton and the hadronic tau. }
+	\item \texttt{DER\_met\_phi\_centrality} \textit{The centrality of the azimuthal angle of the missing transverse energy vector w.r.t. the hadronic tau and the lepton
 	\[C=\frac{A+B}{\sqrt{A^2+B^2}}\],
-	where $A=\sin{\phi_{met}-\phi_{lep}}$, $B=\sin{\phi_{had}-\phi_{met}}$, and $\phi_{met}$, $\phi_{lep}$, and $\phi_{had}$ are the azimuthal angles of the missing transverse energy vector, the lepton, and the hadronic tau, respectively. The centrality in $\sqrt{2}$ if the missing transverse energy vector $\vec{E}_T^{miss}$ is on the bisector of the transverse momenta of the lepton and the hadronic tau. It decreases to 1 if $\vec{E}_T^{miss}$ is collinear with one of these vectors and it decreases further to $-\sqrt{2}$ when $\vec{E}_T^{miss}$ is exactly opposite to the bisector.
-	\item \texttt{DER_lep_eta_centrality} The centrality of the pseudorapidity of the lepton w.r.t. the two jets (undefined if \texttt{PRI_jet_num} $\leq$ 1)
+	where $A=\sin{\phi_{met}-\phi_{lep}}$, $B=\sin{\phi_{had}-\phi_{met}}$, and $\phi_{met}$, $\phi_{lep}$, and $\phi_{had}$ are the azimuthal angles of the missing transverse energy vector, the lepton, and the hadronic tau, respectively. The centrality in $\sqrt{2}$ if the missing transverse energy vector $\vec{E}_T^{miss}$ is on the bisector of the transverse momenta of the lepton and the hadronic tau. It decreases to 1 if $\vec{E}_T^{miss}$ is collinear with one of these vectors and it decreases further to $-\sqrt{2}$ when $\vec{E}_T^{miss}$ is exactly opposite to the bisector.}
+	\item \texttt{DER\_lep\_eta\_centrality} \textit{The centrality of the pseudorapidity of the lepton w.r.t. the two jets (undefined if \texttt{PRI\_\-jet\_\-num} $\leq$ 1)
 	\[\exp{\left[\frac{-4}{(\eta_1-\eta_2)^2}\left(\eta_{lep}-\frac{\eta_1+\eta_2}{2}\right)^2\right]}\],
-	where $\eta_{lep}$ is the preudorapidity of the lepton and $\eta_1$ and $\eta_2$ are the pseudorapidities of the two jets. The centrality is 1 when the lepton is on the bisector of the two jets, decreases to $1/e$ when it is collinear to one of the jets, and decreases further to zero at infinity.
-	\item \texttt{PRI_tau_pt} The transverse momentum $\sqrt{p_x^2+p_y^2}$ of the hadronic tau. 
-	\item \texttt{PRI_tau_eta} The pseudorapidity $\eta$ of the hadronic tau. 
-	\item \texttt{PRI_tau_phi} The azimuth angle $\phi$ of the hadronic tau.
-	\item \texttt{PRI_lep_pt} The transverse momentum $\sqrt{p_x^2+p_y^2}$ of the lepton (electron or muon). 
-	\item \texttt{PRI_lep_eta} The pseudorapidity $\eta$ of the lepton. 
-	\item \texttt{PRI_lep_phi} The azimuth angle $\phi$ of the lepton.
-	\item \texttt{PRI_met} The missing transverse energy $\vec{E}_T^{miss}$. 
-	\item \texttt{PRI_met_phi} The azimuth angle $\phi$ of the missing transverse energy.
-	\item \texttt{PRI_met_sumet} The total transverse energy in the detector.
-	\item \texttt{PRI_jet_num} The number of jets (integer with value of 0, 1, 2 or 3; possible larger values have been caped at 3).
-	\item \texttt{PRI_jet_leading_pt} The transverse momentum $\sqrt{p_x^2+p_y^2}$ of the leading jet, that is the jet with largest transverse momentum (undefined if \texttt{PRI_jet_num} = 0).
-	\item \texttt{PRI_jet_leading_eta} The pseudorapidity $\eta$ of the leading jet (undefined if \texttt{PRI_jet_num} = 0).
-	\item \texttt{PRI_jet_leating_phi} The azimuth angle $\phi$ of the leading jet (undefined if \texttt{PRI_jet_num} = 0). 
-	\item \texttt{PRI_jet_subleading_pt} The transverse momentum $\sqrt{p_x^2+p_y^2}$ of the subleading jet, that is the jet with the second largest transverse momentum (undefined if \texttt{PRI_jet_num} $\leq$ 1).
-	\item \texttt{PRI_jet_subleading_eta} The pseudorapidity $\eta$ of the subleading jet (undefined if \texttt{PRI_jet_num} $\leq$ 1). 
-	\item \texttt{PRI_jet_subleading_phi} The azimuth angle $\phi$ of the subleading jet (undefined if \texttt{PRI_jet_num} $\leq$ 1).
-	\item \texttt{PRI_jet_all_pt} The scalar sum of the transverse momentum of all the jets of the events. 
-	\item \texttt{Label} The event label (string) $y_i\in {s,b}$ (s for signal, b for background). Not to be used as a feature.
-\end{enumerate}}
+	where $\eta_{lep}$ is the preudorapidity of the lepton and $\eta_1$ and $\eta_2$ are the pseudorapidities of the two jets. The centrality is 1 when the lepton is on the bisector of the two jets, decreases to $1/e$ when it is collinear to one of the jets, and decreases further to zero at infinity.}
+	\item \texttt{PRI\_tau\_pt} \textit{The transverse momentum $\sqrt{p_x^2+p_y^2}$ of the hadronic tau. }
+	\item \texttt{PRI\_tau\_eta} \textit{The pseudorapidity $\eta$ of the hadronic tau. }
+	\item \texttt{PRI\_tau\_phi} \textit{The azimuth angle $\phi$ of the hadronic tau.}
+	\item \texttt{PRI\_lep\_pt} \textit{The transverse momentum $\sqrt{p_x^2+p_y^2}$ of the lepton (electron or muon). }
+	\item \texttt{PRI\_lep\_eta} \textit{The pseudorapidity $\eta$ of the lepton. }
+	\item \texttt{PRI\_lep\_phi} \textit{The azimuth angle $\phi$ of the lepton.}
+	\item \texttt{PRI\_met} \textit{The missing transverse energy $\vec{E}_T^{miss}$. }
+	\item \texttt{PRI\_met\_phi} \textit{The azimuth angle $\phi$ of the missing transverse energy.}
+	\item \texttt{PRI\_met\_sumet} \textit{The total transverse energy in the detector.}
+	\item \texttt{PRI\_jet\_num} \textit{The number of jets (integer with value of 0, 1, 2 or 3; possible larger values have been caped at 3).}
+	\item \texttt{PRI\_jet\_leading\_pt} \textit{The transverse momentum $\sqrt{p_x^2+p_y^2}$ of the leading jet, that is the jet with largest transverse momentum (undefined if \texttt{PRI\_\-jet\_\-num} = 0).}
+	\item \texttt{PRI\_jet\_leading\_eta} \textit{The pseudorapidity $\eta$ of the leading jet (undefined if \texttt{PRI\_\-jet\_\-num} = 0).}
+	\item \texttt{PRI\_jet\_leating\_phi} \textit{The azimuth angle $\phi$ of the leading jet (undefined if \texttt{PRI\_\-jet\_\-num} = 0). }
+	\item \texttt{PRI\_jet\_subleading\_pt} \textit{The transverse momentum $\sqrt{p_x^2+p_y^2}$ of the subleading jet, that is the jet with the second largest transverse momentum (undefined if \texttt{PRI\_\-jet\_\-num} $\leq$ 1).}
+	\item \texttt{PRI\_jet\_subleading\_eta} \textit{The pseudorapidity $\eta$ of the subleading jet (undefined if \texttt{PRI\_\-jet\_\-num} $\leq$ 1). }
+	\item \texttt{PRI\_jet\_subleading\_phi} \textit{The azimuth angle $\phi$ of the subleading jet (undefined if \texttt{PRI\_\-jet\_\-num} $\leq$ 1).}
+	\item \texttt{PRI\_jet\_all\_pt} \textit{The scalar sum of the transverse momentum of all the jets of the events. }
+	\item \texttt{Label} \textit{The event label (string) $y_i\in {s,b}$ (s for signal, b for background). Not to be used as a feature.}
+\end{enumerate}
 
 Todos los ángulos azimutales $\phi$ están en radianes en el intervalo $[-\pi,\pi)$, las masas, energías y momentos están en GeV, y el resto de variables son adimensionales. Las variables que estén indefinidas, ya sea porque no tienen sentido físico o porque no han podido ser calculadas, tienen un valor de -999.0, que está fuera del rango de valores normal de todas las variables. 
 
