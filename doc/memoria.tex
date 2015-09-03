@@ -619,36 +619,15 @@ Vimos cómo el Random Forest acertaba al escoger las variables más importantes, s
 
 De este trabajo podemos concluir que no existe un algoritmo mejor que el resto, sino que cada base de datos tiene ``su algoritmo'', uno con el que es más fácil sacar toda la información posible de los datos. También concluimos, gracias a la base de datos del Titanic, que donde no hay información no se puede sacar, que los algoritmos no inventan información, sólo tratan de sacarla de los datos.
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%            BIBL.                                          %
+%            APEN.                                          %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{thebibliography}{99}
-\bibitem{bhat} \textsc{S. Bhattacharyya, S. Jha, K. Tharakunnel y J. C. Westland}. \textit{Decision Support Systems}, \textbf{50}, 602-613 (2011).
-%\bibitem{sanjee} \textsc{S. Jha, M. Guillen, J. C. Westland}. \textit{Expert System with Applications}, \textbf{39}, 12650-12657 (2012).
-\bibitem{LogReg} \textsc{D. W. Hosmer, S. Lemeshow, R. X. Sturdivant}. Applied Logistic Regression, \textit{John Wiley} \& \textit{Sons} (2013).
-\bibitem{IA} \textsc{S. Russel, P. Norvig}. Artificial Intelligence: A Modern Approach, \textit{Prentice Hall} (2010).
-\bibitem{NaiveBayes} \textsc{I. Rish}. An empirical study of the naive Bayes classifier, \textit{IBM Research Report} \textbf{No sé cómo citar esto...} (2001).
-\bibitem{SVM} \textsc{J. E. Hernández, S. Salazar}. \textit{Scientia et Technica}, \textbf{31}, 47-52 (2006)
-\bibitem{SVM2} \textsc{C. Cortes, V. Vapnik}. \textit{Machine Learning}, \textbf{20}, 273-297 (1995)
-\bibitem{SVM3} \textsc{V. Vapnik}. Statistical Learning Theory, \textit{John Wiley} \& \textit{Sons} (1998).
-\bibitem{SVM4} \textsc{J. L. Martínez Pérez}. \textit{Comunicación con computador mediante señales cerebrales. Aplicación a la tecnología de la rehabilitación} (2009). Tesis doctoral de la ETSII (UPM). \textbf{Tampoco sé si se cita así...}
-\bibitem{RF} \textsc{L. Breiman}. \textit{Machine Learning}, \textbf{45}, 5-32 (2001).
-\bibitem{RF2} \textsc{L. Rokach, O. Maimon}. Data Mining with Decision Trees, Theory and Applications, \textit{World Scientific} (2015).
-\bibitem{DecTree} \textsc{J. R. Quinlan}. \textit{Machine Learning}, \textbf{1}, 81-106 (1986).
-\bibitem{NN1} \textsc{T. M. Cover, P. Hart}. \textit{IEEE Transactions on Information
-Theory}, \textbf{13}, 21-27 (1967)
-\bibitem{NN2} \textsc{T. M. Cover}. \textit{IEEE Transactions on Information
-Theory}, \textbf{14}, 21-27 (1968)
-\bibitem{higgsDoc} \textsc{C. Adam-Bourdarios, G. Cowan, C. Germain, I. Guyon, B. Kégl y D. Rousseau}. Learning to discover: the Higgs boson machine learning chalenge (2014)
-
-
-
-\end{thebibliography}
-
 \section{Apéndices}
 \subsection{Variables del Higgs}
 A continuación copio literalmente la explicación de cada una de las variables del problema del apartado \ref{sec:higgs}. 
 
+\textit{
 \begin{enumerate}
 	\item \texttt{EventId} An unique integer identifier of the event. Not to be used as a feature.
 	\item \texttt{DER_mass_MMC} The estimated mass $m_H$ of the Higgs boson candidate, obtained through a probabilistic phase space integration (may be undefined if the topology of the event is too far from the expected topology).
@@ -686,7 +665,35 @@ A continuación copio literalmente la explicación de cada una de las variables de
 	\item \texttt{PRI_jet_subleading_phi} The azimuth angle $\phi$ of the subleading jet (undefined if \texttt{PRI_jet_num} $\leq$ 1).
 	\item \texttt{PRI_jet_all_pt} The scalar sum of the transverse momentum of all the jets of the events. 
 	\item \texttt{Label} The event label (string) $y_i\in {s,b}$ (s for signal, b for background). Not to be used as a feature.
-\end{enumerate}
+\end{enumerate}}
+
+Todos los ángulos azimutales $\phi$ están en radianes en el intervalo $[-\pi,\pi)$, las masas, energías y momentos están en GeV, y el resto de variables son adimensionales. Las variables que estén indefinidas, ya sea porque no tienen sentido físico o porque no han podido ser calculadas, tienen un valor de -999.0, que está fuera del rango de valores normal de todas las variables. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%            BIBL.                                          %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{thebibliography}{99}
+\bibitem{bhat} \textsc{S. Bhattacharyya, S. Jha, K. Tharakunnel y J. C. Westland}. \textit{Decision Support Systems}, \textbf{50}, 602-613 (2011).
+%\bibitem{sanjee} \textsc{S. Jha, M. Guillen, J. C. Westland}. \textit{Expert System with Applications}, \textbf{39}, 12650-12657 (2012).
+\bibitem{LogReg} \textsc{D. W. Hosmer, S. Lemeshow, R. X. Sturdivant}. Applied Logistic Regression, \textit{John Wiley} \& \textit{Sons} (2013).
+\bibitem{IA} \textsc{S. Russel, P. Norvig}. Artificial Intelligence: A Modern Approach, \textit{Prentice Hall} (2010).
+\bibitem{NaiveBayes} \textsc{I. Rish}. An empirical study of the naive Bayes classifier, \textit{IBM Research Report} \textbf{No sé cómo citar esto...} (2001).
+\bibitem{SVM} \textsc{J. E. Hernández, S. Salazar}. \textit{Scientia et Technica}, \textbf{31}, 47-52 (2006)
+\bibitem{SVM2} \textsc{C. Cortes, V. Vapnik}. \textit{Machine Learning}, \textbf{20}, 273-297 (1995)
+\bibitem{SVM3} \textsc{V. Vapnik}. Statistical Learning Theory, \textit{John Wiley} \& \textit{Sons} (1998).
+\bibitem{SVM4} \textsc{J. L. Martínez Pérez}. \textit{Comunicación con computador mediante señales cerebrales. Aplicación a la tecnología de la rehabilitación} (2009). Tesis doctoral de la ETSII (UPM). \textbf{Tampoco sé si se cita así...}
+\bibitem{RF} \textsc{L. Breiman}. \textit{Machine Learning}, \textbf{45}, 5-32 (2001).
+\bibitem{RF2} \textsc{L. Rokach, O. Maimon}. Data Mining with Decision Trees, Theory and Applications, \textit{World Scientific} (2015).
+\bibitem{DecTree} \textsc{J. R. Quinlan}. \textit{Machine Learning}, \textbf{1}, 81-106 (1986).
+\bibitem{NN1} \textsc{T. M. Cover, P. Hart}. \textit{IEEE Transactions on Information
+Theory}, \textbf{13}, 21-27 (1967)
+\bibitem{NN2} \textsc{T. M. Cover}. \textit{IEEE Transactions on Information
+Theory}, \textbf{14}, 21-27 (1968)
+\bibitem{higgsDoc} \textsc{C. Adam-Bourdarios, G. Cowan, C. Germain, I. Guyon, B. Kégl y D. Rousseau}. Learning to discover: the Higgs boson machine learning chalenge (2014)
+
+
+
+\end{thebibliography}
 
 
 \end{document}
