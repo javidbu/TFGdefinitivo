@@ -586,7 +586,7 @@ Los nuevos parámetros encontrados son, para el SVC, $C=10000$ y $\gamma=0.03$, y
 
 Como podemos ver, comparando las tablas \ref{tab:HiggsMetricas} y \ref{tab:HiggsNuevasMetricas}, no han mejorado mucho nuestros algoritmos, y los parámetros vuelven a estar en los extremos de las mallas. Seguramente en la vida real estos valores de las métricas no serían suficientes, y tendríamos que seguir probando hasta tener valores mejores. En la práctica, debido al tiempo de cálculo, para el objetivo de este estudio no nos importa tanto tener el mejor algoritmo sino saber usarlo, así que nos quedaremos con éstos como los mejores parámetros.
 
-Como vimos en la sección \ref{sec:RandForest}, el RF nos proporciona un método para ver la importancia relativa de las variables. Gracias a ello vemos que las diez variables más importantes para esta base de datos son DER\_\-mass\_\-MMC, DER\_\-mass\_\-transverse\_\-met\_\-lep, DER\_\-mass\_\-vis, DER\_\-met\_\-phi\_\-centrality, PRI\_\-tau\_\-pt, DER\_\-deltar\_\-tau\_\-lep, DER\_\-pt\_\-ratio\_\-lep\_\-tau, PRI\_\-met, DER\_\-pt\_\-h y DER\_\-sum\_\-pt\footnote{Ver \cite{higgsDoc} para mayor información sobre estas variables}, con importancias relativas de 0.1513, 0.1330, 0.0935, 0.0731, 0.0632, 0.0493, 0.0448, 0.0401, 0.0289 y 0.0277 respectivamente. No nos sorprende que la variable más importante sea precisamente la masa estimada del candidato a bosón, pues es una característica casi definitoria del bosón. 
+Como vimos en la sección \ref{sec:RandForest}, el RF nos proporciona un método para ver la importancia relativa de las variables. Gracias a ello vemos que las diez variables más importantes para esta base de datos son DER\_\-mass\_\-MMC, DER\_\-mass\_\-transverse\_\-met\_\-lep, DER\_\-mass\_\-vis, DER\_\-met\_\-phi\_\-centrality, PRI\_\-tau\_\-pt, DER\_\-deltar\_\-tau\_\-lep, DER\_\-pt\_\-ratio\_\-lep\_\-tau, PRI\_\-met, DER\_\-pt\_\-h y DER\_\-sum\_\-pt\footnote{Ver \cite{higgsDoc} o la seccion \ref{sec:features} para mayor información sobre estas variables}, con importancias relativas de 0.1513, 0.1330, 0.0935, 0.0731, 0.0632, 0.0493, 0.0448, 0.0401, 0.0289 y 0.0277 respectivamente. No nos sorprende que la variable más importante sea precisamente la masa estimada del evento, pues es una característica casi definitoria del bosón. 
 
 Representamos ahora en la gráfica \ref{fig:HiggsAprendizajePostCV} las curvas de aprendizaje con los nuevos algoritmos, para ver cómo generalizan, y si hace falta usar todos los datos. 
 
@@ -624,7 +624,7 @@ De este trabajo podemos concluir que no existe un algoritmo mejor que el resto, 
 %            APEN.                                          %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Apéndices}
-\subsection{Variables del Higgs}
+\subsection{Variables del Higgs}\label{sec:features}
 A continuación copio literalmente la explicación de cada una de las variables del problema del apartado \ref{sec:higgs}. 
 
 \textit{
