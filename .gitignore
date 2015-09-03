@@ -6,7 +6,6 @@
 *.log
 *.out
 *.toc
-*.ps
 *.pyc
 *.pdf
 !doc/memoria.pdf
