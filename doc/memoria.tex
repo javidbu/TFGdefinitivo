@@ -536,7 +536,7 @@ En la tabla \ref{tab:TitanicMetricas} podemos elegir el mejor algoritmo que haya
 Como resumen de lo que acabamos de conseguir, tenemos un algoritmo, la máquina de soporte vectorial, que entrenado con los datos de apenas 600 pasajeros, como podemos ver en la gráfica \ref{fig:titanic,_curvas_de_aprendizajeDESPUES_DEL_CV}, consigue predecir con una exactitud de casi el 80\% si el resto de pasajeros sobrevivirán o no. Ha encontrado patrones en los datos que seguramente nadie podría haber visto, no fijándose solo en si el pasajero en cuestión es una señorita joven, que viajaba en primera clase con su padre a bordo.
 
 \subsection{Búsqueda del bosón de Higgs}\label{sec:higgs}
-Por último, vamos a estudiar una base de datos grande, la del bosón de Higgs. Ésta también viene de un concurso del Kaggle\footnote{\url{https://www.kaggle.com/c/higgs-boson/data}} celebrado en 2012. Consta de 250000 datos, cada uno con 17 variables primitivas, medidas directamente, y 13 variables derivadas de las anteriores. Muchas entradas de datos tienen variables sin ningún valor, bien porque no se haya podido medir o porque no tiene ningún sentido físico, en esos casos introduciremos un valor nuevo en la variable, que será la media de todos los valores de esa variable.
+Por último, vamos a estudiar una base de datos grande, la del bosón de Higgs. Ésta también viene de un concurso del Kaggle\footnote{\url{https://www.kaggle.com/c/higgs-boson/data}} celebrado en 2012. Consiste en distinguir si un evento es la señal de un bosón de higgs (\textit{signal}) o solo ruido de fondo (\textit{background}) y consta de 250000 datos, cada uno con 17 variables primitivas, medidas directamente, y 13 variables derivadas de las anteriores. Muchas entradas de datos tienen variables sin ningún valor, bien porque no se haya podido medir o porque no tiene ningún sentido físico, en esos casos introduciremos un valor nuevo en la variable, que será la media de todos los valores de esa variable.
 
 Lo primero de todo, como la base de datos es bastante grande, es pintar las curvas de aprendizaje, recogidas en la gráfica \ref{fig:higgs,_curvas_de_aprendizaje}.
 
@@ -588,7 +588,7 @@ Los nuevos parámetros encontrados son, para el SVC, $C=10000$ y $\gamma=0.03$, y
 
 Como podemos ver, comparando las tablas \ref{tab:HiggsMetricas} y \ref{tab:HiggsNuevasMetricas}, no han mejorado mucho nuestros algoritmos, y los parámetros vuelven a estar en los extremos de las mallas. Seguramente en la vida real estos valores de las métricas no serían suficientes, y tendríamos que seguir probando hasta tener valores mejores. En la práctica, debido al tiempo de cálculo, para el objetivo de este estudio no nos importa tanto tener el mejor algoritmo sino saber usarlo, así que nos quedaremos con éstos como los mejores parámetros.
 
-Como vimos en la sección \ref{sec:RandForest}, el RF nos proporciona un método para ver la importancia relativa de las variables. Gracias a ello vemos que las diez variables más importantes para esta base de datos son DER\_\-mass\_\-MMC, DER\_\-mass\_\-transverse\_\-met\_\-lep, DER\_\-mass\_\-vis, DER\_\-met\_\-phi\_\-centrality, PRI\_\-tau\_\-pt, DER\_\-deltar\_\-tau\_\-lep, DER\_\-pt\_\-ratio\_\-lep\_\-tau, PRI\_\-met, DER\_\-pt\_\-h y DER\_\-sum\_\-pt\footnote{Ver \cite{higgsDoc} para mayor información sobre estas variables}, con importancias relativas de 0.1513, 0.1330, 0.0935, 0.0731, 0.0632, 0.0493, 0.0448, 0.0401, 0.0289 y 0.0277 respectivamente. No nos sorprende que la variable más importante sea precisamente la masa estimada del candidato a bosón, pues es una característica casi definitoria del bosón. 
+Como vimos en la sección \ref{sec:RandForest}, el RF nos proporciona un método para ver la importancia relativa de las variables. Gracias a ello vemos que las diez variables más importantes para esta base de datos son DER\_\-mass\_\-MMC, DER\_\-mass\_\-transverse\_\-met\_\-lep, DER\_\-mass\_\-vis, DER\_\-met\_\-phi\_\-centrality, PRI\_\-tau\_\-pt, DER\_\-deltar\_\-tau\_\-lep, DER\_\-pt\_\-ratio\_\-lep\_\-tau, PRI\_\-met, DER\_\-pt\_\-h y DER\_\-sum\_\-pt\footnote{Ver \cite{higgsDoc} o la seccion \ref{sec:features} para mayor información sobre estas variables}, con importancias relativas de 0.1513, 0.1330, 0.0935, 0.0731, 0.0632, 0.0493, 0.0448, 0.0401, 0.0289 y 0.0277 respectivamente. No nos sorprende que la variable más importante sea precisamente la masa estimada del evento, pues es una característica casi definitoria del bosón. 
 
 Representamos ahora en la gráfica \ref{fig:HiggsAprendizajePostCV} las curvas de aprendizaje con los nuevos algoritmos, para ver cómo generalizan, y si hace falta usar todos los datos. 
 
@@ -621,6 +621,56 @@ Vimos cómo el Random Forest acertaba al escoger las variables más importantes, s
 
 De este trabajo podemos concluir que no existe un algoritmo mejor que el resto, sino que cada base de datos tiene ``su algoritmo'', uno con el que es más fácil sacar toda la información posible de los datos. También concluimos, gracias a la base de datos del Titanic, que donde no hay información no se puede sacar, que los algoritmos no inventan información, sólo tratan de sacarla de los datos.
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%            APEN.                                          %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Apéndices}
+\subsection{Variables del Higgs}\label{sec:features}
+A continuación copio literalmente la explicación de cada una de las variables del problema del apartado \ref{sec:higgs}. 
+
+\textit{
+\begin{enumerate}
+	\item \texttt{EventId} An unique integer identifier of the event. Not to be used as a feature.
+	\item \texttt{DER_mass_MMC} The estimated mass $m_H$ of the Higgs boson candidate, obtained through a probabilistic phase space integration (may be undefined if the topology of the event is too far from the expected topology).
+	\item \texttt{DER_mass_transverse_met_lep} The transverse mass between the missing transverse energy and the lepton.
+	\item \texttt{DER_mass_vis} The invariant mass of the hadronic tau and the lepton. 
+	\item \texttt{DER_pt_h} The modulus of the vector sum of the transverse momentum of the hadronic tau, the lepton, and the missing transverse energy vector.
+	\item \texttt{DER_deltaeta_jet_jet} The absolute value of the pseudorapidity separation between the two jets (undefined if \texttt{PRI_jet_num} $\leq$ 1). 
+	\item \texttt{DER_mass_jet_jet} The invariant mass of the two jets (undefined if \texttt{PRI_jet_num} $\leq$ 1). 
+	\item \texttt{DER_prodeta_jet_jet} The product of the pseudorapidities of the two jets (undefined if \texttt{PRI_jet_num} $\leq$ 1).
+	\item \texttt{DER_deltar_tau_lep} The R separation between the hadronic tau and the lepton. 
+	\item \texttt{DER_pt_tot} The modulus of the vector sum of the missing transverse momenta and the transverse momenta of the hadronic tau, the lepton, the leading jet (if \texttt{PRI_jet_num} $\=$ 1) and the subleading jet (if \texttt{PRI_jet_num} $\=$ 2) (but not of any additional jets)
+	\item \texttt{DER_sum_pt} The sum of the moduli of the transverse momenta of the hadronic tau, the lepton, the leading jet (if \texttt{PRI_jet_num} $\=$ 1) and the subleading jet (if \texttt{PRI_jet_num} $\=$ 2) and the other jets (if \texttt{PRI_jet_num} $\=$ 3). 
+	\item \texttt{DER_pt_ratio_lep_tau} The ratio of the transverse momenta of the lepton and the hadronic tau. 
+	\item \texttt{DER_met_phi_centrality} The centrality of the azimuthal angle of the missing transverse energy vector w.r.t. the hadronic tau and the lepton
+	\[C=\frac{A+B}{\sqrt{A^2+B^2}}\],
+	where $A=\sin{\phi_{met}-\phi_{lep}}$, $B=\sin{\phi_{had}-\phi_{met}}$, and $\phi_{met}$, $\phi_{lep}$, and $\phi_{had}$ are the azimuthal angles of the missing transverse energy vector, the lepton, and the hadronic tau, respectively. The centrality in $\sqrt{2}$ if the missing transverse energy vector $\vec{E}_T^{miss}$ is on the bisector of the transverse momenta of the lepton and the hadronic tau. It decreases to 1 if $\vec{E}_T^{miss}$ is collinear with one of these vectors and it decreases further to $-\sqrt{2}$ when $\vec{E}_T^{miss}$ is exactly opposite to the bisector.
+	\item \texttt{DER_lep_eta_centrality} The centrality of the pseudorapidity of the lepton w.r.t. the two jets (undefined if \texttt{PRI_jet_num} $\leq$ 1)
+	\[\exp{\left[\frac{-4}{(\eta_1-\eta_2)^2}\left(\eta_{lep}-\frac{\eta_1+\eta_2}{2}\right)^2\right]}\],
+	where $\eta_{lep}$ is the preudorapidity of the lepton and $\eta_1$ and $\eta_2$ are the pseudorapidities of the two jets. The centrality is 1 when the lepton is on the bisector of the two jets, decreases to $1/e$ when it is collinear to one of the jets, and decreases further to zero at infinity.
+	\item \texttt{PRI_tau_pt} The transverse momentum $\sqrt{p_x^2+p_y^2}$ of the hadronic tau. 
+	\item \texttt{PRI_tau_eta} The pseudorapidity $\eta$ of the hadronic tau. 
+	\item \texttt{PRI_tau_phi} The azimuth angle $\phi$ of the hadronic tau.
+	\item \texttt{PRI_lep_pt} The transverse momentum $\sqrt{p_x^2+p_y^2}$ of the lepton (electron or muon). 
+	\item \texttt{PRI_lep_eta} The pseudorapidity $\eta$ of the lepton. 
+	\item \texttt{PRI_lep_phi} The azimuth angle $\phi$ of the lepton.
+	\item \texttt{PRI_met} The missing transverse energy $\vec{E}_T^{miss}$. 
+	\item \texttt{PRI_met_phi} The azimuth angle $\phi$ of the missing transverse energy.
+	\item \texttt{PRI_met_sumet} The total transverse energy in the detector.
+	\item \texttt{PRI_jet_num} The number of jets (integer with value of 0, 1, 2 or 3; possible larger values have been caped at 3).
+	\item \texttt{PRI_jet_leading_pt} The transverse momentum $\sqrt{p_x^2+p_y^2}$ of the leading jet, that is the jet with largest transverse momentum (undefined if \texttt{PRI_jet_num} = 0).
+	\item \texttt{PRI_jet_leading_eta} The pseudorapidity $\eta$ of the leading jet (undefined if \texttt{PRI_jet_num} = 0).
+	\item \texttt{PRI_jet_leating_phi} The azimuth angle $\phi$ of the leading jet (undefined if \texttt{PRI_jet_num} = 0). 
+	\item \texttt{PRI_jet_subleading_pt} The transverse momentum $\sqrt{p_x^2+p_y^2}$ of the subleading jet, that is the jet with the second largest transverse momentum (undefined if \texttt{PRI_jet_num} $\leq$ 1).
+	\item \texttt{PRI_jet_subleading_eta} The pseudorapidity $\eta$ of the subleading jet (undefined if \texttt{PRI_jet_num} $\leq$ 1). 
+	\item \texttt{PRI_jet_subleading_phi} The azimuth angle $\phi$ of the subleading jet (undefined if \texttt{PRI_jet_num} $\leq$ 1).
+	\item \texttt{PRI_jet_all_pt} The scalar sum of the transverse momentum of all the jets of the events. 
+	\item \texttt{Label} The event label (string) $y_i\in {s,b}$ (s for signal, b for background). Not to be used as a feature.
+\end{enumerate}}
+
+Todos los ángulos azimutales $\phi$ están en radianes en el intervalo $[-\pi,\pi)$, las masas, energías y momentos están en GeV, y el resto de variables son adimensionales. Las variables que estén indefinidas, ya sea porque no tienen sentido físico o porque no han podido ser calculadas, tienen un valor de -999.0, que está fuera del rango de valores normal de todas las variables. 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %            BIBL.                                          %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -646,5 +696,6 @@ Theory}, \textbf{14}, 21-27 (1968)
 
 
 \end{thebibliography}
+
 
 \end{document}
