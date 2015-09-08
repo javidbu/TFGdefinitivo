@@ -1,63 +1,52 @@
-\documentclass[10pt,a4paper]{article}
-
-\newcommand{\nombre}{Javier D\'iaz Bustamante Ussia}
-\newcommand{\titulo}{Algoritmos de Aprendizaje Autom\'atico y sus aplicaciones}
-\newcommand{\asignatura}{Trabajo de Fin de Grado}
-
-\author{\nombre}
-\title{\Huge \titulo \\\Large \asignatura}
-\date{\today}
+\documentclass[11pt]{amsart}
 
 \usepackage[latin1]{inputenc}
-\usepackage[spanish]{babel} %Estefania usa [spanish,es-tabla], igual así me ahorro renewcommand y eso...
+\usepackage[spanish]{babel}
 \usepackage{amsmath}
+\usepackage{geometry}
 \usepackage{amssymb}
 \usepackage{graphicx}
-\usepackage[hidelinks]{hyperref} %Añade marcadores e hipervinculos (sin colorear)
-\usepackage{booktabs}%Para \toprule, middlerule y bottomrule en las tablas
-\usepackage{subfigure}%Subfiguras
-\usepackage{multirow}%Celdas que ocupan muchas lineas. Muchas columnas viene por defecto
-\usepackage[all]{hypcap}%Hace que los links de hyperref vayan al ppio de la figura, no al caption.
-\usepackage{xspace}%Para tratar bien los espacios despues de un comando definido por mi (ver linea \newcommand{\ML})
+\usepackage[hidelinks]{hyperref}
+\usepackage{booktabs}
+\usepackage{subfigure}
+\usepackage{multirow}
+\usepackage[all]{hypcap}
+\usepackage{xspace}
 \usepackage{bm}
 
-\spanishdecimal{.} %Cambia la coma decimal por un punto
+\spanishdecimal{.}
 
-\pagestyle{myheadings}
-\markboth{}{\titulo}
-\newcommand{\qed}{\hfill\ensuremath{\blacksquare}} %simbolo quod erat demostrandum, \qed
-\newcommand\encuadre[1]{\text{\fbox{${\displaystyle #1}$}}} %\encuadre encuadra ecuaciones
-%ejemplo: \[ \therefore \encuadre{2+2=4} \]
+\newcommand\encuadre[1]{\text{\fbox{${\displaystyle #1}$}}}
 \newcommand{\ML}{\textit{ML}\xspace}
 \newcommand{\SVM}{\textit{SVM}\xspace}
+\geometry{left=2.5cm, right=2.4cm, top=3cm, bottom=2.5cm}
+
+\author{Javier D\'iaz Bustamante Ussia}
+\title{Algoritmos de Aprendizaje Automático y sus aplicaciones}
+\address{Departamento de F\'isica Te\'orica II, Universidad Complutense de
+Madrid, 28040 Madrid, Spain.}
+
+\date{}
 
 \begin{document}
-\renewcommand{\tablename}{Tabla} %Para que no aparezca "Cuadro"
-\renewcommand{\figurename}{Gráfica} %Para que no aparezca "Figura"
-\maketitle
-
-\tableofcontents %Añade un índice (igual da algún warning)
+\renewcommand{\tablename}{Tabla}
+\renewcommand{\figurename}{Gráfica}
 
 \begin{abstract}
-En este trabajo vamos a estudiar diferentes algoritmos de Aprendizaje Automático (\textit{Machine Learning}) para la clasificación de sucesos. Para comprobar su funcionamiento, los utilizaremos sobre distintas bases de datos, % una de reconocimiento de dígitos, una de supervivientes del Titanic y la última de búsqueda del bosón de Higgs.
-una de supervivientes del Titanic y otra de búsqueda del bosón de Higgs.
+En este trabajo vamos a estudiar diferentes algoritmos de Aprendizaje Automático (\textit{Machine Learning}) para la clasificación de sucesos. Para comprobar su funcionamiento, los utilizaremos sobre distintas bases de datos, una de supervivientes del Titanic y otra de búsqueda del bosón de Higgs.
+
+\centering\includegraphics[width=0.4\textwidth]{graficas/titanic3}
 \end{abstract}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%            INTRO                                          %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\maketitle
+
 \section{Introducción}
 En un mundo cada vez más tecnológico, las bases de datos crecen cada día. Cuando alguien entra en una página web, realiza una compra en un comercio, una empresa realiza un estudio de mercado, se celebran unas elecciones, se están almacenando datos. Con este ingente flujo de datos, la física no se podía quedar atrás, hoy en día los grandes aceleradores de partículas manejan al día millones de sucesos que hay que catalogar, clasificar y estudiar, pero la enorme cantidad de estos datos hace imposible su tratamiento \textit{manual}.
 
 Para solucionar el problema del tratamiento de datos surge el \textit{Machine Learning} (de ahora en adelante \ML), con algoritmos cada vez más potentes capaces de sacar el máximo partido a estos datos. En este trabajo estudiaremos en concreto cinco de ellos, todos de clasificación. Estos cinco son \textit{Logistic Regresion} (LR), \textit{Naïve Bayes} (NB), \textit{Support Vector Machine} (SVM), \textit{Random Forest} (RF) y \textit{K-Nearest Neighbors} (KNN), explicados en detalle en la seccion \ref{sec:alg}.
 
-Existen dos tipos de problemas en \ML, los de clasificación y los de regresión. Todos ellos tratan de predecir el valor de una variable a partir de un conjunto de datos, la diferencia es que en los de regresión la variable predicha toma valores continuos, mientras que en la clasificación toma valores discretos, pudiendo ser una clasificación binaria (verdadero o falso) o una clasificación multiclase, como por ejemplo un algoritmo de reconocimiento de dígitos.% A lo largo de este trabajo, por similitud con el problema del bosón de Higgs, trataremos únicamente con problemas de clasificación binaria.
+Existen dos tipos de problemas en \ML, los de clasificación y los de regresión. Todos ellos tratan de predecir el valor de una variable a partir de un conjunto de datos, la diferencia es que en los de regresión la variable predicha toma valores continuos, mientras que en la clasificación toma valores discretos, pudiendo ser una clasificación binaria (verdadero o falso) o una clasificación multiclase, como por ejemplo un algoritmo de reconocimiento de dígitos.
 
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%            PREV.                                          %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Consideraciones previas}\label{sec:previo}
 \subsection{Aprendizaje supervisado y no supervisado}\label{sec:supervisado}
 Antes de explicar cada uno de los algoritmos, vamos a ver algunas características comunes de \ML. Para empezar, veamos la diferencia entre \textit{aprendizaje supervisado} y \textit{aprendizaje no supervisado}. En \ML, el término aprendizaje (o entrenamiento) se refiere al análisis de los datos por parte del algoritmo. Éste recibe un conjunto de datos de aprendizaje (el \textit{training set}) y los analiza para tomar una decisión. La diferencia entre aprendizaje supervisado y aprendizaje no supervisado es que en el primero el conjunto de datos de aprendizaje se encuentra perfectamente etiquetado, mientras que en el no supervisado no lo está. 
@@ -68,8 +57,9 @@ Por otra parte, podemos tener datos como por ejemplo el gusto por diferentes tip
 
 \begin{figure}[htbp]
 \centering
-\subfigure[Supervisado. En rojo, los amantes de la música clásica.]{\includegraphics[width=0.4\textwidth]{graficas/supervisado}}
-\subfigure[No supervisado.]{\includegraphics[width=0.4\textwidth]{graficas/noSupervisado}}
+\subfigure[Supervisado. En rojo, los amantes de la música clásica.]{\includegraphics[width=0.35\textwidth]{graficas/supervisado}}
+\qquad\quad
+\subfigure[No supervisado.]{\includegraphics[width=0.35\textwidth]{graficas/noSupervisado}}
 \caption{Aprendizaje supervisado (a) y no supervisado (b).}
 \label{fig:tipos}
 \end{figure}
@@ -78,8 +68,9 @@ Tanto en el aprendizaje supervisado como en el no supervisado, el objetivo de un
 
 \begin{figure}[htbp]
 \centering
-\subfigure{\includegraphics[width=0.4\textwidth]{graficas/supervisadoDecCurv}}
-\subfigure{\includegraphics[width=0.4\textwidth]{graficas/noSupervisadoDecCurv}}
+\subfigure{\includegraphics[width=0.35\textwidth]{graficas/supervisadoDecCurv}}
+\qquad\quad
+\subfigure{\includegraphics[width=0.35\textwidth]{graficas/noSupervisadoDecCurv}}
 \caption{Curvas de decisión lineales.}
 \label{fig:decCurv}
 \end{figure}
@@ -124,8 +115,7 @@ Para estudiar un algoritmo seguimos unos pasos definidos. Primero, entrenaremos 
 El concepto de generalizar viene de que normalmente tenemos un conjunto de datos ya clasificados, que usaremos para entrenar el algoritmo, pero este algoritmo lo necesitamos no para clasificar ese conjunto, sino para clasificar nuevos conjuntos de datos que estén aún sin clasificar. Por esto no medimos las métricas sobre el mismo conjunto con el que entrenamos, sino que lo hacemos sobre un conjunto distinto, para ver si el algoritmo no sólo clasifica bien el conjunto de aprendizaje, sino cualquier nuevo conjunto de datos del que dispongamos.
 
 \subsection{Validación Cruzada}\label{sec:CV}
-La mayoría de los algoritmos de \ML  dependen de parámetros que hay que fijar, optimizando las métricas conseguidas por el algoritmo.% Por ejemplo, muchos de ellos utilizan el \textit{parámetro de smoothing}, $C$, que veremos a continuación. El problema es que los valores de estos parámetros influyen en gran medida en la bondad de la clasificación, y una mala elección de los parámetros nos puede hacer pensar que un algoritmo es malo, cuando la realidad es que lo estamos utilizando mal. 
-Hasta ahora el procedimiento a seguir era entrenar el algoritmo con el conjunto de aprendizaje, y ver la bondad del mismo con el conjunto de test. Ahora, para fijar correctamente estos parámetros, usaremos un tercer conjunto, el conjunto de validación cruzada (\textit{Cross Validation set}. Los pasos a seguir ahora son los siguientes:
+La mayoría de los algoritmos de \ML  dependen de parámetros que hay que fijar, optimizando las métricas conseguidas por el algoritmo. Hasta ahora el procedimiento a seguir era entrenar el algoritmo con el conjunto de aprendizaje, y ver la bondad del mismo con el conjunto de test. Ahora, para fijar correctamente estos parámetros, usaremos un tercer conjunto, el conjunto de validación cruzada (\textit{Cross Validation set}. Los pasos a seguir ahora son los siguientes:
 
 Primero, elegimos valores para nuestros parámetros y entrenamos el algoritmo. Evaluamos las métricas sobre el conjunto de validación cruzada (de ahora en adelante CVC), y volvemos a realizar estos pasos con valores distintos de los parámetros, eligiendo el conjunto de parámetros que mejor prediga las clases del CVC. Por último, con el algoritmo entrenado con los mejores parámetros, evaluamos las métricas sobre el conjunto de test. Estas métricas son las que nos dirán cómo de acertado será nuestro algoritmo al clasificar datos nuevos.
 
@@ -138,10 +128,13 @@ Por el contrario, tendremos alta varianza (\textit{high variance}) en nuestro al
 
 \begin{figure}[htbp]
 \centering
-\subfigure[Datos]{\includegraphics[width=0.4\textwidth]{graficas/DatosBiasVariance}}
-\subfigure[Bien ajustado]{\includegraphics[width=0.4\textwidth]{graficas/NoBiasVariance}}
-\subfigure[Alto sesgo (underfitting)]{\includegraphics[width=0.4\textwidth]{graficas/highBias}}
-\subfigure[Alta varianza (overfitting)]{\includegraphics[width=0.4\textwidth]{graficas/highVariance}}
+\subfigure[Datos]{\includegraphics[width=0.35\textwidth]{graficas/DatosBiasVariance}}
+\qquad\quad
+\subfigure[Bien ajustado]{\includegraphics[width=0.35\textwidth]{graficas/NoBiasVariance}}
+\qquad\quad
+\subfigure[Alto sesgo (underfitting)]{\includegraphics[width=0.35\textwidth]{graficas/highBias}}
+\qquad\quad
+\subfigure[Alta varianza (overfitting)]{\includegraphics[width=0.35\textwidth]{graficas/highVariance}}
 \caption{Datos para la regresión (a), regresión correcta (b), regresión con alto sesgo (c) y regresión con alta varianza (d).}
 \label{fig:BiasVariance}
 \end{figure}
@@ -157,10 +150,6 @@ J'(\bm{\theta}) = J(\bm{\theta}) + \frac{1}{C}\bm{\theta}\cdot \bm{\theta}
 
 Reduciendo $C$ se consigue minimizar el valor de los pesos $\theta_j$, suavizando la hipótesis del algoritmo, reduciendo así la varianza del algoritmo. Por otro lado, si aumentamos $C$ permitimos al algoritmo ajustar los pesos más de acuerdo con su hipótesis, permitiendo que ésta sea más compleja y reduciendo el sesgo del mismo. Por lo tanto, el parámetro de \textit{smoothing} nos ayuda a mejorar nuestro algoritmo, y lo podremos fijar con el CVC, como vimos en el apartado \ref{sec:CV}.
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%            ALGTM                                          %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Algoritmos}\label{sec:alg}
 En esta sección estudiaremos diversos algoritmos de clasificación. La mayor parte de los algoritmos siempre producen una hipótesis y una función de error a minimizar. La hipótesis es una aplicación que va del espacio de las variables (\textit{features}) al de las etiquetas (\textit{labels} o \textit{targets}). La forma concreta de la hipótesis depende del algoritmo. La función de error, o función objetivo, mide el error cometido por la hipótesis, y será una función que vaya del espacio de los vectores de pesos al de números reales positivos, incluyendo el 0. La forma concreta de la función objetivo también depende del algoritmo, así que vamos a estudiar los que utilizaremos.
 
@@ -176,7 +165,7 @@ g(z) = \frac{1}{1+e^{-z}}
 
 \begin{figure}[htbp]
 	\centering
-		\includegraphics[width=0.50\textwidth]{graficas/sigmoid}
+		\includegraphics[width=0.45\textwidth]{graficas/sigmoid}
 	\caption{Función logística. La forma de ``S'' (sigmoidea) es típica de las densidades de probabilidad acumulada en estadística.}
 	\label{fig:sigmoid}
 \end{figure}
@@ -184,7 +173,7 @@ g(z) = \frac{1}{1+e^{-z}}
 Sea $\bm{x}$ el vector de variables de entrada, y $\bm{\theta}$ el vector de pesos, ambos de la misma dimensión. Por convenio, al vector $\bm{x}$ le añadimos una primera componente, $x_0 = 1$, que tiene su peso correspondiente, $\theta_0$. Esta componente añade un término constante a la combinación lineal de las variables de entrada\footnote{La componente $\theta_0$ no se suele penalizar al hacer la regularización \eqref{eq:ErrorRegul}, cambiando $\bm{\theta}\cdot \bm{\theta}$ por $\sum_{j=1}^n \theta_j^2$.}. La hipótesis del algoritmo es \eqref{eq:hipLogReg}, donde $g(z)$ es la función logística de \eqref{eq:sigmoid}. La hipótesis se interpreta como la probabilidad de que, dados el vector $\bm{x}$ y los pesos $\bm{\theta}$, la etiqueta correspondiente a esos datos sea ``1''.
 
 \begin{equation}
-\encuadre{h_{\bm{\theta}}(\bm{x}) = p(y = 1 | \bm{x}; \bm{\theta}) = g(\bm{\theta}\cdot  \bm{x}) = \frac{1}{1+e^{-\bm{\theta}\cdot  \bm{x}}}}
+h_{\bm{\theta}}(\bm{x}) = p(y = 1 | \bm{x}; \bm{\theta}) = g(\bm{\theta}\cdot  \bm{x}) = \frac{1}{1+e^{-\bm{\theta}\cdot  \bm{x}}}
 \label{eq:hipLogReg}
 \end{equation}
 
@@ -192,7 +181,7 @@ Por norma general, predeciremos ``$y=1$'' si $h_{\bm{\theta}}(\bm{x})>0.5$, es d
 
 La función de coste nos da el error cometido por la hipótesis, y en el caso de la Regresión Logística tiene la siguiente forma:
 \begin{equation}
-\encuadre{J(\bm{\theta}) = -\frac{1}{m}\sum_{i=1}^{m}{\left[y^{(i)}\log{\left(h_{\bm{\theta}}(\bm{x}^{(i)})\right)} + \left(1-y^{(i)}\right)\log{\left(1-h_{\bm{\theta}}(\bm{x}^{(i)})\right)}\right]}}
+J(\bm{\theta}) = -\frac{1}{m}\sum_{i=1}^{m}{\left[y^{(i)}\log{\left(h_{\bm{\theta}}(\bm{x}^{(i)})\right)} + \left(1-y^{(i)}\right)\log{\left(1-h_{\bm{\theta}}(\bm{x}^{(i)})\right)}\right]}
 \label{eq:errLogReg}
 \end{equation}
 donde $m$ es el número de entradas de datos. Nótese que el primer término del sumatorio corresponde a los datos con $y=1$, mientras que el segundo es el de los datos con $y=0$. La función de coste se representa para los casos $y=1$ y $y=0$ en la gráfica \ref{fig:errLogReg}.
@@ -214,7 +203,7 @@ donde $\bm{x}$ es el vector de variables, cuyas componentes son $x_j$, y $C$ es 
 
 Gracias al teorema de Bayes, sabemos que la probabilidad de que dado el vector de variables $\bm{x}$, éste sea de la clase $C_l$ es:
 \begin{equation}
-\encuadre{p(C_l|\bm{x}) = \frac{p(C_l)p(\bm{x}|C_l)}{p(\bm{x})}}
+p(C_l|\bm{x}) = \frac{p(C_l)p(\bm{x}|C_l)}{p(\bm{x})}
 \label{eq:TeoremaBayes}
 \end{equation}
 
@@ -245,8 +234,9 @@ Las \SVM tienen la característica de crear una curva de decisión lineal siempre 
 
 \begin{figure}[htbp]
 	\centering
-		\subfigure[Variables antiguas]{\includegraphics[width=0.40\textwidth]{graficas/kernel}}
-		\subfigure[Variables nuevas]{\includegraphics[width=0.40\textwidth]{graficas/kernelInv}}
+		\subfigure[Variables antiguas]{\includegraphics[width=0.35\textwidth]{graficas/kernel}}
+		\qquad\quad
+		\subfigure[Variables nuevas]{\includegraphics[width=0.35\textwidth]{graficas/kernelInv}}
 	\caption{Con un cambio de variables (\textit{kernel}) podemos crear superficies de decisión no lineales.}
 	\label{fig:kernel}
 \end{figure}
@@ -273,14 +263,15 @@ y^{(i)}\left(\bm{\theta}\cdot \bm{x}^{(i)} + b\right) \geq 1 \ \ \forall i = 1,.
 \end{equation}
 Los puntos que cumplen que $y^{(i)}\left(\bm{\theta}\cdot \bm{x}^{(i)} + b\right) = 1$ se llaman \textit{vectores de soporte}, y son los que dan el nombre al algoritmo. Nuestra hipótesis será
 \begin{equation}
-\encuadre{h_{\bm{\theta}}(\bm{x}) = \text{signo}(\bm{\theta}\cdot \bm{x} + b)}
+h_{\bm{\theta}}(\bm{x}) = \text{signo}(\bm{\theta}\cdot \bm{x} + b)
 \label{eq:SVMHip}
 \end{equation}
 
 \begin{figure}[htbp]
 	\centering
-		\subfigure[High margin]{\includegraphics[width=0.40\textwidth]{graficas/highMargin2}}
-		\subfigure[Soft margin]{\includegraphics[width=0.40\textwidth]{graficas/softMargin}}
+		\subfigure[High margin]{\includegraphics[width=0.35\textwidth]{graficas/highMargin2}}
+		\qquad\quad
+		\subfigure[Soft margin]{\includegraphics[width=0.35\textwidth]{graficas/softMargin}}
 	\caption{Gráfica \textbf{a}: Hiperplano de separación (b), con ecuación $\{\bm{x}:\bm{\theta}\cdot \bm{x} + b = 0\}$ e hiperplanos soporte, (a) con ecuación $\{\bm{x}:\bm{\theta}\cdot \bm{x} + b = +1\}$ y (c) con ecuación $\{\bm{x}:\bm{\theta}\cdot \bm{x} + b = -1\}$. Los vectores de soporte son los más cercanos al hiperplano de separación. Gráfica \textbf{b}: Ejemplo de problema de \textit{soft margin}. Hay algunos puntos que se clasifican mal con tal de mantener un margen amplio con la mayoría de los datos, reduciendo el error de generalización.}
 	\label{fig:highMargin2}
 \end{figure}
@@ -344,8 +335,9 @@ Podemos ver un ejemplo de base de datos en la gráfica \ref{fig:DecTree}a, mientr
 
 \begin{figure}[htbp]
 	\centering
-		\subfigure[Datos]{\includegraphics[width=0.40\textwidth]{graficas/RandomForestPuntos}}
-		\subfigure[Línea de decisión]{\includegraphics[width=0.40\textwidth]{graficas/RandomForest}}
+		\subfigure[Datos]{\includegraphics[width=0.35\textwidth]{graficas/RandomForestPuntos}}
+		\qquad\quad
+		\subfigure[Línea de decisión]{\includegraphics[width=0.35\textwidth]{graficas/RandomForest}}
 	\caption{Ejemplo de línea de decisión tomada por un árbol de decisión.}
 	\label{fig:DecTree}
 \end{figure}
@@ -378,16 +370,6 @@ Hay más criterios, pero éstos son los más importantes y usados. El desorden medi
 	\label{fig:DecTreeCriterios}
 \end{figure}
 
-%Vamos a analizar el ejemplo de la gráfica \ref{fig:DecTreeDecLine}. Al principio tenemos una única región con un 0.6 de positivos (puntos rojos) y un 0.4 de negativos (cruces azules). Utilizaremos \eqref{eq:DecTreeGini} para calcular las imperfecciones en este ejemplo. En esta primera región, pues, tenemos:
-%\[0.6\times(1-0.6) + 0.4\times(1-0.4)=0.48\]
-%La línea 1 parte la primera región en dos regiones, la de la derecha con 1.0 de proporción de positivos y con el 0.25 del total de la región anterior, y la de la izquierda con proporciones $(0.3,0.7)$ ($(positivo, negativo)$ por comodidad) y el 0.75 de los datos. Tenemos:
-%\[0.75\times [ 0.3\times(1-0.3)+0.7\times(1-0.7) ] = 0.315\]
-%donde no se han sumado explícitamente las imperfecciones de las regiones bien separadas por ser nulas. La línea 2 parte la última región en una arriba con proporciones $(0.8,0.2)$ y el 0.4 de la región anterior y en otra abajo con proporciones $(0.0,1.0)$. Esto nos queda:
-%\[0.4\times0.75\times [ 0.8\times(1-0.8)+0.2\times(1-0.2) ] = 0.096\]
-%donde hemos tenido que multiplicar la fracción de datos de esta región con la de la anterior. La línea 3, que vuelve a dividir horizontalmente los datos, deja arriba el 0.5 de ellos con proporción $(1.0,0.0)$ y abajo el otro 0.5 con $(0.4,0.6)$. Tenemos
-%\[0.5\times0.4\times0.75\times [ 0.6\times(1-0.6)+0.4\times(1-0.4)] = 0.072\]
-%Por último, la línea 4 separa perfectamente los datos de su región, dejándonos con una imperfección nula. Vemos que hemos ido reduciendo la imperfección (0.48, 0.315, 0.096, 0.072, 0.00) con cada línea. Ésto es lo que hace un árbol de decisión.
-
 Uno de los mayores problemas de un árbol de decisión es su tendencia a sobreajustar los datos. Con unos datos como los usados en el ejemplo anterior no había ningún problema, porque eran fácilmente separables, pero con datos más realistas y complejos, podemos tener una línea de decisión como la de la gráfica \ref{fig:DecTreeOverfit}, con finas franjas para unos pocos datos y regiones aisladas para uno o dos puntos. Las bases de datos reales pueden ser aún más complejas que la de la gráfica, haciendo que la línea de decisión del árbol no tenga realmente ningún sentido general. Una de las maneras de resolver esto es exigir que el algoritmo no divida regiones con pocos datos, o que no deje regiones cerradas con menos de cierto número de datos. Estos pasos requieren de mucho ``\textit{cocinado}'' para cada base de datos. Otra forma, bastante más extendida, es emplear varios árboles de decisión inicializados de forma aleatoria, creando un \textit{\textbf{Random Forest}}.
 
 \begin{figure}[htbp]
@@ -409,84 +391,18 @@ Llegamos a otro algoritmo más sencillo aún que el \textit{Naïve Bayes}, si esto 
 
 \begin{figure}[htbp]
 	\centering
-		\subfigure[Datos]{\includegraphics[width=0.40\textwidth]{graficas/KNN}}
-		\subfigure[1 vecino]{\includegraphics[width=0.40\textwidth]{graficas/KNN1}}
-		\subfigure[1 vecino, \textit{overfitting}]{\includegraphics[width=0.40\textwidth]{graficas/KNN1Overfit}}
-		\subfigure[3 vecinos, ya no hay \textit{overfitting}]{\includegraphics[width=0.40\textwidth]{graficas/KNN3}}
+		\subfigure[Datos]{\includegraphics[width=0.35\textwidth]{graficas/KNN}}
+		\subfigure[1 vecino]{\includegraphics[width=0.35\textwidth]{graficas/KNN1}}
+		\subfigure[1 vecino, \textit{overfitting}]{\includegraphics[width=0.35\textwidth]{graficas/KNN1Overfit}}
+		\subfigure[3 vecinos, ya no hay \textit{overfitting}]{\includegraphics[width=0.35\textwidth]{graficas/KNN3}}
 	\label{fig:KNN}
 	\caption{Con pocos vecinos, el algoritmo es propenso al \textit{overfitting}.}
 \end{figure}
 
 En la grafica \ref{fig:KNN}, vemos la sencillez del algoritmo. Hay que tener cuidado con el número de vecinos, porque si escogemos pocos podemos caer en \textit{overfitting}. También es importante antes de entrenar el algoritmo, hacer un \textit{feature scaling}\footnote{El \textit{feature scaling} cambia todas las variables para que sus valores se encuentren en el intervalo [0,1]. Es importante hacerlo tanto para este algoritmo como para el \SVM (sobre todo con el \textit{kernel} gaussiano), aunque nosotros lo hacemos para todos los algoritmos por comodidad.}, de manera que no haya una variable cuyas distancias entre datos sean mucho menores que el resto de variables, dando a todas ellas la misma importancia.
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%            DATOS                                          %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Aplicaciones}\label{sec:dat}
 En esta sección veremos cómo se aplican los anteriores algoritmos a bases de datos reales. Para cada una de ellas explicaremos las variables de que se disponen, las peculiaridades de los datos y los resultados que extraemos.
-
-%\subsection{Reconocimiento de dígitos}\label{sec:digitos}
-%Gracias al paquete \texttt{sklearn} de Python disponemos de una serie de bases de datos para hacer pruebas. La que vamos a usar es la de reconocimiento de digitos, que consiste en una serie de imágenes de $8\times8$ píxeles, cada una representando un dígito del 0 al 9. Por similitud con la base de datos del Higgs, nosotros solo utilizaremos las imagenes con digitos 0 y 1, transformando el problema en uno de clasificación binaria.
-%
-%\begin{figure}[htbp]
-	%\centering
-		%\includegraphics[width=0.70\textwidth]{graficas/digitos}
-	%\caption{Ejemplos de imágenes de la base de datos.}
-	%\label{fig:digitos}
-%\end{figure}
-%
-%Las variables de esta base de datos son las intensidades de cada uno de los píxeles, con valores comprendidos entre 0 y 16, leídos por filas desde arriba. Tenemos por tanto 64 variables para cada una de las 360 imágenes, que son nuestras entradas de datos.
-%
-%Procedemos a estudiar los datos. Lo primero que se suele hacer es una curva de aprendizaje, en la que representamos la bondad de cada algoritmo en función del número de datos estudiados. Esto se hace para ver si necesitamos tomar más datos, o si por el contrario podemos despreciar algunos, ganando en velocidad de cálculo. La curva de aprendizaje de esta base de datos se recoge en la gráfica \ref{fig:digitos,_curvas_de_aprendizaje}.
-%
-%\begin{figure}[htbp]
-	%\centering
-		%\includegraphics[width=1.00\textwidth]{graficas/digitos,_curvas_de_aprendizaje}
-	%\caption{Curvas de aprendizaje para la base de datos de los dígitos.}
-	%\label{fig:digitos,_curvas_de_aprendizaje}
-%\end{figure}
-%
-%En la gráfica \ref{fig:digitos,_curvas_de_aprendizaje} podemos ver cómo los algoritmos de Logistic Regression, Support Vector Machine y K-Nearest Neighbors consiguen un buen valor F1 aún con pocos datos, y que la curva del training set y la del CV set son prácticamente paralelas, así que usar más datos no va a ser mejor, y de hecho podemos usar menos datos. El resto de algoritmos presentan un comportamiento más común, en el que la curva del training set va reduciendo su valor F1 al aumentar el número de datos, mientras que la del CV set van aumentando al aumentar los datos. El mejor número de datos a utilizar sería aquel para el que las dos curvas sean prácticamente paralelas, así que según las gráficas podríamos utilizar sólo 100 entradas de datos. En la realidad, al ser ésta una base de datos bastante pequeña, los algoritmos no tardan mucho en ser entrenados, así que usaremos la base de datos entera.
-%
-%Realizamos ahora el Cross Validation. La malla inicial de parámetros, común a todas las bases de datos, es la siguiente: Para el SVC (Support Vector Classifier) usamos el kernel RBF con los valores de C 1, 10, 100, 1000, y los valores de $\gamma$ 0.0001, 0.001, 0.01, 0.1, 1.0, y el kernel lineal con los mismos valores de C. Como el Naïve Bayes no depende de parámetros no podemos hacer sobre él ningún cross validation. Para el Logistic Regression usamos los mismos valores de C. Para el Random Forest usamos 5, 10 y 15 árboles, para el mínimo de datos requerido para poder separar una rama usamos 2, 4, 6, 8 y 10 datos, y para el mínimo de datos por hoja usamos 1, 2, 3, 4 y 5 datos. Para el KNN (K-Nearest Neighbors) usamos como número de vecinos 2, 3, 4, 5 y 6.
-%
-%Los mejores parámetros que hemos encontrado tras hacer el Cross Validation son los siguientes: Para el SVC, el kernel RBF con $C=1$ y $\gamma=0.001$; para el Logistic Regression, $C=1$, para el Random Forest, 15 árboles, con 6 datos como mínimo para separar una rama y con 1 dato como mínimo para cada hoja; y para el KNN 2 vecinos. Las métricas medidas por cada algoritmo se recogen en la tabla \ref{tab:digitosMetricas}.
-%
-%\begin{table}[htbp]
-	%\centering
-		%\begin{tabular}{ccccc}
-		  %\toprule
-			%Algoritmo & Accuracy & Precision & Recall & F1-Score \\
-			%\midrule
-			%Gaussian NB & 0.9667 & 0.9688 & 0.9688 & 0.9688 \\
-			%SVC & 0.9500 & 0.9677 & 0.9375 & 0.9524 \\
-			%Logistic Regression & 1.0000 & 1.0000 & 1.0000 & 1.0000 \\
-			%Random Forest & 1.0000 & 1.0000 & 1.0000 & 1.0000 \\
-			%KNN & 1.0000 & 1.0000 & 1.0000 & 1.0000 \\
-			%\bottomrule
-			%\end{tabular}
-	%\caption{Métricas de los dígitos para los distintos algoritmos.}
-	%\label{tab:digitosMetricas}
-%\end{table}
-%
-%Hemos llegado a un problema (bendito problema): que tres de nuestros algoritmos funcionan perfectamente. Para elegir cuál es el que nos compensa usar, habrá que ver si buscamos rapidez, robustez (que aguante bien posibles alteraciones en los datos), optimizar la memoria... El mejor algoritmo dependerá de la aplicación real que hagamos de él, pero este ejemplo nos sirve para mostrar que no hay un algoritmo mejor que otro, que, dependiendo de la base de datos, pueden funcionar todos igual de bien (el SVC, que ha sido el peor, tiene un valor F1 de 0.95, bastante alto, y seguramente haciendo un ajuste más fino de los parámetros conseguiríamos un valor mejor).
-%
-%Para ilustrar lo que hemos conseguido, podemos realizar las gráficas con las variables más influyentes que se han encontrado, consiguiendo las gráficas \ref{fig:digVar1} y \ref{fig:digVar2}, en las que se ha hecho un feature scaling para que las variables estén en el intervalo [0,1].
-%
-%\begin{figure}[htbp]
-	%\centering
-		%\includegraphics[width=1.00\textwidth]{graficas/digitos,_curvas_de_decision21-28}
-	%\caption{Curvas de decisión para los diferentes algoritmos utilizando los valores de los píxeles 21 (x) y 28 (y). Los puntos rojos y los azules corresponden a la clase 1 y a la 0, respectivamente. Los puntos semitransparentes son los del test set.}
-	%\label{fig:digVar1}
-%\end{figure}
-%
-%\begin{figure}[htbp]
-	%\centering
-		%\includegraphics[width=1.00\textwidth]{graficas/digitos,_curvas_de_decision29-47}
-	%\caption{Curvas de decisión para los diferentes algoritmos utilizando los valores de los píxeles 29 (x) y 47 (y)}
-	%\label{fig:digVar2}
-%\end{figure}
 
 \subsection{Supervivientes del Titanic}\label{sec:titanic}
 Esta base de datos se encuentra en la página web del Kaggle\footnote{\url{https://www.kaggle.com/c/titanic/data}}, una web en la que se proponen concursos abiertos de \ML. Este ejemplo concreto consiste en un problema que proponen como iniciación para los nuevos usuarios, y consiste en conseguir detectar qué pasajeros sobrevivieron al accidente. Las variables con las que contamos son las siguientes: la categoría del billete, que es una variable categórica (1ª, 2ª o 3ª clase); el sexo, variable binaria; la edad; el número de parientes y esposas a bordo (sin contar padres ni hijos); el número de padres e hijos a bordo; el precio del billete; el lugar de embarque, variable categórica con valores C, Q y S, refiriéndose a Cherbourg, Queenstown y Southampton, y otra información no útil como el nombre del pasajero o un ID único para cada uno de ellos. Disponemos de los datos de 891 pasajeros ya clasificados como supervivientes o no, que usaremos para los conjuntos de aprendizaje, validación cruzada y test.
@@ -531,7 +447,7 @@ Después de hacer la validación cruzada, los mejores parámetros que hemos encontr
 
 En la gráfica \ref{fig:titanic,_curvas_de_aprendizajeDESPUES_DEL_CV} vemos que no ha mejorado mucho el \textit{overfitting} del RF, lo cual se puede deber a que tenemos muy pocas variables, muchas de ellas con pocos valores posibles (categóricas), por lo que los árboles de decisión no tienen muchas posibilidades de separar los datos de muchas formas.
 
-En la tabla \ref{tab:TitanicMetricas} podemos elegir el mejor algoritmo que hayamos logrado. Podríamos pensar que es el RF, con un valor F1 de 0.7660, pero, como sabemos que está sobreajustando los datos, no está generalizando bien \textbf{¿ESTOY SEGURO DE ESTO?}. Los dos mejores algoritmos, una vez despreciamos el RF, son el SVM y el KNN, con 0.7299 y 0.7234 como valores F1 respectivamente. Aunque estos valores no son muy diferentes, si nos volvemos a fijar en la gráfica \ref{fig:titanic,_curvas_de_aprendizajeDESPUES_DEL_CV} vemos que la curva del CVC y la del conjunto de aprendizaje están más próximas en el SVC que en el KNN, por lo que el SVC tiene menos sesgo, generalizará mejor para datos nuevos. El KNN sería mejor si dispusiésemos de nuevos datos, como se refleja en la gráfica, pero con los datos que tenemos, el SVC es el mejor algoritmo para esta base de datos.
+En la tabla \ref{tab:TitanicMetricas} podemos elegir el mejor algoritmo que hayamos logrado. Podríamos pensar que es el RF, con un valor F1 de 0.7660, pero, como sabemos que está sobreajustando los datos.. Los dos mejores algoritmos, una vez descartamos el RF, son el SVM y el KNN, con 0.7299 y 0.7234 como valores F1 respectivamente. Aunque estos valores no son muy diferentes, si nos volvemos a fijar en la gráfica \ref{fig:titanic,_curvas_de_aprendizajeDESPUES_DEL_CV} vemos que la curva del CVC y la del conjunto de aprendizaje están más próximas en el SVC que en el KNN, por lo que el SVC tiene menos sesgo, generalizará mejor para datos nuevos. El KNN sería mejor si dispusiésemos de nuevos datos, como se refleja en la gráfica, pero con los datos que tenemos, el SVC es el mejor algoritmo para esta base de datos.
 
 Como resumen de lo que acabamos de conseguir, tenemos un algoritmo, la máquina de soporte vectorial, que entrenado con los datos de apenas 600 pasajeros, como podemos ver en la gráfica \ref{fig:titanic,_curvas_de_aprendizajeDESPUES_DEL_CV}, consigue predecir con una exactitud de casi el 80\% si el resto de pasajeros sobrevivirán o no. Ha encontrado patrones en los datos que seguramente nadie podría haber visto, no fijándose solo en si el pasajero en cuestión es una señorita joven, que viajaba en primera clase con su padre a bordo.
 
@@ -542,7 +458,7 @@ Lo primero de todo, como la base de datos es bastante grande, es pintar las curv
 
 \begin{figure}[htbp]
 	\centering
-		\includegraphics[width=1.00\textwidth]{C:/Users/Javi/Desktop/TFGdefinitivo/doc/graficas/higgs,_curvas_de_aprendizaje.ps}
+		\includegraphics[width=1.00\textwidth]{graficas/higgs,_curvas_de_aprendizaje.ps}
 	\caption{Curvas de aprendizaje del bosón de Higgs.}
 	\label{fig:higgs,_curvas_de_aprendizaje}
 \end{figure}
@@ -603,78 +519,57 @@ Podemos ver que el KNN y el RF siguen sobreajustando los datos, y no parece que 
 
 Para terminar, como el RF seguía sobreajustando los datos, podemos decir que para esta base de datos el mejor algoritmo es la Máquina de Soporte Vectorial. 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%            CONCL                                          %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusiones}\label{sec:conclusion}
 Para concluir este trabajo, vamos a ver qué hemos conseguido. Primero hemos podido conocer los fundamentos del \textit{Machine Learning}, cómo usar los algoritmos, qué casos nos podemos encontrar, si hay que preparar los datos antes de alimentar al algoritmo, etc. Luego hemos ido viendo las peculiaridades de cada algoritmo, en qué se basa, cómo funciona, qué tipo de datos necesita, si tiene alguna restricción especial que haya que considerar aparte, qué tipo de curvas de decisión realiza y cómo podemos utilizar esas curvas, etc. Hasta aquí la parte teórica del trabajo, nos quedaba mancharnos las manos con la práctica.
 
-A la hora de utilizar realmente los algoritmos, hemos usado dos bases de datos, una de ellas más simple, la del Titanic, y otra más seria, la del Higgs. %En la primera hemos visto que teníamos tres algoritmos que clasificaban a la perfección los datos, es decir, todas las muestras de imágenes que eran el dígito 0 las predecía como 0, y las que eran 1 las predecía como tal. Estos algoritmos eran el Logistic Regression, el Random Forest y el K-Nearest Neighbors. 
-En la primera base de datos vimos que sólo éramos capaces de conseguir valores F1 en torno a 73-76\%. Ésto se debía a que tenemos pocas variables a estudiar, y además las clases no seguían una distribución clara, siendo más difícil diferenciarlas. Hay que tener en cuenta que el ML no es un truco de magia, son algoritmos matemáticos, así que si en una base de datos éstos no contienen mucha información, un algoritmo de ML no podrá extraerla de donde no existe. Pongamos el ejemplo de un dado perfectamente equilibrado. Si alimentamos a cualquier algoritmo con los números han salido en las últimas 100000 tiradas, éste no podrá predecir qué saldrá en las siguientes, aunque sepa datos como quién tira el dado, qué temperatura hace o hacia dónde lo tira. Los algoritmos jamás podrán identificar patrones que no se encuentren en los datos.
+A la hora de utilizar realmente los algoritmos, hemos usado dos bases de datos, una de ellas más simple, la del Titanic, y otra más grande, la del Higgs. En la base de datos  de supervivientes del Titanic, el algoritmo que mejor funcionó fue el SVM, con un valor F1 del 73\%. Para elegir éste algoritmo tuvimos que descartar el RF, con un mejor valor F1 (76\%), pero sobreajustaba los datos del conjunto de aprendizaje, así que no nos podíamos fiar de su capacidad de generalización.
 
-Una vez aclarado esto, recordamos que en esta base de datos el algoritmo que mejor funcionó fue el SVM, con un valor F1 del 73\%. Para elegir éste algoritmo tuvimos que descartar el RF, con un mejor valor F1 (76\%), pero sobreajustaba los datos del conjunto de aprendizaje, así que no nos podíamos fiar de su capacidad de generalización.
+Por último, la base de datos del Higgs. Como la base de datos es bastante grande, aprovechamos la información que nos brindaban las curvas de aprendizaje\footnote{Mi portátil tardó en hacerlas 3 días enteros, porque para hacerlas hay que entrenar cada algoritmo cada vez con distinto número de muestras} y pudimos usar solo un 10\% de los datos. Luego vimos en profundidad cómo llevar a cabo la validación cruzada sobre una base de datos, probando mallas de parámetros cada vez más finas, hasta alcanzar el nivel de precisión deseado.  Vimos cómo el RF acertaba al escoger las variables más importantes, siendo la masa estimada la mejor. Al final, decidimos que el mejor algoritmo para esta base de datos, al nivel de profundidad al que la estudiamos, era el SVM, aunque seguramente, si hubiéramos seguido probando mallas más finas, podría haber sido el RF. De este trabajo podemos concluir que no existe un algoritmo mejor que el resto, sino que cada base de datos tiene ``su algoritmo'', uno con el que es más fácil sacar toda la información posible de los datos. 
 
-Por último, la base de datos del Higgs. Como la base de datos es bastante grande, aprovechamos la información que nos brindaban las curvas de aprendizaje\footnote{Mi portátil tardó en hacerlas 3 días enteros, porque para hacerlas hay que entrenar cada algoritmo cada vez con distinto número de muestras} y pudimos usar solo un 10\% de los datos. Luego vimos en profundidad cómo llevar a cabo la validación cruzada sobre una base de datos, probando mallas de parámetros cada vez más finas, hasta alcanzar el nivel de precisión deseado. 
-
-Vimos cómo el RF acertaba al escoger las variables más importantes, siendo la masa estimada la mejor. Al final, decidimos que el mejor algoritmo para esta base de datos, al nivel de profundidad al que la estudiamos, era el SVM, aunque seguramente, si hubiéramos seguido probando mallas más finas, podría haber sido el RF.
-
-De este trabajo podemos concluir que no existe un algoritmo mejor que el resto, sino que cada base de datos tiene ``su algoritmo'', uno con el que es más fácil sacar toda la información posible de los datos. También concluimos, gracias a la base de datos del Titanic, que donde no hay información no se puede sacar, que los algoritmos no inventan información, sólo tratan de sacarla de los datos. \textbf{He quitado el apartado de los dígitos, pero ahora el mejor algoritmo para las dos bases de datos es el SVM... Esto choca con lo que digo de que cada base de datos tiene su algoritmo... Vuelvo a poner los digitos?}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%            APEN.                                          %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Apéndices}
-\subsection{Variables del Higgs}\label{sec:features}
-A continuación copio literalmente de \cite{higgsDoc} la explicación de cada una de las variables del problema del apartado \ref{sec:higgs}. 
+\section{Apéndice: variables para la b\'usqueda del bos\'on de Higgs}\label{sec:features}
+En este Ap\'endice se recoge la lista completa de variables utilizadas para la clasificación de eventos en la b\'usqueda del bos\'on de Higgs de la Secci\'on \ref{sec:higgs}. Todos los ángulos azimutales $\phi$ están en radianes en el intervalo $[-\pi,\pi)$, las masas, energías y momentos están en GeV, y el resto de variables son adimensionales. Las variables que estén indefinidas, ya sea porque no tienen sentido físico o porque no han podido ser calculadas, tienen un valor de -999.0, que está fuera del rango de valores normal de todas las variables. 
 
 \begin{enumerate}
-	\item \texttt{EventId} \textit{An unique integer identifier of the event. Not to be used as a feature.}
-	\item \texttt{DER\_mass\_MMC} \textit{The estimated mass} $m_H$ \textit{of the Higgs boson candidate, obtained through a probabilistic phase space integration (may be undefined if the topology of the event is too far from the expected topology).}
-	\item \texttt{DER\_mass\_transverse\_met\_lep} \textit{The transverse mass between the missing transverse energy and the lepton.}
-	\item \texttt{DER\_mass\_vis} \textit{The invariant mass of the hadronic tau and the lepton. }
-	\item \texttt{DER\_pt\_h} \textit{The modulus of the vector sum of the transverse momentum of the hadronic tau, the lepton, and the missing transverse energy vector.}
-	\item \texttt{DER\_deltaeta\_jet\_jet} \textit{The absolute value of the pseudorapidity separation between the two jets (undefined if \texttt{PRI\_\-jet\_\-num} $\leq$ 1). }
-	\item \texttt{DER\_mass\_jet\_jet} \textit{The invariant mass of the two jets (undefined if \texttt{PRI\_\-jet\_\-num} $\leq$ 1). }
-	\item \texttt{DER\_prodeta\_jet\_jet} \textit{The product of the pseudorapidities of the two jets (undefined if \texttt{PRI\_\-jet\_\-num} $\leq$ 1).}
-	\item \texttt{DER\_deltar\_tau\_lep} \textit{The R separation between the hadronic tau and the lepton. }
-	\item \texttt{DER\_pt\_tot} \textit{The modulus of the vector sum of the missing transverse momenta and the transverse momenta of the hadronic tau, the lepton, the leading jet (if \texttt{PRI\_\-jet\_\-num} = 1) and the subleading jet (if \texttt{PRI\_\-jet\_\-num} = 2) (but not of any additional jets).}
-	\item \texttt{DER\_sum\_pt} \textit{The sum of the moduli of the transverse momenta of the hadronic tau, the lepton, the leading jet (if \texttt{PRI\_\-jet\_\-num} = 1) and the subleading jet (if \texttt{PRI\_\-jet\_\-num} = 2) and the other jets (if \texttt{PRI\_\-jet\_\-num} = 3). }
-	\item \texttt{DER\_pt\_ratio\_lep\_tau} \textit{The ratio of the transverse momenta of the lepton and the hadronic tau. }
-	\item \texttt{DER\_met\_phi\_centrality} \textit{The centrality of the azimuthal angle of the missing transverse energy vector w.r.t. the hadronic tau and the lepton
+	\item \texttt{EventId} An unique integer identifier of the event. Not to be used as a feature.
+	\item \texttt{DER\_mass\_MMC} The estimated mass $m_H$ of the Higgs boson candidate, obtained through a probabilistic phase space integration (may be undefined if the topology of the event is too far from the expected topology).
+	\item \texttt{DER\_mass\_transverse\_met\_lep} The transverse mass between the missing transverse energy and the lepton.
+	\item \texttt{DER\_mass\_vis} The invariant mass of the hadronic tau and the lepton. 
+	\item \texttt{DER\_pt\_h} The modulus of the vector sum of the transverse momentum of the hadronic tau, the lepton, and the missing transverse energy vector.
+	\item \texttt{DER\_deltaeta\_jet\_jet} The absolute value of the pseudorapidity separation between the two jets (undefined if \texttt{PRI\_\-jet\_\-num} $\leq$ 1). 
+	\item \texttt{DER\_mass\_jet\_jet} The invariant mass of the two jets (undefined if \texttt{PRI\_\-jet\_\-num} $\leq$ 1). 
+	\item \texttt{DER\_prodeta\_jet\_jet} The product of the pseudorapidities of the two jets (undefined if \texttt{PRI\_\-jet\_\-num} $\leq$ 1).
+	\item \texttt{DER\_deltar\_tau\_lep} The R separation between the hadronic tau and the lepton. 
+	\item \texttt{DER\_pt\_tot} The modulus of the vector sum of the missing transverse momenta and the transverse momenta of the hadronic tau, the lepton, the leading jet (if \texttt{PRI\_\-jet\_\-num} = 1) and the subleading jet (if \texttt{PRI\_\-jet\_\-num} = 2) (but not of any additional jets).
+	\item \texttt{DER\_sum\_pt} The sum of the moduli of the transverse momenta of the hadronic tau, the lepton, the leading jet (if \texttt{PRI\_\-jet\_\-num} = 1) and the subleading jet (if \texttt{PRI\_\-jet\_\-num} = 2) and the other jets (if \texttt{PRI\_\-jet\_\-num} = 3). 
+	\item \texttt{DER\_pt\_ratio\_lep\_tau} The ratio of the transverse momenta of the lepton and the hadronic tau. 
+	\item \texttt{DER\_met\_phi\_centrality} The centrality of the azimuthal angle of the missing transverse energy vector w.r.t. the hadronic tau and the lepton
 	\[C=\frac{A+B}{\sqrt{A^2+B^2}}\],
-	where $A=\sin{\phi_{met}-\phi_{lep}}$, $B=\sin{\phi_{had}-\phi_{met}}$, and $\phi_{met}$, $\phi_{lep}$, and $\phi_{had}$ are the azimuthal angles of the missing transverse energy vector, the lepton, and the hadronic tau, respectively. The centrality in $\sqrt{2}$ if the missing transverse energy vector $\vec{E}_T^{miss}$ is on the bisector of the transverse momenta of the lepton and the hadronic tau. It decreases to 1 if $\vec{E}_T^{miss}$ is collinear with one of these vectors and it decreases further to $-\sqrt{2}$ when $\vec{E}_T^{miss}$ is exactly opposite to the bisector.}
-	\item \texttt{DER\_lep\_eta\_centrality} \textit{The centrality of the pseudorapidity of the lepton w.r.t. the two jets (undefined if \texttt{PRI\_\-jet\_\-num} $\leq$ 1)
+	where $A=\sin{\phi_{met}-\phi_{lep}}$, $B=\sin{\phi_{had}-\phi_{met}}$, and $\phi_{met}$, $\phi_{lep}$, and $\phi_{had}$ are the azimuthal angles of the missing transverse energy vector, the lepton, and the hadronic tau, respectively. The centrality in $\sqrt{2}$ if the missing transverse energy vector $\vec{E}_T^{miss}$ is on the bisector of the transverse momenta of the lepton and the hadronic tau. It decreases to 1 if $\vec{E}_T^{miss}$ is collinear with one of these vectors and it decreases further to $-\sqrt{2}$ when $\vec{E}_T^{miss}$ is exactly opposite to the bisector.
+	\item \texttt{DER\_lep\_eta\_centrality} The centrality of the pseudorapidity of the lepton w.r.t. the two jets (undefined if \texttt{PRI\_\-jet\_\-num} $\leq$ 1)
 	\[\exp{\left[\frac{-4}{(\eta_1-\eta_2)^2}\left(\eta_{lep}-\frac{\eta_1+\eta_2}{2}\right)^2\right]}\],
-	where $\eta_{lep}$ is the preudorapidity of the lepton and $\eta_1$ and $\eta_2$ are the pseudorapidities of the two jets. The centrality is 1 when the lepton is on the bisector of the two jets, decreases to $1/e$ when it is collinear to one of the jets, and decreases further to zero at infinity.}
-	\item \texttt{PRI\_tau\_pt} \textit{The transverse momentum $\sqrt{p_x^2+p_y^2}$ of the hadronic tau. }
-	\item \texttt{PRI\_tau\_eta} \textit{The pseudorapidity $\eta$ of the hadronic tau. }
-	\item \texttt{PRI\_tau\_phi} \textit{The azimuth angle $\phi$ of the hadronic tau.}
-	\item \texttt{PRI\_lep\_pt} \textit{The transverse momentum $\sqrt{p_x^2+p_y^2}$ of the lepton (electron or muon). }
-	\item \texttt{PRI\_lep\_eta} \textit{The pseudorapidity $\eta$ of the lepton. }
-	\item \texttt{PRI\_lep\_phi} \textit{The azimuth angle $\phi$ of the lepton.}
-	\item \texttt{PRI\_met} \textit{The missing transverse energy $\vec{E}_T^{miss}$. }
-	\item \texttt{PRI\_met\_phi} \textit{The azimuth angle $\phi$ of the missing transverse energy.}
-	\item \texttt{PRI\_met\_sumet} \textit{The total transverse energy in the detector.}
-	\item \texttt{PRI\_jet\_num} \textit{The number of jets (integer with value of 0, 1, 2 or 3; possible larger values have been caped at 3).}
-	\item \texttt{PRI\_jet\_leading\_pt} \textit{The transverse momentum $\sqrt{p_x^2+p_y^2}$ of the leading jet, that is the jet with largest transverse momentum (undefined if \texttt{PRI\_\-jet\_\-num} = 0).}
-	\item \texttt{PRI\_jet\_leading\_eta} \textit{The pseudorapidity $\eta$ of the leading jet (undefined if \texttt{PRI\_\-jet\_\-num} = 0).}
-	\item \texttt{PRI\_jet\_leating\_phi} \textit{The azimuth angle $\phi$ of the leading jet (undefined if \texttt{PRI\_\-jet\_\-num} = 0). }
-	\item \texttt{PRI\_jet\_subleading\_pt} \textit{The transverse momentum $\sqrt{p_x^2+p_y^2}$ of the subleading jet, that is the jet with the second largest transverse momentum (undefined if \texttt{PRI\_\-jet\_\-num} $\leq$ 1).}
-	\item \texttt{PRI\_jet\_subleading\_eta} \textit{The pseudorapidity $\eta$ of the subleading jet (undefined if \texttt{PRI\_\-jet\_\-num} $\leq$ 1). }
-	\item \texttt{PRI\_jet\_subleading\_phi} \textit{The azimuth angle $\phi$ of the subleading jet (undefined if \texttt{PRI\_\-jet\_\-num} $\leq$ 1).}
-	\item \texttt{PRI\_jet\_all\_pt} \textit{The scalar sum of the transverse momentum of all the jets of the events. }
-	\item \texttt{Label} \textit{The event label (string) $y_i\in {s,b}$ (s for signal, b for background). Not to be used as a feature.}
+	where $\eta_{lep}$ is the preudorapidity of the lepton and $\eta_1$ and $\eta_2$ are the pseudorapidities of the two jets. The centrality is 1 when the lepton is on the bisector of the two jets, decreases to $1/e$ when it is collinear to one of the jets, and decreases further to zero at infinity.
+	\item \texttt{PRI\_tau\_pt} The transverse momentum $\sqrt{p_x^2+p_y^2}$ of the hadronic tau. 
+	\item \texttt{PRI\_tau\_eta} The pseudorapidity $\eta$ of the hadronic tau. 
+	\item \texttt{PRI\_tau\_phi} The azimuth angle $\phi$ of the hadronic tau.
+	\item \texttt{PRI\_lep\_pt} The transverse momentum $\sqrt{p_x^2+p_y^2}$ of the lepton (electron or muon). 
+	\item \texttt{PRI\_lep\_eta} The pseudorapidity $\eta$ of the lepton. 
+	\item \texttt{PRI\_lep\_phi} The azimuth angle $\phi$ of the lepton.
+	\item \texttt{PRI\_met} The missing transverse energy $\vec{E}_T^{miss}$. 
+	\item \texttt{PRI\_met\_phi} The azimuth angle $\phi$ of the missing transverse energy.
+	\item \texttt{PRI\_met\_sumet} The total transverse energy in the detector.
+	\item \texttt{PRI\_jet\_num} The number of jets (integer with value of 0, 1, 2 or 3; possible larger values have been caped at 3).
+	\item \texttt{PRI\_jet\_leading\_pt} The transverse momentum $\sqrt{p_x^2+p_y^2}$ of the leading jet, that is the jet with largest transverse momentum (undefined if \texttt{PRI\_\-jet\_\-num} = 0).
+	\item \texttt{PRI\_jet\_leading\_eta} The pseudorapidity $\eta$ of the leading jet (undefined if \texttt{PRI\_\-jet\_\-num} = 0).
+	\item \texttt{PRI\_jet\_leating\_phi} The azimuth angle $\phi$ of the leading jet (undefined if \texttt{PRI\_\-jet\_\-num} = 0). 
+	\item \texttt{PRI\_jet\_subleading\_pt} The transverse momentum $\sqrt{p_x^2+p_y^2}$ of the subleading jet, that is the jet with the second largest transverse momentum (undefined if \texttt{PRI\_\-jet\_\-num} $\leq$ 1).
+	\item \texttt{PRI\_jet\_subleading\_eta} The pseudorapidity $\eta$ of the subleading jet (undefined if \texttt{PRI\_\-jet\_\-num} $\leq$ 1). 
+	\item \texttt{PRI\_jet\_subleading\_phi} The azimuth angle $\phi$ of the subleading jet (undefined if \texttt{PRI\_\-jet\_\-num} $\leq$ 1).
+	\item \texttt{PRI\_jet\_all\_pt} The scalar sum of the transverse momentum of all the jets of the events. 
+	\item \texttt{Label} The event label (string) $y_i\in {s,b}$ (s for signal, b for background). Not to be used as a feature.
 \end{enumerate}
 
-Todos los ángulos azimutales $\phi$ están en radianes en el intervalo $[-\pi,\pi)$, las masas, energías y momentos están en GeV, y el resto de variables son adimensionales. Las variables que estén indefinidas, ya sea porque no tienen sentido físico o porque no han podido ser calculadas, tienen un valor de -999.0, que está fuera del rango de valores normal de todas las variables. 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%            BIBL.                                          %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{thebibliography}{99}
 \bibitem{bhat} \textsc{S. Bhattacharyya, S. Jha, K. Tharakunnel y J. C. Westland}. \textit{Decision Support Systems}, \textbf{50}, 602-613 (2011).
-%\bibitem{sanjee} \textsc{S. Jha, M. Guillen, J. C. Westland}. \textit{Expert System with Applications}, \textbf{39}, 12650-12657 (2012).
 \bibitem{LogReg} \textsc{D. W. Hosmer, S. Lemeshow, R. X. Sturdivant}. Applied Logistic Regression, \textit{John Wiley} \& \textit{Sons} (2013).
 \bibitem{IA} \textsc{S. Russel, P. Norvig}. Artificial Intelligence: A Modern Approach, \textit{Prentice Hall} (2010).
 \bibitem{NaiveBayes} \textsc{I. Rish}. An empirical study of the naive Bayes classifier, \textit{IBM Research Report} \textbf{No sé cómo citar esto...} (2001).
@@ -690,10 +585,6 @@ Theory}, \textbf{13}, 21-27 (1967)
 \bibitem{NN2} \textsc{T. M. Cover}. \textit{IEEE Transactions on Information
 Theory}, \textbf{14}, 21-27 (1968)
 \bibitem{higgsDoc} \textsc{C. Adam-Bourdarios, G. Cowan, C. Germain, I. Guyon, B. Kégl y D. Rousseau}. Learning to discover: the Higgs boson machine learning chalenge (2014)
-
-
-
 \end{thebibliography}
-
 
 \end{document}
