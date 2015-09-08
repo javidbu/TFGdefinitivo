@@ -447,7 +447,7 @@ Después de hacer la validación cruzada, los mejores parámetros que hemos encontr
 
 En la gráfica \ref{fig:titanic,_curvas_de_aprendizajeDESPUES_DEL_CV} vemos que no ha mejorado mucho el \textit{overfitting} del RF, lo cual se puede deber a que tenemos muy pocas variables, muchas de ellas con pocos valores posibles (categóricas), por lo que los árboles de decisión no tienen muchas posibilidades de separar los datos de muchas formas.
 
-En la tabla \ref{tab:TitanicMetricas} podemos elegir el mejor algoritmo que hayamos logrado. Podríamos pensar que es el RF, con un valor F1 de 0.7660, pero, como sabemos que está sobreajustando los datos.. Los dos mejores algoritmos, una vez descartamos el RF, son el SVM y el KNN, con 0.7299 y 0.7234 como valores F1 respectivamente. Aunque estos valores no son muy diferentes, si nos volvemos a fijar en la gráfica \ref{fig:titanic,_curvas_de_aprendizajeDESPUES_DEL_CV} vemos que la curva del CVC y la del conjunto de aprendizaje están más próximas en el SVC que en el KNN, por lo que el SVC tiene menos sesgo, generalizará mejor para datos nuevos. El KNN sería mejor si dispusiésemos de nuevos datos, como se refleja en la gráfica, pero con los datos que tenemos, el SVC es el mejor algoritmo para esta base de datos.
+En la tabla \ref{tab:TitanicMetricas} podemos elegir el mejor algoritmo que hayamos logrado. Podríamos pensar que es el RF, con un valor F1 de 0.7660, pero sabemos que está sobreajustando los datos. Los dos mejores algoritmos, una vez descartamos el RF, son el SVM y el KNN, con 0.7299 y 0.7234 como valores F1 respectivamente. Aunque estos valores no son muy diferentes, si nos volvemos a fijar en la gráfica \ref{fig:titanic,_curvas_de_aprendizajeDESPUES_DEL_CV} vemos que la curva del CVC y la del conjunto de aprendizaje están más próximas en el SVC que en el KNN, por lo que el SVC tiene menos sesgo, generalizará mejor para datos nuevos. El KNN sería mejor si dispusiésemos de nuevos datos, como se refleja en la gráfica, pero con los datos que tenemos, el SVC es el mejor algoritmo para esta base de datos.
 
 Como resumen de lo que acabamos de conseguir, tenemos un algoritmo, la máquina de soporte vectorial, que entrenado con los datos de apenas 600 pasajeros, como podemos ver en la gráfica \ref{fig:titanic,_curvas_de_aprendizajeDESPUES_DEL_CV}, consigue predecir con una exactitud de casi el 80\% si el resto de pasajeros sobrevivirán o no. Ha encontrado patrones en los datos que seguramente nadie podría haber visto, no fijándose solo en si el pasajero en cuestión es una señorita joven, que viajaba en primera clase con su padre a bordo.
 
@@ -458,7 +458,7 @@ Lo primero de todo, como la base de datos es bastante grande, es pintar las curv
 
 \begin{figure}[htbp]
 	\centering
-		\includegraphics[width=1.00\textwidth]{graficas/higgs,_curvas_de_aprendizaje.ps}
+		\includegraphics[width=1.00\textwidth]{graficas/higgs,_curvas_de_aprendizaje}
 	\caption{Curvas de aprendizaje del bosón de Higgs.}
 	\label{fig:higgs,_curvas_de_aprendizaje}
 \end{figure}
