@@ -35,7 +35,12 @@ Madrid, 28040 Madrid, Spain.}
 \begin{abstract}
 En este trabajo vamos a estudiar diferentes algoritmos de Aprendizaje Automático (\textit{Machine Learning}) para la clasificación de sucesos. Para comprobar su funcionamiento, los utilizaremos sobre distintas bases de datos, una de supervivientes del Titanic y otra de búsqueda del bosón de Higgs.
 
-\centering\includegraphics[width=0.4\textwidth]{graficas/titanic3}
+\centering
+\begin{tabular}{cc}
+\includegraphics[width=0.4\textwidth]{graficas/titanic3}
+&
+\includegraphics[width=0.4\textwidth]{graficas/higgs-simulation-3}
+\end{tabular}
 \end{abstract}
 
 \maketitle
@@ -43,9 +48,11 @@ En este trabajo vamos a estudiar diferentes algoritmos de Aprendizaje Automático
 \section{Introducción}
 En un mundo cada vez más tecnológico, las bases de datos crecen cada día. Cuando alguien entra en una página web, realiza una compra en un comercio, una empresa realiza un estudio de mercado, se celebran unas elecciones, se están almacenando datos. Con este ingente flujo de datos, la física no se podía quedar atrás, hoy en día los grandes aceleradores de partículas manejan al día millones de sucesos que hay que catalogar, clasificar y estudiar, pero la enorme cantidad de estos datos hace imposible su tratamiento \textit{manual}.
 
-Para solucionar el problema del tratamiento de datos surge el \textit{Machine Learning} (de ahora en adelante \ML), con algoritmos cada vez más potentes capaces de sacar el máximo partido a estos datos. En este trabajo estudiaremos en concreto cinco de ellos, todos de clasificación. Estos cinco son \textit{Logistic Regresion} (LR), \textit{Naïve Bayes} (NB), \textit{Support Vector Machine} (SVM), \textit{Random Forest} (RF) y \textit{K-Nearest Neighbors} (KNN), explicados en detalle en la seccion \ref{sec:alg}.
+Para solucionar el problema del tratamiento de datos surge el \textit{Machine Learning} (de ahora en adelante \ML), con algoritmos cada vez más potentes capaces de sacar el máximo partido a estos datos. Existen dos tipos de problemas en \ML, los de clasificación y los de regresión. Todos ellos tratan de predecir el valor de una variable a partir de un conjunto de datos, la diferencia es que en los de regresión la variable predicha toma valores continuos, mientras que en la clasificación toma valores discretos, pudiendo ser una clasificación binaria (verdadero o falso) o una clasificación multiclase, como por ejemplo un algoritmo de reconocimiento de dígitos.
 
-Existen dos tipos de problemas en \ML, los de clasificación y los de regresión. Todos ellos tratan de predecir el valor de una variable a partir de un conjunto de datos, la diferencia es que en los de regresión la variable predicha toma valores continuos, mientras que en la clasificación toma valores discretos, pudiendo ser una clasificación binaria (verdadero o falso) o una clasificación multiclase, como por ejemplo un algoritmo de reconocimiento de dígitos.
+En este trabajo estudiaremos en concreto cinco algoritmos, todos ellos de clasificación: \textit{Logistic Regresion} (LR), \textit{Naïve Bayes} (NB), \textit{Support Vector Machine} (SVM), \textit{Random Forest} (RF) y \textit{K-Nearest Neighbors} (KNN), explicados en detalle en la seccion \ref{sec:alg}.
+
+
 
 \section{Consideraciones previas}\label{sec:previo}
 \subsection{Aprendizaje supervisado y no supervisado}\label{sec:supervisado}
@@ -104,7 +111,7 @@ Un buen algoritmo será aquel que prediga 0 para todos los negativos y 1 para los
 \label{eq:metricas}
 \end{equation}
 
-\textit{Recall} (sensibilidad) nos da el cociente entre los casos positivos bien clasificados y todos los casos positivos, mientras que \textit{Specificity} (especificidad) nos da la de los casos negativos. \textit{Precision} (precisión) nos da el cociente de los casos  positivos bien clasificados entre todos los casos clasificados como positivos. 
+\textit{Recall} (sensibilidad) nos da el cociente entre los casos positivos bien clasificados y todos los casos positivos, mientras que \textit{Specificity} (especificidad) nos da el de los casos negativos. \textit{Precision} (precisión) nos da el cociente de los casos  positivos bien clasificados entre todos los casos clasificados como positivos. 
 
 Aunque pudiera parecer que \textit{Accuracy} (exactitud) es una buena medida de la bondad de la clasificación, pues nos da la proporción de los casos bien clasificados frente al resto de casos, no siempre es así. En los casos de clases sesgadas (\textit{skewed classes}), en las que la proporción de una de las dos clases es mucho mayor que la de la otra, un algoritmo que clasifique cualquier entrada de datos como la clase mayoritaria tendría una gran exactitud, aunque no cumpliría con el objetivo de clasificar correctamente los datos. Por ejemplo, supongamos un problema de detección de fraude en transacciones bancarias en el que nuestro algoritmo deba clasificar como 1 las operaciones fraudulentas. En la realidad hay muchas más transacciones legítimas que fraudulentas, en nuestro ejemplo consideraremos que son el 99\% de las transacciones. Si tenemos un algoritmo que prediga siempre que una transacción es legítima, la exactitud será del 99\%, pero no por ello será un buen algoritmo. 
 
@@ -526,6 +533,8 @@ A la hora de utilizar realmente los algoritmos, hemos usado dos bases de datos, 
 
 Por último, la base de datos del Higgs. Como la base de datos es bastante grande, aprovechamos la información que nos brindaban las curvas de aprendizaje\footnote{Mi portátil tardó en hacerlas 3 días enteros, porque para hacerlas hay que entrenar cada algoritmo cada vez con distinto número de muestras} y pudimos usar solo un 10\% de los datos. Luego vimos en profundidad cómo llevar a cabo la validación cruzada sobre una base de datos, probando mallas de parámetros cada vez más finas, hasta alcanzar el nivel de precisión deseado.  Vimos cómo el RF acertaba al escoger las variables más importantes, siendo la masa estimada la mejor. Al final, decidimos que el mejor algoritmo para esta base de datos, al nivel de profundidad al que la estudiamos, era el SVM, aunque seguramente, si hubiéramos seguido probando mallas más finas, podría haber sido el RF. De este trabajo podemos concluir que no existe un algoritmo mejor que el resto, sino que cada base de datos tiene ``su algoritmo'', uno con el que es más fácil sacar toda la información posible de los datos. 
 
+Las bases de datos y el c\'odigo necesario para todos los c\'alculos de este trabajo est\'an recogidos en un CD con material suplementario que acompaña a esta memoria. El c\'odigo se ha desarrollado en lenguaje python, utilizando las librerías del paquete \texttt{scikit-learn}\footnote{\texttt{http://scikit-learn.org/stable/}}, de inteligencia artificial en python.
+
 \section{Apéndice: variables para la b\'usqueda del bos\'on de Higgs}\label{sec:features}
 En este Ap\'endice se recoge la lista completa de variables utilizadas para la clasificación de eventos en la b\'usqueda del bos\'on de Higgs de la Secci\'on \ref{sec:higgs}. Todos los ángulos azimutales $\phi$ están en radianes en el intervalo $[-\pi,\pi)$, las masas, energías y momentos están en GeV, y el resto de variables son adimensionales. Las variables que estén indefinidas, ya sea porque no tienen sentido físico o porque no han podido ser calculadas, tienen un valor de -999.0, que está fuera del rango de valores normal de todas las variables. 
 
@@ -543,10 +552,10 @@ En este Ap\'endice se recoge la lista completa de variables utilizadas para la c
 	\item \texttt{DER\_sum\_pt} The sum of the moduli of the transverse momenta of the hadronic tau, the lepton, the leading jet (if \texttt{PRI\_\-jet\_\-num} = 1) and the subleading jet (if \texttt{PRI\_\-jet\_\-num} = 2) and the other jets (if \texttt{PRI\_\-jet\_\-num} = 3). 
 	\item \texttt{DER\_pt\_ratio\_lep\_tau} The ratio of the transverse momenta of the lepton and the hadronic tau. 
 	\item \texttt{DER\_met\_phi\_centrality} The centrality of the azimuthal angle of the missing transverse energy vector w.r.t. the hadronic tau and the lepton
-	\[C=\frac{A+B}{\sqrt{A^2+B^2}}\],
+	\[C=\frac{A+B}{\sqrt{A^2+B^2}},\]
 	where $A=\sin{\phi_{met}-\phi_{lep}}$, $B=\sin{\phi_{had}-\phi_{met}}$, and $\phi_{met}$, $\phi_{lep}$, and $\phi_{had}$ are the azimuthal angles of the missing transverse energy vector, the lepton, and the hadronic tau, respectively. The centrality in $\sqrt{2}$ if the missing transverse energy vector $\vec{E}_T^{miss}$ is on the bisector of the transverse momenta of the lepton and the hadronic tau. It decreases to 1 if $\vec{E}_T^{miss}$ is collinear with one of these vectors and it decreases further to $-\sqrt{2}$ when $\vec{E}_T^{miss}$ is exactly opposite to the bisector.
 	\item \texttt{DER\_lep\_eta\_centrality} The centrality of the pseudorapidity of the lepton w.r.t. the two jets (undefined if \texttt{PRI\_\-jet\_\-num} $\leq$ 1)
-	\[\exp{\left[\frac{-4}{(\eta_1-\eta_2)^2}\left(\eta_{lep}-\frac{\eta_1+\eta_2}{2}\right)^2\right]}\],
+	\[\exp{\left[\frac{-4}{(\eta_1-\eta_2)^2}\left(\eta_{lep}-\frac{\eta_1+\eta_2}{2}\right)^2\right]},\]
 	where $\eta_{lep}$ is the preudorapidity of the lepton and $\eta_1$ and $\eta_2$ are the pseudorapidities of the two jets. The centrality is 1 when the lepton is on the bisector of the two jets, decreases to $1/e$ when it is collinear to one of the jets, and decreases further to zero at infinity.
 	\item \texttt{PRI\_tau\_pt} The transverse momentum $\sqrt{p_x^2+p_y^2}$ of the hadronic tau. 
 	\item \texttt{PRI\_tau\_eta} The pseudorapidity $\eta$ of the hadronic tau. 
@@ -572,11 +581,11 @@ En este Ap\'endice se recoge la lista completa de variables utilizadas para la c
 \bibitem{bhat} \textsc{S. Bhattacharyya, S. Jha, K. Tharakunnel y J. C. Westland}. \textit{Decision Support Systems}, \textbf{50}, 602-613 (2011).
 \bibitem{LogReg} \textsc{D. W. Hosmer, S. Lemeshow, R. X. Sturdivant}. Applied Logistic Regression, \textit{John Wiley} \& \textit{Sons} (2013).
 \bibitem{IA} \textsc{S. Russel, P. Norvig}. Artificial Intelligence: A Modern Approach, \textit{Prentice Hall} (2010).
-\bibitem{NaiveBayes} \textsc{I. Rish}. An empirical study of the naive Bayes classifier, \textit{IBM Research Report} \textbf{No sé cómo citar esto...} (2001).
+\bibitem{NaiveBayes} \textsc{I. Rish}. An empirical study of the naive Bayes classifier, In IJCAI workshop on empirical methods in artificial intelligence, \textbf{3(22)}, 41-46. IBM New York (2001).
 \bibitem{SVM} \textsc{J. E. Hernández, S. Salazar}. \textit{Scientia et Technica}, \textbf{31}, 47-52 (2006)
 \bibitem{SVM2} \textsc{C. Cortes, V. Vapnik}. \textit{Machine Learning}, \textbf{20}, 273-297 (1995)
 \bibitem{SVM3} \textsc{V. Vapnik}. Statistical Learning Theory, \textit{John Wiley} \& \textit{Sons} (1998).
-\bibitem{SVM4} \textsc{J. L. Martínez Pérez}. \textit{Comunicación con computador mediante señales cerebrales. Aplicación a la tecnología de la rehabilitación} (2009). Tesis doctoral de la ETSII (UPM). \textbf{Tampoco sé si se cita así...}
+\bibitem{SVM4} \textsc{J. L. Martínez Pérez}. \textit{Comunicación con computador mediante señales cerebrales. Aplicación a la tecnología de la rehabilitación} (2009). Tesis doctoral de la ETSII (UPM).
 \bibitem{RF} \textsc{L. Breiman}. \textit{Machine Learning}, \textbf{45}, 5-32 (2001).
 \bibitem{RF2} \textsc{L. Rokach, O. Maimon}. Data Mining with Decision Trees, Theory and Applications, \textit{World Scientific} (2015).
 \bibitem{DecTree} \textsc{J. R. Quinlan}. \textit{Machine Learning}, \textbf{1}, 81-106 (1986).
