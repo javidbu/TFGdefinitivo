@@ -13,3 +13,7 @@
 higgs/*
 Higgs.txt
 doc/memoria.ps
+*.nav
+*.snm
+!doc/presentacion.pdf
+doc/presentacion.ps
