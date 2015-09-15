@@ -10,6 +10,7 @@
 \usepackage[latin1]{inputenc}
 \usepackage{subfigure}
 \usepackage{bm}
+\usepackage{booktabs}
 
 \title[Aprendizaje Autom\'atico]{Algoritmos de Aprendizaje Autom\'atico y sus aplicaciones}
 \subtitle{Trabajo de Fin de Grado}
@@ -75,6 +76,29 @@
 \end{figure}
 \end{frame}
 
+\subsection{Superficies de decisi\'on}
+
+\begin{frame}
+	\frametitle{Superficies de decisi\'on}
+	\centering\includegraphics[width = 1.0\textwidth]{digitos,_curvas_de_decision21-28}
+\end{frame}
+
+\subsection{Sesgo y varianza}
+
+\begin{frame}
+	\frametitle{Sesgo y varianza}
+		\begin{figure}[htbp]
+		\centering
+		\subfigure{\includegraphics[width=0.35\textwidth]{DatosBiasVariance}}
+		\qquad\quad
+		\subfigure{\includegraphics[width=0.35\textwidth]{NoBiasVariance}}
+		\qquad\quad
+		\subfigure{\includegraphics[width=0.35\textwidth]{highBias}}
+		\qquad\quad
+		\subfigure{\includegraphics[width=0.35\textwidth]{highVariance}}
+	\end{figure}
+\end{frame}
+
 \subsection{M\'etricas}
 
 \begin{frame}
@@ -99,29 +123,6 @@
 			\text{F1-score} &= \frac{2\cdot \text{Precision}\cdot \text{Recall}}{\text{Precision} + \text{Recall}} & &
 		\end{aligned}
 	\end{equation*}
-\end{frame}
-
-\subsection{Sesgo y varianza}
-
-\begin{frame}
-	\frametitle{Sesgo y varianza}
-		\begin{figure}[htbp]
-		\centering
-		\subfigure{\includegraphics[width=0.35\textwidth]{DatosBiasVariance}}
-		\qquad\quad
-		\subfigure{\includegraphics[width=0.35\textwidth]{NoBiasVariance}}
-		\qquad\quad
-		\subfigure{\includegraphics[width=0.35\textwidth]{highBias}}
-		\qquad\quad
-		\subfigure{\includegraphics[width=0.35\textwidth]{highVariance}}
-	\end{figure}
-\end{frame}
-
-\subsection{Superficies de decisi\'on}
-
-\begin{frame}
-	\frametitle{Superficies de decisi\'on}
-	\centering\includegraphics[width = 1.0\textwidth]{digitos,_curvas_de_decision21-28}
 \end{frame}
 
 \section{Algoritmos}
@@ -183,7 +184,7 @@
 \subsection{Random Forest}
 
 \begin{frame}
-	\frametitle{Random Forest}
+	\frametitle{Random Forest, \'arboles de decisi\'on}
 	\begin{figure}[htbp]
 		\centering
 		\subfigure{\includegraphics[width=0.4\textwidth]{RandomForest}}
@@ -192,10 +193,42 @@
 	\end{figure}
 \end{frame}
 
+\begin{frame}
+	\frametitle{Random Forest, ensemble methods}
+	\centering\includegraphics[width=0.7\textwidth]{curva_decision_RF}
+\end{frame}
+
 \section{Resultados}
 
 \begin{frame}
-	\frametitle{He currado un mont\'on}
+	\frametitle{Resultados, el Higgs}
+	\begin{table}[htbp]
+		\centering
+		\begin{tabular}{ccccc}
+		  \toprule
+			Algoritmo & Accuracy & Precision & Recall & F1-Score \\
+			\midrule
+			Gaussian NB & 0.6858 & 0.7367 & 0.8144 & 0.7736 \\
+			SVM & 0.8129 & 0.8413 & 0.8826 & 0.8614 \\
+			Logistic Regression & 0.7412 & 0.7810 & 0.8608 & 0.8190 \\
+			Random Forest & 0.8252 & 0.8450 & 0.9000 & 0.8716 \\
+			KNN & 0.7249 & 0.7855 & 0.8015 & 0.7934 \\
+			\bottomrule
+			\end{tabular}
+\end{table}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Resultados, el Higgs}
+	\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=1.00\textwidth]{higgs,_curvas_de_aprendizaje_post_CV}
+	\end{figure}
+\end{frame}
+	
+
+\begin{frame}
+	\frametitle{Resultados}
 	El c\'odigo utilizado para los c\'alculos de este trabajo ha sido realizado en Python, con ayuda del paquete de Inteligencia Artificial \texttt{scikit-learn}. 
 
 	Todos los c\'alculos han sido llevados a cabo por un ordenador con sistema operativo Windows 7 de 64 bits, un procesador Intel$^\circledR$ Core\texttrademark \ i3 a 1.7 GHz, con 4 GB de memoria RAM.
